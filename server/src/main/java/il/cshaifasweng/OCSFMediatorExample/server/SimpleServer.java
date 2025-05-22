@@ -9,25 +9,38 @@ import java.util.ArrayList;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
 
+import static il.cshaifasweng.OCSFMediatorExample.server.App.instance;
+
 public class SimpleServer extends AbstractServer {
 	private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
 
 	public SimpleServer(int port) {
 		super(port);
-		
+
 	}
 
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		String msgString = msg.toString();
-		if (msgString.startsWith("#warning")) {
-			Warning warning = new Warning("Warning from server!");
+		if (msgString.startsWith("image1")) {
 			try {
-				client.sendToClient(warning);
+				client.sendToClient("show_image1_info");
 				System.out.format("Sent warning to client %s\n", client.getInetAddress().getHostAddress());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		else if (msgString.startsWith("image2")) {
+			instance.getFlower(msgString);
+		}
+		else if (msgString.startsWith("image3")) {
+
+		}
+		else if (msgString.startsWith("image4")) {
+
+		}
+		else if (msgString.startsWith("image5")) {
+
 		}
 		else if(msgString.startsWith("add client")){
 			SubscribedClient connection = new SubscribedClient(client);
