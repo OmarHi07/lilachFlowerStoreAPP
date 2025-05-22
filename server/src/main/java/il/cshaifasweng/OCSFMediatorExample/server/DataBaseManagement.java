@@ -8,6 +8,10 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
+
 public class DataBaseManagement {
     public DataBaseManagement() {
         SessionFactory sessionFactory = getSessionFactory();
@@ -65,8 +69,69 @@ public class DataBaseManagement {
             exception.printStackTrace();
         }
     }
-    //public Flower getFlower(String id){
-       // session.beginTransaction();
 
-    //}
+    public List<Flower> getAllFlowers() throws Exception {
+        try {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
+            criteria.from(Flower.class);
+
+            List<Flower> result = session.createQuery(criteria).getResultList();
+
+            session.getTransaction().commit();
+            return result;
+        } catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            System.out.println("An error occurred, changes have been rolled back.");
+            exception.printStackTrace();
+            throw exception; // propagate the exception or return an empty list
+        }
+    }
+
+
+    public Flower getFlower(int id) {
+        Flower flower = null;
+        try {
+            session.beginTransaction();
+
+            flower = session.get(Flower.class, id);  // 🚀 simple and direct
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+        return flower;
+    }
+
+    public void changePrice(int id, int price) {
+        try {
+            session.beginTransaction();
+
+            // Fetch the flower by ID
+            Flower flower = session.get(Flower.class, id);
+
+            if (flower != null) {
+                flower.setPrice(price); // Set new price
+                session.update(flower); // Optional: Hibernate tracks changes automatically
+            } else {
+                System.out.println("Flower with ID " + id + " not found.");
+            }
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+
 }
