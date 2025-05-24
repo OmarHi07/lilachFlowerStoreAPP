@@ -50,7 +50,7 @@ public class Flower implements Serializable {
         return type;
     }
     public void setType(String type) {
-        type = type;
+        this.type = type;
     }
 
 }
