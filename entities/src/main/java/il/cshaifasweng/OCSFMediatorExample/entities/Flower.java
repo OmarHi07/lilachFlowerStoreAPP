@@ -21,14 +21,16 @@ public class Flower implements Serializable {
     @Column(name = "type")
     private String type;
 
+    private String PrimaryType;
     public Flower() {
     }
 
-    public Flower(String flowerName, String Type, double price) {
+    public Flower(String flowerName, String Type, double price, String PrimaryType) {
         super();
         this.flowerName = flowerName;
         this.type = Type;
         this.price = price;
+        this.PrimaryType = PrimaryType;
     }
 
     public int getId() {
@@ -51,6 +53,12 @@ public class Flower implements Serializable {
     }
     public void setType(String type) {
         this.type = type;
+    }
+    public String getPrimaryType() {
+        return PrimaryType;
+    }
+    public void setPrimaryType(String primaryType) {
+        this.PrimaryType = primaryType;
     }
 
 }

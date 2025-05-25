@@ -2,15 +2,15 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 public class ChangePrice {
     private int id;
-    private int price;
-    public ChangePrice(int id, int price){
+    private double price;
+    public ChangePrice(int id, double price){
         this.id = id;
         this.price = price;
     }
     public int getId(){
        return this.id;
     }
-    public int getPrice(){
+    public double getPrice(){
         return this.price;
     }
     public void setPrice(int price){

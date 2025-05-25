@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
@@ -14,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.event.ActionEvent;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class PrimaryController {
@@ -25,30 +28,6 @@ public class PrimaryController {
 	void sendWarning(ActionEvent event) {
 		try {
 			SimpleClient.getClient().sendToServer("#warning");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	void initialize(){
-		List<Text>  priceTexts = new ArrayList<>(List.of(PriceFlower3, PriceFlower4, PriceFlower5, PriceFlower1, PriceFlower2));
-		List<Text>  nameTexts = new ArrayList<>(List.of(PutName1,PutName2,PutName3,PutName4, PutName5));
-		List<Text>  typeTexts = new ArrayList<>(List.of(PutType1,PutType2,PutType3,PutType4,PutType5));
-		images = new Image[5];
-		for(int i = 0; i < images.length; i++){
-			images[i] = new Image(String.valueOf(PrimaryController.class.getResource("/images/" + i + ".png")));
-		}
-		Image image_background = new Image(String.valueOf(PrimaryController.class.getResource("/images/background.jpg")));
-		BackgroundIMAGE.setImage(image_background);
-		image_1.setImage(images[0]);
-		image_2.setImage(images[1]);
-		image_3.setImage(images[2]);
-		image_4.setImage(images[3]);
-		image_5.setImage(images[4]);
-		try {
-			SimpleClient.getClient().sendToServer("add client");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,22 +131,53 @@ public class PrimaryController {
 	@FXML // fx:id="image_5"
 	private ImageView image_5; // Value injected by FXMLLoader
 
+	@FXML
+	void initialize(){
+		EventBus.getDefault().register(this);
+		priceTexts = new ArrayList<>(List.of(PriceFlower1, PriceFlower2, PriceFlower3, PriceFlower4, PriceFlower5));
+		nameTexts = new ArrayList<>(List.of(PutName1,PutName2,PutName3,PutName4, PutName5));
+		typeTexts = new ArrayList<>(List.of(PutType1,PutType2,PutType3,PutType4,PutType5));
+		images = new Image[5];
+		for(int i = 0; i < images.length; i++){
+			images[i] = new Image(String.valueOf(PrimaryController.class.getResource("/images/" + i + ".png")));
+		}
+		Image image_background = new Image(String.valueOf(PrimaryController.class.getResource("/images/background.jpg")));
+		BackgroundIMAGE.setImage(image_background);
+		image_1.setImage(images[4]);
+		image_2.setImage(images[2]);
+		image_3.setImage(images[0]);
+		image_4.setImage(images[1]);
+		image_5.setImage(images[3]);
+		try {
+			SimpleClient.getClient().sendToServer("add client");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	@Subscribe
-	public void init(List<Flower> FloweList){
-		Platform.runLater(()->{
-            for(int i = 0; i < FloweList.size(); i++){
-				Flower flower = FloweList.get(i);
-				priceTexts.get(i).setText(String.valueOf(flower.getPrice()));
-				typeTexts.get(i).setText(flower.getType());
-				nameTexts.get(i).setText(flower.getFlowerName());
+	public void init(List<?> list){
+		if (list.isEmpty() || !(list.get(0) instanceof Flower)) return;
+
+		List<Flower> flowerList = list.stream().map(f -> (Flower) f).collect(Collectors.toList());
+		flowerList.sort(Comparator.comparingInt(Flower::getId));
+		flowerList.forEach(f -> System.out.println(f.getId()));
+
+		Platform.runLater(() -> {
+			for (int i = 0; i < flowerList.size(); i++) {
+				Flower flower = flowerList.get(i);
+				priceTexts.get(i).setText("Price:" + String.valueOf(flower.getPrice()) + "₪");
+				typeTexts.get(i).setText("Type:" + flower.getPrimaryType());
+				nameTexts.get(i).setText("Name:" + flower.getFlowerName());
 			}
 		});
 	}
 	@Subscribe
 	public void ChangePrice1(ChangePrice changePrice){
 		Platform.runLater(()->{
-			int index = changePrice.getId();
-			priceTexts.get(index).setText(String.valueOf(changePrice.getPrice()));
+			int index = changePrice.getId() - 1 ;
+			priceTexts.get(index).setText("Price:" + String.valueOf(changePrice.getPrice()) + "₪");
 		});
 	}
 
@@ -179,7 +189,7 @@ public class PrimaryController {
 	@FXML
 	void ChangeF1(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice1 + ",1");
+			SimpleClient.getClient().sendToServer("change," + NewPrice1.getText() + ",1");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,7 +198,7 @@ public class PrimaryController {
 	@FXML
 	void ChangeF2(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice2 + ",2");
+			SimpleClient.getClient().sendToServer("change," + NewPrice2.getText() + ",2");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -198,7 +208,7 @@ public class PrimaryController {
 	@FXML
 	void ChangeF3(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice3 + ",3");
+			SimpleClient.getClient().sendToServer("change," + NewPrice3.getText() + ",3");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +217,7 @@ public class PrimaryController {
 	@FXML
 	void ChangeF4(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice4 + ",4");
+			SimpleClient.getClient().sendToServer("change," + NewPrice4.getText() + ",4");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -216,7 +226,7 @@ public class PrimaryController {
 	@FXML
 	void ChangeF5(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice5 + ",5");
+			SimpleClient.getClient().sendToServer("change," + NewPrice5.getText() + ",5");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

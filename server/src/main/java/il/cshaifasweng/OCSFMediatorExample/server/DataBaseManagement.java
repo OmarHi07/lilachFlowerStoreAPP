@@ -35,15 +35,15 @@ public class DataBaseManagement {
 
     private static void generateFlowers() throws Exception {
 
-        Flower flower1 = new Flower("Whisper of love" ,"Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250);
+        Flower flower1 = new Flower("Whisper of love" ,"Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250,"Dozens of red roses");
         session.save(flower1);
-        Flower flower2 = new Flower("SunShine Meadow","A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers " ,160);
+        Flower flower2 = new Flower("SunShine Meadow","A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers " ,160,"bouquet full of sunflowers");
         session.save(flower2);
-        Flower flower3 = new Flower("Tropical Sunrise"," A vibrant and colorful mix with orange, pink, and yellow tones",150);
+        Flower flower3 = new Flower("Tropical Sunrise"," A vibrant and colorful mix with orange, pink, and yellow tones",150,"A colorful mix");
         session.save(flower3);
-        Flower flower4 = new Flower("Velvet touch","A sleek and elegant single red rose in premium wrapping",20);
+        Flower flower4 = new Flower("Velvet touch","A sleek and elegant single red rose in premium wrapping",20,"A single red rose");
         session.save(flower4);
-        Flower flower5 = new Flower("Eternal Grace"," Classic combination of red and white symbolizing love and purity",200);
+        Flower flower5 = new Flower("Eternal Grace"," Classic combination of red and white symbolizing love and purity",200,"Classic combination");
         session.save(flower5);
         /*
          * The call to session.flush() updates the DB immediately without ending the transaction.
@@ -98,7 +98,7 @@ public class DataBaseManagement {
         try {
             session.beginTransaction();
 
-            flower = session.get(Flower.class, id);  // 🚀 simple and direct
+            flower = session.get(Flower.class, id);
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class DataBaseManagement {
         return flower;
     }
 
-    public void changePrice(int id, int price) {
+    public void changePriceDB(int id, int price) {
         try {
             session.beginTransaction();
 
