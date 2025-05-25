@@ -66,7 +66,6 @@ public class SimpleServer extends AbstractServer {
 		else if(msgString.startsWith("add client")){
 			SubscribedClient connection = new SubscribedClient(client);
 			SubscribersList.add(connection);
-
 			try {
 				List<Flower> flowerList = instance.getAllFlowers();
 				client.sendToClient(flowerList);
@@ -85,20 +84,13 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if(msgString.startsWith("change")){
+		else if(msgString.startsWith("change")) {
 			String[] parts = msgString.split(",");
 
 			int newPrice = Integer.parseInt(parts[1]);  // parts[1] = "150"
 			int flowerId = Integer.parseInt(parts[2]);  // parts[2] = "1"
-
-			instance.changePrice(flowerId, newPrice);
-
-			try {
-				client.sendToClient(msgString);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
+			instance.changePriceDB(flowerId, newPrice);
+			sendToAllClients(msgString);
 		}
 	}
 	public void sendToAllClients(String message) {
