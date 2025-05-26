@@ -187,47 +187,57 @@ public class PrimaryController {
 
 	@FXML
 	void ChangeF1(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice1.getText() + ",1");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (Integer.parseInt(NewPrice1.getText())>=0 && NewPrice1.getText()!=null ) {
+			try {
+				SimpleClient.getClient().sendToServer("change," + NewPrice1.getText() + ",1");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@FXML
 	void ChangeF2(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice2.getText() + ",2");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (Integer.parseInt(NewPrice2.getText())>=0 && NewPrice2.getText()!=null) {
+			try {
+				SimpleClient.getClient().sendToServer("change," + NewPrice2.getText() + ",2");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
 
 	@FXML
 	void ChangeF3(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice3.getText() + ",3");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (Integer.parseInt(NewPrice3.getText())>=0 && NewPrice3.getText()!=null) {
+			try {
+				SimpleClient.getClient().sendToServer("change," + NewPrice3.getText() + ",3");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@FXML
 	void ChangeF4(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice4.getText() + ",4");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (Integer.parseInt(NewPrice4.getText())>=0 && NewPrice4.getText()!=null) {
+			try {
+				SimpleClient.getClient().sendToServer("change," + NewPrice4.getText() + ",4");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@FXML
 	void ChangeF5(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("change," + NewPrice5.getText() + ",5");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (Integer.parseInt(NewPrice5.getText())>=0 && NewPrice5.getText()!=null) {
+			try {
+				SimpleClient.getClient().sendToServer("change," + NewPrice5.getText() + ",5");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
