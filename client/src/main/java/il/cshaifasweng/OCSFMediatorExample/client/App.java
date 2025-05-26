@@ -21,19 +21,23 @@ public class App extends Application {
 
     private static Scene scene;
     private SimpleClient client;
-
+    private static Stage primaryStage;
     @Override
     public void start(Stage stage) throws IOException {
     	EventBus.getDefault().register(this);
     	client = SimpleClient.getClient();
     	client.openConnection();
-        scene = new Scene(loadFXML("primary"), 1012, 654);
+        primaryStage = stage;
+        scene = new Scene(loadFXML("primary"), 900, 660);
         stage.setScene(scene);
         stage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
+    static void setRoot(String fxml, double width, double height) throws IOException {
+        Parent root = loadFXML(fxml);
+        scene.setRoot(root);
+        primaryStage.setWidth(width);
+        primaryStage.setHeight(height);
     }
 
     private static Parent loadFXML(String fxml) throws IOException {

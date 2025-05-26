@@ -87,7 +87,7 @@ public class SimpleServer extends AbstractServer {
 		else if(msgString.startsWith("change")) {
 			String[] parts = msgString.split(",");
 
-			int newPrice = Integer.parseInt(parts[1]);  // parts[1] = "150"
+			double newPrice = Double.parseDouble(parts[1]);// parts[1] = "150"
 			int flowerId = Integer.parseInt(parts[2]);  // parts[2] = "1"
 			instance.changePriceDB(flowerId, newPrice);
 			sendToAllClients(msgString);

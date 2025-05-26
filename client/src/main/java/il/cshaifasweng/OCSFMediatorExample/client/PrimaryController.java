@@ -162,7 +162,6 @@ public class PrimaryController {
 
 		List<Flower> flowerList = list.stream().map(f -> (Flower) f).collect(Collectors.toList());
 		flowerList.sort(Comparator.comparingInt(Flower::getId));
-		flowerList.forEach(f -> System.out.println(f.getId()));
 
 		Platform.runLater(() -> {
 			for (int i = 0; i < flowerList.size(); i++) {

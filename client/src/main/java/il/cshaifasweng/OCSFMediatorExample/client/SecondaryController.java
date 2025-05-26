@@ -29,7 +29,7 @@ public class SecondaryController {
         Flower flower = FlowerHolder.CurrentFlower;
         if(flower != null){
             TextName.setText(flower.getFlowerName());
-            TextPrice.setText(String.valueOf(flower.getPrice()));
+            TextPrice.setText(String.valueOf(flower.getPrice()) + "₪");
             TextType.setText(flower.getType());
         }
     }
@@ -41,7 +41,7 @@ public class SecondaryController {
     @FXML
     void BackToPrimary(ActionEvent event) {
         try {
-            App.setRoot("primary");
+            App.setRoot("primary", 900, 690);
         }
         catch(Exception e){
             e.printStackTrace();
