@@ -33,7 +33,7 @@ public class SimpleClient extends AbstractClient {
 				Flower flower = (Flower) msg;
 				FlowerHolder.CurrentFlower = flower;
 				try {
-					App.setRoot("secondary");
+					App.setRoot("secondary", 520, 421);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,7 +42,7 @@ public class SimpleClient extends AbstractClient {
 	    	String msgString = msg.toString();
 		    if (msgString.startsWith("change")) {
 				String[] msgParts = msgString.split(",");
-				double newPrice = Integer.parseInt(msgParts[1]);
+				double newPrice = Double.parseDouble(msgParts[1]);
 				int Id = Integer.parseInt(msgParts[2]);
 				ChangePrice changePrice = new ChangePrice(Id, newPrice);
 				EventBus.getDefault().post(changePrice);
@@ -59,7 +59,7 @@ public class SimpleClient extends AbstractClient {
 
 		public static SimpleClient getClient () {
 			if (client == null) {
-				client = new SimpleClient("localhost", 3000);
+				client = new SimpleClient("localhost", 3001);
 			}
 			return client;
 		}

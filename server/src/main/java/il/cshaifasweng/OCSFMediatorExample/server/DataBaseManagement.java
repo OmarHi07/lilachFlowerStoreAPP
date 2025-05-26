@@ -35,23 +35,25 @@ public class DataBaseManagement {
 
     private static void generateFlowers() throws Exception {
 
-        Flower flower1 = new Flower("Whisper of love" ,"Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250,"Dozens of red roses");
-        session.save(flower1);
-        Flower flower2 = new Flower("SunShine Meadow","A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers " ,160,"bouquet full of sunflowers");
-        session.save(flower2);
-        Flower flower3 = new Flower("Tropical Sunrise"," A vibrant and colorful mix with orange, pink, and yellow tones",150,"A colorful mix");
-        session.save(flower3);
-        Flower flower4 = new Flower("Velvet touch","A sleek and elegant single red rose in premium wrapping",20,"A single red rose");
-        session.save(flower4);
-        Flower flower5 = new Flower("Eternal Grace"," Classic combination of red and white symbolizing love and purity",200,"Classic combination");
-        session.save(flower5);
-        /*
-         * The call to session.flush() updates the DB immediately without ending the transaction.
-         * Recommended to do after an arbitrary unit of work.
-         * MANDATORY to do if you are saving a large amount of data - otherwise you may get cache errors.
-         */
-        session.flush();
-
+        Long count = (Long) session.createQuery("select count(f) from Flower f").uniqueResult();
+        if (count == 0 ) {
+            Flower flower1 = new Flower("Whisper of love", "Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250, "Dozens of red roses");
+            session.save(flower1);
+            Flower flower2 = new Flower("SunShine Meadow", "A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers ", 160, "bouquet full of sunflowers");
+            session.save(flower2);
+            Flower flower3 = new Flower("Tropical Sunrise", " A vibrant and colorful mix with orange, pink, and yellow tones", 150, "A colorful mix");
+            session.save(flower3);
+            Flower flower4 = new Flower("Velvet touch", "A sleek and elegant single red rose in premium wrapping", 20, "A single red rose");
+            session.save(flower4);
+            Flower flower5 = new Flower("Eternal Grace", " Classic combination of red and white symbolizing love and purity", 200, "Classic combination");
+            session.save(flower5);
+            /*
+             * The call to session.flush() updates the DB immediately without ending the transaction.
+             * Recommended to do after an arbitrary unit of work.
+             * MANDATORY to do if you are saving a large amount of data - otherwise you may get cache errors.
+             */
+            session.flush();
+        }
     }
 
     public void initDataBase(){
@@ -110,7 +112,7 @@ public class DataBaseManagement {
         return flower;
     }
 
-    public void changePriceDB(int id, int price) {
+    public void changePriceDB(int id, double price) {
         try {
             session.beginTransaction();
 
