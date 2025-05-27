@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,6 +8,8 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class SecondaryController {
     @FXML // fx:id="AddToCart"
@@ -26,6 +29,7 @@ public class SecondaryController {
 
     @FXML
     public void initialize() {
+        EventBus.getDefault().register(this);
         Flower flower = FlowerHolder.CurrentFlower;
         if(flower != null){
             TextName.setText(flower.getFlowerName());
@@ -45,6 +49,17 @@ public class SecondaryController {
         }
         catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    @Subscribe
+    public void ChangePrice1(ChangePrice changePrice){
+        Flower flower = FlowerHolder.CurrentFlower;
+        int id = flower.getId();
+        if(id == changePrice.getId()) {
+            Platform.runLater(() -> {
+                TextPrice.setText(String.valueOf(changePrice.getPrice()) + " ₪");
+            });
         }
     }
 

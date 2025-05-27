@@ -17,5 +17,6 @@ public class App
         server = new SimpleServer(3001);
         instance.initDataBase();
         server.listen();
+        System.out.println("Server listening on port 3001");
     }
 }

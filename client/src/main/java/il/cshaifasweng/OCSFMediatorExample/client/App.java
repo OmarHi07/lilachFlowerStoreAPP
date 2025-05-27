@@ -22,14 +22,15 @@ public class App extends Application {
     private static Scene scene;
     private SimpleClient client;
     private static Stage primaryStage;
+
     @Override
     public void start(Stage stage) throws IOException {
-    	EventBus.getDefault().register(this);
-    	client = SimpleClient.getClient();
-    	client.openConnection();
+        EventBus.getDefault().register(this);
+
         primaryStage = stage;
-        scene = new Scene(loadFXML("primary"), 900, 660);
+        scene = new Scene(loadFXML("connect"), 600, 400); // Set initial scene to 'connect'
         stage.setScene(scene);
+        stage.setTitle("Connect to Server");
         stage.show();
     }
 
@@ -44,17 +45,20 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
-    
-    
 
     @Override
-	public void stop() throws Exception {
-		// TODO Auto-generated method stub
-    	EventBus.getDefault().unregister(this);
-        client.sendToServer("remove client");
-        client.closeConnection();
-		super.stop();
-	}
+    public void stop() throws Exception {
+        // TODO Auto-generated method stub
+        EventBus.getDefault().unregister(this);
+        if(SimpleClient.getClient().isConnected()) {
+            SimpleClient  client = SimpleClient.getClient();
+            client.sendToServer("remove client");
+            client.closeConnection();
+        }
+        super.stop();
+    }
+
+
     
     @Subscribe
     public void onWarningEvent(WarningEvent event) {

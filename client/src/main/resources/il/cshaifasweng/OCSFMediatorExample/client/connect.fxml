@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.connectController">
+   <children>
+      <Text fill="#020000" layoutX="136.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please fill the following sections :" textAlignment="CENTER" wrappingWidth="328.1366882324219">
+         <font>
+            <Font name="Dubai Bold" size="22.0" />
+         </font>
+      </Text>
+      <Text layoutX="119.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Address:" wrappingWidth="97.33203124999994">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text layoutX="173.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="port:" wrappingWidth="42.2591552734375">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="backgroundImage" blendMode="MULTIPLY" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+         <effect>
+            <Blend mode="MULTIPLY" opacity="0.0" />
+         </effect>
+      </ImageView>
+      <TextField fx:id="portText" layoutX="229.0" layoutY="164.0">
+         <effect>
+            <InnerShadow choke="0.46" />
+         </effect>
+      </TextField>
+      <TextField fx:id="ipText" layoutX="229.0" layoutY="119.0">
+         <effect>
+            <InnerShadow choke="0.46" />
+         </effect>
+      </TextField>
+      <Button fx:id="connect2" alignment="CENTER" layoutX="247.0" layoutY="257.0" mnemonicParsing="false" onAction="#connect2toserver" prefHeight="57.0" prefWidth="113.0" text="connect" textAlignment="CENTER">
+         <font>
+            <Font name="Dubai Bold" size="20.0" />
+         </font>
+         <effect>
+            <InnerShadow choke="0.75" radius="11.46" width="26.84" />
+         </effect></Button>
+   </children>
+</AnchorPane>
