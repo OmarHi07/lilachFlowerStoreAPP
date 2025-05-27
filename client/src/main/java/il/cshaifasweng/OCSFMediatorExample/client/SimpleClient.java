@@ -57,9 +57,13 @@ public class SimpleClient extends AbstractClient {
 
 		}
 
-		public static SimpleClient getClient () {
+		public static SimpleClient getClient() {
+		     return client;
+		}
+
+		public static SimpleClient getClient (String host, int port) {
 			if (client == null) {
-				client = new SimpleClient("localhost", 3001);
+				client = new SimpleClient(host, port);
 			}
 			return client;
 		}

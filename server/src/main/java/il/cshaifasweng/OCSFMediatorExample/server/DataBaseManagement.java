@@ -11,6 +11,7 @@ import org.hibernate.service.ServiceRegistry;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
+import java.util.Scanner;
 
 public class DataBaseManagement {
     public DataBaseManagement() {
@@ -21,6 +22,13 @@ public class DataBaseManagement {
 
     private static SessionFactory getSessionFactory() throws HibernateException {
         Configuration configuration = new Configuration();
+
+        System.out.println("Enter dataBase password: ");
+        Scanner scanner = new Scanner(System.in);
+        String password = scanner.nextLine();
+        scanner.close();
+
+        configuration.setProperty("hibernate.connection.password", password);
 
         // Add ALL of your entities here. You can also try adding a whole package.
         configuration.addAnnotatedClass(Flower.class);

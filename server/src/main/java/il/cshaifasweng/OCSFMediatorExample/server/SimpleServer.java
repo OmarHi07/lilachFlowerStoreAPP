@@ -92,6 +92,10 @@ public class SimpleServer extends AbstractServer {
 			instance.changePriceDB(flowerId, newPrice);
 			sendToAllClients(msgString);
 		}
+		else if (msgString.startsWith("dbpassword:")) {
+			String[] parts = msgString.split(":");
+			String dbPassword = parts[1];
+		}
 	}
 	public void sendToAllClients(String message) {
 		try {
