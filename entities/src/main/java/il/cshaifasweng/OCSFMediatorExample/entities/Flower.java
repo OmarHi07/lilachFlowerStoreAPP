@@ -33,9 +33,7 @@ public class Flower implements Serializable {
         this.PrimaryType = PrimaryType;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() {return id;}
     public String getFlowerName() {
         return flowerName;
     }
