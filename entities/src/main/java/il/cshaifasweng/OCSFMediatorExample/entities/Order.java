@@ -39,8 +39,8 @@ public class Order implements Serializable {
     private boolean isCanceled;
 
     public Order(Customer user, Branch store, String dateReceive, String timeReceive, String dateOrder, String timeOrder, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
-        this.customer = customer;
-        this.branch = branch;
+        this.customer = user;
+        this.branch = store;
         this.dateReceive = dateReceive;
         this.timeReceive = timeReceive;
         this.dateOrder = dateOrder;
@@ -98,12 +98,12 @@ public class Order implements Serializable {
     public void addProduct(CartProduct product){
         this.products.add(product);
         product.setOrder(this);
-        this.sum+=product.getTotalPrice();
+        this.sum+=product.getPrice();
     }
 
     public void removeProduct(CartProduct product){
         this.products.remove(product);
-        this.sum-=product.getTotalPrice();
+        this.sum-=product.getPrice();
     }
 
     public boolean isCanceled() {
@@ -113,7 +113,6 @@ public class Order implements Serializable {
     public void setCanceled(boolean canceled) {
         isCanceled = canceled;
     }
-
 
     public String getDateReceive() {
         return dateReceive;
@@ -187,11 +186,11 @@ public class Order implements Serializable {
         this.address = address;
     }
 
-    public Branch getStore() {
+    public Branch getBranch() {
         return branch;
     }
 
-    public void setStore(Branch branch) {
+    public void setBranch(Branch branch) {
         this.branch = branch;
     }
 
