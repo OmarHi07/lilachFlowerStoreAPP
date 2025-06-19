@@ -1,15 +1,18 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import static il.cshaifasweng.OCSFMediatorExample.server.App.instance;
 
@@ -96,6 +99,29 @@ public class SimpleServer extends AbstractServer {
 			String[] parts = msgString.split(":");
 			String dbPassword = parts[1];
 		}
+		//check if username already in use
+		else if (msg instanceof UsernameCheckRequest ) {
+			UsernameCheckRequest request = (UsernameCheckRequest) msg;
+			boolean isTaken = DataBaseManagement.isUsernameTaken(request.getUsername());
+
+			UsernameCheckRequest response=new UsernameCheckRequest(request.getUsername(), isTaken); // boolean flag: true if taken
+			try {
+				client.sendToClient(response);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+		//Add customer to the table
+		else if (msg instanceof SignUpRequest) {
+			SignUpRequest request = (SignUpRequest) msg;
+			SignUpResponse response = DataBaseManagement.registerCustomer(request);
+			try {
+				client.sendToClient(response);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 	public void sendToAllClients(String message) {
 		try {
@@ -106,5 +132,6 @@ public class SimpleServer extends AbstractServer {
 			e1.printStackTrace();
 		}
 	}
+
 
 }

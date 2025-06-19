@@ -11,7 +11,7 @@ public class BranchManager extends Employee implements Serializable{
     public BranchManager() {super();}
     public BranchManager(String name , String username, String password, Branch branch) {
         super(name, username, password);
-        setBranch(Branch);
+        setBranch(branch);
     }
     public Branch getBranch(){
         return Branch;

@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,6 +8,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
@@ -31,6 +33,17 @@ public class DataBaseManagement {
         configuration.setProperty("hibernate.connection.password", password);
 
         // Add ALL of your entities here. You can also try adding a whole package.
+        configuration.addAnnotatedClass(Customer.class);
+        configuration.addAnnotatedClass(Branch.class);
+        configuration.addAnnotatedClass(BranchManager.class);
+        configuration.addAnnotatedClass(Employee.class);
+        configuration.addAnnotatedClass(Complain.class);
+        configuration.addAnnotatedClass(Order.class);
+        configuration.addAnnotatedClass(CartProduct.class);
+        configuration.addAnnotatedClass(NetworkWorker.class);
+        configuration.addAnnotatedClass(StoreChainManager.class);
+        configuration.addAnnotatedClass(SystemAdmin.class);
+        configuration.addAnnotatedClass(CostumerServiceEmployee.class);
         configuration.addAnnotatedClass(Flower.class);
 
         ServiceRegistry serviceRegistry = new
@@ -64,11 +77,33 @@ public class DataBaseManagement {
         }
     }
 
+    private static void generateBranches() throws Exception {
+        Long count = (Long) session.createQuery("select count(b) from Branch b").uniqueResult();
+        if (count == 0) {
+            Branch branch1 = new Branch("Makr");
+            Branch branch2 = new Branch("Nazareth");
+            Branch branch3 = new Branch("Kafr Manda");
+            Branch branch4 = new Branch("Rame");
+            Branch branch5 = new Branch("Sakhnin");
+
+            session.save(branch1);
+            session.save(branch2);
+            session.save(branch3);
+            session.save(branch4);
+            session.save(branch5);
+
+            session.flush(); // Commit to DB before customer registration
+        }
+    }
+
+
     public void initDataBase(){
         try{
             session.beginTransaction();
 
             generateFlowers();
+            generateBranches();
+
             session.getTransaction().commit();
         }
         catch (Exception exception) {
@@ -142,6 +177,96 @@ public class DataBaseManagement {
             e.printStackTrace();
         }
     }
+
+    public static boolean isUsernameTaken(String username) {
+        try {
+            session.beginTransaction();
+
+            Long count = (Long) session.createQuery(
+                            "SELECT COUNT(c) FROM Customer c WHERE c.username = :username")
+                    .setParameter("username", username)
+                    .uniqueResult();
+
+            session.getTransaction().commit();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return true; // Fail-safe: assume taken on error
+        }
+    }
+
+    public static SignUpResponse registerCustomer(SignUpRequest req) {
+        try {
+            session.beginTransaction();
+
+            // Optional: check again if username/email/phone already exist to be extra safe
+            Long count = (Long) session.createQuery(
+                            "SELECT COUNT(c) FROM Customer c WHERE c.username = :username OR c.email = :email OR c.phone = :phone OR c.identifyingNumber = :id")
+                    .setParameter("username", req.getUsername())
+                    .setParameter("email", req.getEmail())
+                    .setParameter("phone", req.getPhone())
+                    .setParameter("id", req.getId())
+                    .uniqueResult();
+
+            if (count != null && count > 0) {
+                session.getTransaction().rollback();
+                return new SignUpResponse(false, "Account with these credentials already exists.");
+            }
+
+            // Map account type to customerType
+            int type = switch (req.getAccountType()) {
+                case "Membership" -> 3;
+                case "Network Account" -> 2;
+                default -> 1; // Regular
+            };
+
+            Customer customer = new Customer(
+                    req.getFirstName(), req.getLastName(), req.getEmail(), req.getPhone(),
+                    req.getUsername(), req.getPassword(), req.getCreditCard(), req.getExpiryDate(),
+                    req.getCvv(), req.getId(), type
+            );
+
+            // Branch assignment logic
+            if (type == 1) {  // Regular: assign selected branch
+                Branch selectedBranch = (Branch) session
+                        .createQuery("FROM Branch WHERE address = :address")
+                        .setParameter("address", req.getBranch())
+                        .uniqueResult();
+
+                if (selectedBranch != null) {
+                    customer.addStore(selectedBranch);  // will handle both sides
+                } else {
+                    session.getTransaction().rollback();
+                    return new SignUpResponse(false, "Selected branch not found.");
+                }
+
+            } else {  // Network or Membership: assign all branches
+                List<Branch> allBranches = session
+                        .createQuery("FROM Branch", Branch.class)
+                        .getResultList();
+
+                customer.addStore2(allBranches);  // adds both ways
+            }
+
+            session.save(customer);
+            session.getTransaction().commit();
+
+            return new SignUpResponse(true, "Account created successfully.");
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return new SignUpResponse(false, "An error occurred while creating the account.");
+        }
+    }
+
+
+
+
 
 
 }

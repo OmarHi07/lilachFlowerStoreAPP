@@ -37,7 +37,7 @@ public class Customer implements Serializable {
     private boolean loggedIn;
     private int customerType ; // 3 membership , 2 networkCustomer , 1 regular Customer
 
-    @OneToMany (mappedBy = "Customer")
+    @OneToMany (mappedBy = "customer")
     private List<Order> listOrders;
 
     @OneToMany(mappedBy = "Customer")
@@ -164,8 +164,10 @@ public class Customer implements Serializable {
     }
 
     public void addStore(Branch store){
-        this.ListBranch.add(store);
-        store.AddUser(this);
+        if (!this.ListBranch.contains(store)) {
+            this.ListBranch.add(store);      // Update my own list
+            store.AddUser(this);             // Update the other side once
+        }
     }
     public void removeStore(Branch store){
         this.ListBranch.remove(store);
