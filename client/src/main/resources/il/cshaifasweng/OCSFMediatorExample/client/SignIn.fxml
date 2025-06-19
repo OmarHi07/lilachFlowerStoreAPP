@@ -5,26 +5,37 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SignInController">
+<AnchorPane fx:id="Sign_" prefHeight="500.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SignInController">
 
     <Label layoutX="372.0" layoutY="7.0" prefHeight="35.0" prefWidth="259.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="💐Customer Sign Up💐" AnchorPane.leftAnchor="372.0" AnchorPane.rightAnchor="19.333333333333258" AnchorPane.topAnchor="7.0" />
- <TextField fx:id="IDNumber" layoutX="427.0" layoutY="120.0" promptText="ID Number" />
- <PasswordField fx:id="UserName" layoutX="427.0" layoutY="225.0" promptText="User name" />
+ <TextField fx:id="IDNumber" layoutX="427.0" layoutY="120.0" promptText="ID Number">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+ <TextField fx:id="UserName" layoutX="427.0" layoutY="225.0" promptText="User name">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
 
- <Button fx:id="signUpButton" alignment="CENTER" layoutX="452.0" layoutY="460.0" onAction="#signUpFunc" prefWidth="100" text="Sign Up" />
+ <Button fx:id="signUpButton" alignment="CENTER" layoutX="452.0" layoutY="460.0" onAction="#signUpFunc" prefWidth="100" text="Sign Up">
+      <effect>
+         <DropShadow />
+      </effect></Button>
    <AnchorPane layoutX="-1.0" layoutY="-2.0" prefHeight="500.0" prefWidth="325.0" style="-fx-background-color: #a8c9bd;">
       <children>
-         <Label layoutX="55.0" layoutY="14.0" prefHeight="28.0" prefWidth="215.0" text="welcome to lelac stores">
+         <Label layoutX="55.0" layoutY="14.0" prefHeight="28.0" prefWidth="215.0" text="welcome to lelac stores ">
             <font>
                <Font name="System Bold Italic" size="19.0" />
             </font>
          </Label>
-         <ImageView fx:id="signInImages" fitHeight="225.0" fitWidth="215.0" layoutX="53.0" layoutY="74.0" pickOnBounds="true" preserveRatio="true" />
+         <ImageView fx:id="signInImages" fitHeight="272.0" fitWidth="259.0" layoutX="33.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" />
          <Label layoutX="88.0" layoutY="315.0" prefHeight="28.0" prefWidth="149.0" text=" Why Choose Us ?">
             <font>
                <Font name="Miriam Fixed" size="15.0" />
@@ -47,15 +58,47 @@
          </Label>
       </children>
    </AnchorPane>
-   <TextField fx:id="firstName" layoutX="427.0" layoutY="50.0" promptText="first name" />
-   <TextField fx:id="lastName" layoutX="427.0" layoutY="85.0" promptText="last name" />
-   <PasswordField fx:id="password" layoutX="427.0" layoutY="260.0" promptText="Password" />
-   <TextField fx:id="email" layoutX="427.0" layoutY="155.0" promptText=" Email Address" />
-   <TextField fx:id="phoneNumber" layoutX="427.0" layoutY="190.0" promptText="Phone Number" />
-   <PasswordField fx:id="creditCard" layoutX="427.0" layoutY="295.0" promptText="Credit Card Number" />
-   <PasswordField fx:id="CVV" layoutX="586.0" layoutY="295.0" prefHeight="25.0" prefWidth="50.0" promptText="CVV" />
-   <DatePicker fx:id="epirtyDate" layoutX="427.0" layoutY="330.0" prefHeight="25.0" prefWidth="149.0" promptText="Expirty Date" />
-   <ComboBox fx:id="accountType" layoutX="427.0" layoutY="365.0" prefWidth="150.0" promptText="Account Type" />
+   <TextField fx:id="firstName" layoutX="427.0" layoutY="50.0" promptText="first name">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+   <TextField fx:id="lastName" layoutX="427.0" layoutY="85.0" promptText="last name">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+    <PasswordField fx:id="password" layoutX="427.0" layoutY="260.0" promptText="Password">
+      <effect>
+         <DropShadow />
+      </effect></PasswordField>
+    <TextField fx:id="visiblePassword" layoutX="427.0" layoutY="260.0" managed="false" promptText="Password" visible="false" />
+    <Button fx:id="togglePasswordButton" layoutX="586.0" layoutY="260.0" onAction="#togglePasswordVisibility" text="👁">
+      <effect>
+         <DropShadow />
+      </effect></Button>
+    <TextField fx:id="email" layoutX="427.0" layoutY="155.0" promptText=" Email Address">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+   <TextField fx:id="phoneNumber" layoutX="427.0" layoutY="190.0" promptText="Phone Number">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+   <TextField fx:id="creditCard" layoutX="427.0" layoutY="295.0" promptText="xxxx xxxx xxxx xxxx">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+   <TextField fx:id="CVV" layoutX="586.0" layoutY="295.0" prefHeight="25.0" prefWidth="50.0" promptText="CVV">
+      <effect>
+         <DropShadow />
+      </effect></TextField>
+   <DatePicker fx:id="epirtyDate" layoutX="427.0" layoutY="330.0" prefHeight="25.0" prefWidth="149.0" promptText="Expirty Date">
+      <effect>
+         <DropShadow />
+      </effect></DatePicker>
+   <ComboBox fx:id="accountType" layoutX="427.0" layoutY="365.0" onAction="#chooseAccType" prefHeight="25.0" prefWidth="120.0" promptText="Account Type">
+      <effect>
+         <DropShadow />
+      </effect></ComboBox>
    <Label layoutX="340.0" layoutY="54.0" prefHeight="17.0" prefWidth="85.0" text="    First Name :">
       <font>
          <Font name="Segoe UI" size="13.0" />
@@ -106,5 +149,19 @@
          <Font name="Segoe UI" size="13.0" />
       </font>
    </Label>
+   <TextArea fx:id="note" editable="false" layoutX="421.0" layoutY="396.0" prefHeight="57.0" prefWidth="215.0" text="" visible="false" wrapText="true">
+      <font>
+         <Font name="Segoe UI" size="12.0" />
+      </font>
+      <effect>
+         <DropShadow />
+      </effect>
+   </TextArea>
+   <Label fx:id="noteLabel" layoutX="372.0" layoutY="396.0" prefHeight="17.0" prefWidth="50.0" text="  Note :" textFill="RED" visible="false">
+      <font>
+         <Font name="Segoe UI" size="14.0" />
+      </font>
+   </Label>
+   <ComboBox fx:id="branch" layoutX="552.0" layoutY="365.0" onAction="#chooseBranch" prefHeight="25.0" prefWidth="85.0" promptText="branch" visible="false" />
 
 </AnchorPane>

@@ -20,7 +20,7 @@ public class Branch implements Serializable {
        @ManyToMany(mappedBy = "ListBranch")
        private List<Customer> ListUsers;
 
-       @OneToMany(mappedBy = "Branch")
+       @OneToMany(mappedBy = "branch")
        private List<Order> ListOrders;
 
        @OneToMany(mappedBy = "Branch")
@@ -52,8 +52,10 @@ public class Branch implements Serializable {
        }
 
        public void AddUser(Customer NewUser){
-              this.ListUsers.add(NewUser);
-              NewUser.addStore(this);
+              if (!this.ListUsers.contains(NewUser)) {
+                     this.ListUsers.add(NewUser);        // ONLY update my own list
+                     // DO NOT call user.addStore(this); again — it already did the work
+              }
        }
        public void addCustomer2(Customer NewUser){this.ListUsers.add(NewUser);}
 
