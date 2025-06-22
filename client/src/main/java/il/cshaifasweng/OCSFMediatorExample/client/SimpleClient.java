@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class SimpleClient extends AbstractClient {
 
     private static SimpleClient client = null;
+    private List<Flower> flowers;
 
     private SimpleClient(String host, int port) {
         super(host, port);
@@ -25,9 +26,9 @@ public class SimpleClient extends AbstractClient {
             List<?> msgList = (List<?>) msg;
             boolean allAreFlowers = msgList.stream().allMatch(o -> o instanceof Flower);
             if (allAreFlowers) {
-                List<Flower> flowerList = msgList.stream().map(o -> (Flower) o).collect(Collectors.toList());
-                flowerList.sort(Comparator.comparingInt(Flower::getId));
-                EventBus.getDefault().post(flowerList);
+                flowers = msgList.stream().map(o -> (Flower) o).collect(Collectors.toList());
+                flowers.sort(Comparator.comparingInt(Flower::getId));
+                EventBus.getDefault().post(flowers);
             }
         } else if (msg instanceof Flower) {
             Flower flower = (Flower) msg;
