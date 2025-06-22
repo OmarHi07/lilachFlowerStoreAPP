@@ -8,7 +8,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-
+import javafx.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 
 public class Item {
@@ -32,5 +32,29 @@ public class Item {
         byte[] ImageByte = flower.getImage();
         Image imageObj = new Image(new ByteArrayInputStream(ImageByte));
         image.setImage(imageObj);
+    }
+    @FXML
+    void AddToTheCart(ActionEvent event) {
+
+    }
+
+    @FXML
+    void NewAvalible(ActionEvent event) {
+
+    }
+
+    @FXML
+    void NewName(ActionEvent event) {
+
+    }
+
+    @FXML
+    void NewPrice(ActionEvent event) {
+
+    }
+
+    @FXML
+    void NewType(ActionEvent event) {
+
     }
 }
