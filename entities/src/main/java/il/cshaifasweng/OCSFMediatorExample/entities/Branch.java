@@ -17,6 +17,9 @@ public class Branch implements Serializable {
 
        private String address;
 
+       @ManyToMany(mappedBy = "BranchesAvailable")
+       private List<Flower> flowers;
+
        @ManyToMany(mappedBy = "ListBranch")
        private List<Customer> ListUsers;
 
@@ -33,8 +36,13 @@ public class Branch implements Serializable {
               this.ListUsers = new ArrayList<Customer>();
               this.ListOrders = new ArrayList<Order>();
               this.ListComplains = new ArrayList<Complain>();
+              this.flowers = new ArrayList<Flower>();
        }
 
+       public List<Flower> getFlowers() { return flowers; };
+       public void AddFlower (Flower flower) {
+              flowers.add(flower);
+       }
        public String getAddress() {return address;}
        public void setAddress(String address) {this.address = address;}
        public void setManager(BranchManager manager){this.manager = manager;}

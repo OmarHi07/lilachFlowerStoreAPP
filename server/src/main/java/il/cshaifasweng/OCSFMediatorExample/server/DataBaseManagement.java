@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,15 +59,25 @@ public class DataBaseManagement {
 
         Long count = (Long) session.createQuery("select count(f) from Flower f").uniqueResult();
         if (count == 0 ) {
-            Flower flower1 = new Flower("Whisper of love", "Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250, "Dozens of red roses");
+            InputStream is = DataBaseManagement.class.getResourceAsStream("/images/0.png");
+            byte[] imageBytes = is.readAllBytes();
+            Flower flower1 = new Flower("Whisper of love", "Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250, "Dozens of red roses", imageBytes);
             session.save(flower1);
-            Flower flower2 = new Flower("SunShine Meadow", "A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers ", 160, "bouquet full of sunflowers");
+            is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
+            imageBytes = is.readAllBytes();
+            Flower flower2 = new Flower("SunShine Meadow", "A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers ", 160, "bouquet full of sunflowers", imageBytes);
             session.save(flower2);
-            Flower flower3 = new Flower("Tropical Sunrise", " A vibrant and colorful mix with orange, pink, and yellow tones", 150, "A colorful mix");
+            is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
+            imageBytes = is.readAllBytes();
+            Flower flower3 = new Flower("Tropical Sunrise", " A vibrant and colorful mix with orange, pink, and yellow tones", 150, "A colorful mix", imageBytes);
             session.save(flower3);
-            Flower flower4 = new Flower("Velvet touch", "A sleek and elegant single red rose in premium wrapping", 20, "A single red rose");
+            is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
+            imageBytes = is.readAllBytes();
+            Flower flower4 = new Flower("Velvet touch", "A sleek and elegant single red rose in premium wrapping", 20, "A single red rose", imageBytes);
             session.save(flower4);
-            Flower flower5 = new Flower("Eternal Grace", " Classic combination of red and white symbolizing love and purity", 200, "Classic combination");
+            is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
+            imageBytes = is.readAllBytes();
+            Flower flower5 = new Flower("Eternal Grace", " Classic combination of red and white symbolizing love and purity", 200, "Classic combination", imageBytes);
             session.save(flower5);
             /*
              * The call to session.flush() updates the DB immediately without ending the transaction.
