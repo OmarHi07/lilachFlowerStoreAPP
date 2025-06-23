@@ -28,9 +28,6 @@
             </GridPane>
          </content>
       </ScrollPane>
-      <fx:define>
-         <ToggleGroup fx:id="BranchGroup"/>
-      </fx:define>
       <Text fill="#4e3620" layoutX="31.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lelac" textAlignment="CENTER" wrappingWidth="187.99998779296874">
          <font>
             <Font name="Serif Regular" size="63.0" />
@@ -41,7 +38,7 @@
             <Font name="Serif Regular" size="23.0" />
          </font>
       </Text>
-      <RadioButton fx:id="Haifa" layoutX="94.0" layoutY="245.0" mnemonicParsing="false" onAction="#HaifaBranch" prefHeight="42.0" prefWidth="69.0" text="Haifa" textFill="#231204" toggleGroup="$BranchGroup">
+      <RadioButton fx:id="Haifa" layoutX="94.0" layoutY="245.0" mnemonicParsing="false" onAction="#HaifaBranch" prefHeight="42.0" prefWidth="69.0" text="Haifa" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
@@ -56,7 +53,7 @@
             <Font name="Gabriola" size="21.0" />
          </font>
       </Text>
-      <RadioButton fx:id="TelAviv" layoutX="95.0" layoutY="277.0" mnemonicParsing="false" onAction="#TelAvivBranch" prefHeight="42.0" prefWidth="83.0" text="Tel Aviv" textFill="#231204" toggleGroup="$BranchGroup">
+      <RadioButton fx:id="TelAviv" layoutX="95.0" layoutY="277.0" mnemonicParsing="false" onAction="#TelAvivBranch" prefHeight="42.0" prefWidth="83.0" text="Tel Aviv" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
@@ -66,30 +63,27 @@
             <Font name="Gabriola" size="21.0" />
          </font>
       </Text>
-      <fx:define>
-         <ToggleGroup fx:id="colorGroup"/>
-      </fx:define>
-      <RadioButton fx:id="Yellow" layoutX="95.0" layoutY="359.0" mnemonicParsing="false" onAction="#YellowColor" prefHeight="42.0" prefWidth="69.0" text="Yellow" textFill="#231204" toggleGroup="$colorGroup">
+      <RadioButton fx:id="Yellow" layoutX="95.0" layoutY="359.0" mnemonicParsing="false" onAction="#YellowColor" prefHeight="42.0" prefWidth="69.0" text="Yellow" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
       </RadioButton>
-      <RadioButton fx:id="Blue" layoutX="95.0" layoutY="392.0" mnemonicParsing="false" onAction="#BlueColor" prefHeight="42.0" prefWidth="69.0" text="Blue" textFill="#231204" toggleGroup="$colorGroup">
+      <RadioButton fx:id="Blue" layoutX="95.0" layoutY="392.0" mnemonicParsing="false" onAction="#BlueColor" prefHeight="42.0" prefWidth="69.0" text="Blue" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
       </RadioButton>
-      <RadioButton fx:id="Pink" layoutX="95.0" layoutY="425.0" mnemonicParsing="false" onAction="#PinkColor" prefHeight="42.0" prefWidth="69.0" text="Pink" textFill="#231204" toggleGroup="$colorGroup">
+      <RadioButton fx:id="Pink" layoutX="95.0" layoutY="425.0" mnemonicParsing="false" onAction="#PinkColor" prefHeight="42.0" prefWidth="69.0" text="Pink" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
       </RadioButton>
-      <RadioButton fx:id="Red" layoutX="95.0" layoutY="457.0" mnemonicParsing="false" onAction="#RedColor" prefHeight="42.0" prefWidth="69.0" text="Red" textFill="#231204" toggleGroup="$colorGroup">
+      <RadioButton fx:id="Red" layoutX="95.0" layoutY="457.0" mnemonicParsing="false" onAction="#RedColor" prefHeight="42.0" prefWidth="69.0" text="Red" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
       </RadioButton>
-      <RadioButton fx:id="White" layoutX="95.0" layoutY="491.0" mnemonicParsing="false" onAction="#WhiteColor" prefHeight="42.0" prefWidth="69.0" text="White" textFill="#231204" toggleGroup="$colorGroup">
+      <RadioButton fx:id="White" layoutX="95.0" layoutY="491.0" mnemonicParsing="false" onAction="#WhiteColor" prefHeight="42.0" prefWidth="69.0" text="White" textFill="#231204">
          <font>
             <Font name="Gabriola" size="17.0" />
          </font>
