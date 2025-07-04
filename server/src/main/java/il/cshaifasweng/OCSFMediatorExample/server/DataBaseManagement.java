@@ -61,23 +61,23 @@ public class DataBaseManagement {
         if (count == 0 ) {
             InputStream is = DataBaseManagement.class.getResourceAsStream("/images/0.png");
             byte[] imageBytes = is.readAllBytes();
-            Flower flower1 = new Flower("Whisper of love", "Dozens of deep red roses tightly wrapped — bold, luxurious, and intense", 250, "Dozens of red roses", imageBytes);
+            Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red");
             session.save(flower1);
             is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
             imageBytes = is.readAllBytes();
-            Flower flower2 = new Flower("SunShine Meadow", "A rustic bouquet full of sunflowers,white blooms,and tiny blue and yellow flowers ", 160, "bouquet full of sunflowers", imageBytes);
+            Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow");
             session.save(flower2);
             is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
             imageBytes = is.readAllBytes();
-            Flower flower3 = new Flower("Tropical Sunrise", " A vibrant and colorful mix with orange, pink, and yellow tones", 150, "A colorful mix", imageBytes);
+            Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow");
             session.save(flower3);
             is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
             imageBytes = is.readAllBytes();
-            Flower flower4 = new Flower("Velvet touch", "A sleek and elegant single red rose in premium wrapping", 20, "A single red rose", imageBytes);
+            Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue");
             session.save(flower4);
             is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
             imageBytes = is.readAllBytes();
-            Flower flower5 = new Flower("Eternal Grace", " Classic combination of red and white symbolizing love and purity", 200, "Classic combination", imageBytes);
+            Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White");
             session.save(flower5);
             /*
              * The call to session.flush() updates the DB immediately without ending the transaction.
@@ -91,22 +91,26 @@ public class DataBaseManagement {
     private static void generateBranches() throws Exception {
         Long count = (Long) session.createQuery("select count(b) from Branch b").uniqueResult();
         if (count == 0) {
-            Branch branch1 = new Branch("Makr");
-            Branch branch2 = new Branch("Nazareth");
-            Branch branch3 = new Branch("Kafr Manda");
-            Branch branch4 = new Branch("Rame");
-            Branch branch5 = new Branch("Sakhnin");
+            Branch branch1 = new Branch("Haifa");
+            Branch branch2 = new Branch("TelAviv");
 
             session.save(branch1);
             session.save(branch2);
-            session.save(branch3);
-            session.save(branch4);
-            session.save(branch5);
 
             session.flush(); // Commit to DB before customer registration
         }
     }
 
+    private static void generateUsers() throws Exception {
+        Long count = (Long) session.createQuery("select count(b) from Customer b").uniqueResult();
+        if (count == 0) {
+            Customer Cu1 = new Customer("Arkan", "Issa", "Arkanissa7@gmail.com", "0500118796", "Arkan7", "123456", "1457125896543267", "0727", "148", "872136", 87);
+            NetworkWorker nw = new NetworkWorker("ACS", "AERT", "ghty");
+            session.save(nw);
+            session.save(Cu1);
+            session.flush(); // Commit to DB before customer registration
+        }
+    }
 
     public void initDataBase(){
         try{
@@ -114,6 +118,7 @@ public class DataBaseManagement {
 
             generateFlowers();
             generateBranches();
+            generateUsers();
 
             session.getTransaction().commit();
         }
@@ -125,6 +130,21 @@ public class DataBaseManagement {
             exception.printStackTrace();
         }
     }
+    public Flower addFlower(Flower flower) {
+        try {
+            session.beginTransaction();
+            session.save(flower);
+            session.getTransaction().commit();
+        } catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+        return flower;
+    }
+
+
 
     public List<Flower> getAllFlowers() throws Exception {
         try {
@@ -138,7 +158,8 @@ public class DataBaseManagement {
 
             session.getTransaction().commit();
             return result;
-        } catch (Exception exception) {
+        }
+        catch (Exception exception) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
@@ -148,7 +169,20 @@ public class DataBaseManagement {
         }
     }
 
-
+    public NetworkWorker getUser(int id) {
+        NetworkWorker user = null;
+        try {
+            session.beginTransaction();
+            user = session.get(NetworkWorker.class, id);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+        return user;
+    }
     public Flower getFlower(int id) {
         Flower flower = null;
         try {
@@ -166,29 +200,121 @@ public class DataBaseManagement {
         return flower;
     }
 
-    public void changePriceDB(int id, double price) {
+
+    //Added by arkan
+    public void deleteFlower(int id){
+        try{
+            session.beginTransaction();
+            Flower flower = session.get(Flower.class, id);
+            if (flower != null) {
+                session.delete(flower);
+                session.getTransaction().commit();
+            }
+            else {
+                System.out.println("Flower with ID " + id + " not found.");
+            }
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+    }
+
+
+    //Added by arkan
+    public List<Branch> getAllBranches() throws Exception {
         try {
             session.beginTransaction();
 
-            // Fetch the flower by ID
-            Flower flower = session.get(Flower.class, id);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Branch> criteria = builder.createQuery(Branch.class);
+            criteria.from(Branch.class);
 
-            if (flower != null) {
-                flower.setPrice(price); // Set new price
-                session.update(flower); // Optional: Hibernate tracks changes automatically
-            } else {
-                System.out.println("Flower with ID " + id + " not found.");
-            }
+            List<Branch> result = session.createQuery(criteria).getResultList();
 
             session.getTransaction().commit();
-        } catch (Exception e) {
+            return result;
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            System.out.println("An error occurred, changes have been rolled back.");
+            exception.printStackTrace();
+            throw exception; // propagate the exception or return an empty list
+        }
+    }
+
+
+    public Flower ChangeDetails(ChangeFlower flowerEdit) {
+        Flower flower1 = null;
+        try {
+            session.beginTransaction();
+            int id = flowerEdit.getId();
+            flower1 = session.get(Flower.class, id);
+            if (flower1 != null) {
+                if(flowerEdit.getNewName() != null){
+                    flower1.setFlowerName(flowerEdit.getNewName());
+                }
+                if(flowerEdit.getNewPrice() != null){
+                    Double NewPrice = Double.parseDouble(flowerEdit.getNewPrice());
+                    flower1.setPrice(NewPrice);
+                }
+                if(flowerEdit.getNewType() != null){
+                    flower1.setType(flowerEdit.getNewType());
+                }
+                if(!flowerEdit.getNewBranches().isEmpty()){
+                    for (int idBranch : flowerEdit.getNewBranches()){
+                        Branch branch = session.get(Branch.class, idBranch);
+                        if(!(flower1.getBranch().contains(branch))){
+                            flower1.getBranch().add(branch);
+                        }
+                    }
+                }
+                if(flowerEdit.getImage() != null){
+                    flower1.setImage(flowerEdit.getImage());
+                }
+                if(!flowerEdit.getRemoveBranches().isEmpty()){
+                    for (int idBranch : flowerEdit.getRemoveBranches()){
+                        Branch branch = session.get(Branch.class, idBranch);
+                        if(flower1.getBranch().contains(branch)){
+                            flower1.getBranch().remove(branch);
+                        }
+                    }
+                }
+                session.update(flower1);
+            }
+            session.getTransaction().commit();
+            return flower1;
+        }
+        catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+        return flower1;
+
+    }
+    public void PutSale(int id, int newSale){
+        try{
+            session.beginTransaction();
+            Flower flower = session.get(Flower.class, id);
+            if (flower != null) {
+                flower.setSale(newSale);
+                session.update(flower);
+            }
+            session.getTransaction().commit();
+        }
+        catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
         }
     }
-
     public static boolean isUsernameTaken(String username) {
         try {
             session.beginTransaction();

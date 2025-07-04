@@ -204,6 +204,9 @@ public class Customer implements Serializable {
             }
         }
     }
+    public List<Branch> getListBranch() {
+        return this.ListBranch;
+    }
 
 
 }
