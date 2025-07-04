@@ -1,293 +1,400 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
+/**
+ * Sample Skeleton for 'primary.fxml' Controller Class
+ */
 
-import java.awt.*;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import org.greenrobot.eventbus.EventBus;
+import javafx.scene.control.Button;
+import org.greenrobot.eventbus.Subscribe;
+import javafx.scene.control.ToggleGroup;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Comparator;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
-import javafx.event.ActionEvent;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import javafx.geometry.Insets;
 
-public class PrimaryController {
-	private Image[] images;
-	private List<Text> priceTexts;
-	private List<Text> nameTexts;
-	private List<Text> typeTexts;
-	@FXML
-	void sendWarning(ActionEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("#warning");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+public class PrimaryController{
 
-	/**
-	 * Sample Skeleton for 'primary.fxml' Controller Class
-	 */
+	private int NumCol;
+	private int NumRow;
 
-	@FXML // fx:id="BackgroundIMAGE"
-	private ImageView BackgroundIMAGE; // Value injected by FXMLLoader
+	@FXML // fx:id="Blue"
+	private RadioButton Blue; // Value injected by FXMLLoader
 
-	@FXML // fx:id="Change1"
-	private Button Change1; // Value injected by FXMLLoader
+	@FXML // fx:id="CartBU"
+	private Button CartBU; // Value injected by FXMLLoader
 
-	@FXML // fx:id="Change2"
-	private Button Change2; // Value injected by FXMLLoader
+	@FXML // fx:id="RefreshBU"
+	private Button RefreshBU; // Value injected by FXMLLoader
 
-	@FXML // fx:id="Change3"
-	private Button Change3; // Value injected by FXMLLoader
+	@FXML // fx:id="ReportBU"
+	private Button ReportBU; // Value injected by FXMLLoader
 
-	@FXML // fx:id="Change4"
-	private Button Change4; // Value injected by FXMLLoader
+	@FXML // fx:id="Haifa"
+	private RadioButton Haifa; // Value injected by FXMLLoader
 
-	@FXML // fx:id="Change5"
-	private Button Change5; // Value injected by FXMLLoader
+	@FXML // fx:id="Max"
+	private TextField Max; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower1"
-	private Text PriceFlower1; // Value injected by FXMLLoader
+	@FXML // fx:id="Min"
+	private TextField Min; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower11"
-	private TextField NewPrice1; // Value injected by FXMLLoader
+	@FXML // fx:id="Pink"
+	private RadioButton Pink; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower2"
-	private Text PriceFlower2; // Value injected by FXMLLoader
+	@FXML // fx:id="Red"
+	private RadioButton Red; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower22"
-	private TextField NewPrice2; // Value injected by FXMLLoader
+	@FXML // fx:id="TelAviv"
+	private RadioButton TelAviv; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower3"
-	private Text PriceFlower3; // Value injected by FXMLLoader
+	@FXML // fx:id="White"
+	private RadioButton White; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower33"
-	private TextField NewPrice3; // Value injected by FXMLLoader
+	@FXML // fx:id="Yellow"
+	private RadioButton Yellow; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower4"
-	private Text PriceFlower4; // Value injected by FXMLLoader
+	@FXML // fx:id="UpdateCatalogBU"
+	private Button UpdateCatalogBU; // Value injected by FXMLLoader
 
-	@FXML // fx:id="PriceFlower44"
-	private TextField NewPrice4; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PriceFlower5"
-	private Text PriceFlower5; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PriceFlower55"
-	private TextField NewPrice5; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutName1"
-	private Text PutName1; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutName2"
-	private Text PutName2; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutName3"
-	private Text PutName3; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutName4"
-	private Text PutName4; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutName5"
-	private Text PutName5; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutType1"
-	private Text PutType1; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutType2"
-	private Text PutType2; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutType3"
-	private Text PutType3; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutType4"
-	private Text PutType4; // Value injected by FXMLLoader
-
-	@FXML // fx:id="PutType5"
-	private Text PutType5; // Value injected by FXMLLoader
-
-	@FXML // fx:id="image_1"
-	private ImageView image_1; // Value injected by FXMLLoader
-
-	@FXML // fx:id="image_2"
-	private ImageView image_2; // Value injected by FXMLLoader
-
-	@FXML // fx:id="image_3"
-	private ImageView image_3; // Value injected by FXMLLoader
-
-	@FXML // fx:id="image_4"
-	private ImageView image_4; // Value injected by FXMLLoader
-
-	@FXML // fx:id="image_5"
-	private ImageView image_5; // Value injected by FXMLLoader
-
+	@FXML // fx:id="Grid"
+	private GridPane Grid; // Value injected by FXMLLoader
+    private boolean RedSelected;
+	private boolean YellowSelected;
+	private boolean BlueSelected;
+	private boolean PinkSelected;
+	private boolean WhiteSelected;
+	private ToggleGroup BranchGroup;
+	private ToggleGroup colorGroup;
+    private static String selectedBranch;
+	private static List<String> selectedColor;
+	private static List<Flower> filtered;
 	@FXML
 	void initialize(){
 		EventBus.getDefault().register(this);
-		priceTexts = new ArrayList<>(List.of(PriceFlower1, PriceFlower2, PriceFlower3, PriceFlower4, PriceFlower5));
-		nameTexts = new ArrayList<>(List.of(PutName1,PutName2,PutName3,PutName4, PutName5));
-		typeTexts = new ArrayList<>(List.of(PutType1,PutType2,PutType3,PutType4,PutType5));
-		images = new Image[5];
-		for(int i = 0; i < images.length; i++){
-			images[i] = new Image(String.valueOf(PrimaryController.class.getResource("/images/" + i + ".png")));
-		}
-		Image image_background = new Image(String.valueOf(PrimaryController.class.getResource("/images/background.jpg")));
-		BackgroundIMAGE.setImage(image_background);
-		image_1.setImage(images[4]);
-		image_2.setImage(images[2]);
-		image_3.setImage(images[0]);
-		image_4.setImage(images[1]);
-		image_5.setImage(images[3]);
-		try {
+        BranchGroup = new ToggleGroup();
+		//colorGroup = new ToggleGroup();
+		Haifa.setToggleGroup(BranchGroup);
+		TelAviv.setToggleGroup(BranchGroup);
+		RedSelected = false;
+		YellowSelected = false;
+		BlueSelected = false;
+		PinkSelected = false;
+		WhiteSelected = false;
+		//Pink.setToggleGroup(colorGroup);
+		//Red.setToggleGroup(colorGroup);
+		//Yellow.setToggleGroup(colorGroup);
+		//White.setToggleGroup(colorGroup);
+		//Blue.setToggleGroup(colorGroup);
+		selectedColor = new ArrayList<String>();
+		selectedBranch = null;
+		NumRow = 0;
+		NumCol = 0;
+		Grid.setHgap(20);     // רווח אופקי בין טורים
+		Grid.setVgap(20);     // רווח אנכי בין שורות
+		Grid.setPadding(new Insets(20)); // רווח מהשוליים
+
+		try{
+			SimpleClient client = SimpleClient.getClient( "localhost", 3001);
+			client.openConnection();
 			SimpleClient.getClient().sendToServer("add client");
-		} catch (IOException e) {
+		}catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	@Subscribe
-	public void init(List<?> list){
-		if (list.isEmpty() || !(list.get(0) instanceof Flower)) return;
+	public void init(List<Flower> flowers) {
+			flowers.sort(Comparator.comparingInt(Flower::getId));
+			Platform.runLater(()->{
+				if (CurrentCustomer.getCurrentEmployee() != null) {
+					System.out.println("Hi");
+					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
+					System.out.println(employee.getUsername());
+					if(employee.getPermission() == 5) {
+						System.out.println("Hi");
+						UpdateCatalogBU.setVisible(true);
+					}
+				}
+				else {
+					UpdateCatalogBU.setVisible(false);
+				}
+			   Grid.getChildren().clear();
+               NumCol = 0;
+			   NumRow = 1;
+			   for (Flower flower : flowers) {
+				   try {
+					  AnchorPane FlowerNode;
+					  if (FlowerCardCache.contains(flower.getId())) {
+					    	FlowerNode = FlowerCardCache.getPane(flower.getId());
+					  }
+					  else {
+						FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
+						FlowerNode = loader.load();
+						Item controller = loader.getController();
+						controller.setData(flower);
+						FlowerCardCache.put(flower.getId(), FlowerNode, controller);
+					  }
+					  FlowerNode.setPrefHeight(520);
+					  Grid.add(FlowerNode, NumCol, NumRow);
+					  NumCol++;
+					  if (NumCol == 2) {
+					    	NumCol = 0;
+						    NumRow++;
+					  }
 
-		List<Flower> flowerList = list.stream().map(f -> (Flower) f).collect(Collectors.toList());
-		flowerList.sort(Comparator.comparingInt(Flower::getId));
+				   }
+				   catch (IOException e) {
+					e.printStackTrace();
+				}
 
+			}
+		});
+	}
+	private void filterFlowers(){
+		NumCol = 0;
+		NumRow = 0;
+		List<Flower> flowers1 = SimpleClient.getFlowers();
+		List<Flower> filteredFlowers = flowers1;
+		if(filteredFlowers==null){
+			System.out.println("Hello from Java!!!!");
+
+		}
+		if (selectedColor != null && !selectedColor.isEmpty()) {
+			filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
+		}
+		if(selectedBranch != null){
+			filteredFlowers = filteredFlowers.stream().filter(f -> selectedBranch.equals(f.getColor())).collect(Collectors.toList());
+
+		}
+		filtered = filteredFlowers;
+		init(filteredFlowers);
+  	}
+
+	@FXML
+	void BlueColor(ActionEvent event) {
+		if (Blue.isSelected() && !BlueSelected){
+			if(!selectedColor.contains("Blue")){
+				selectedColor.add("Blue");
+			}
+			BlueSelected = true;
+		}
+		else {
+			selectedColor.remove("Blue");
+			BlueSelected = false;
+		}
+		filterFlowers();
+	}
+
+	@Subscribe
+	public void onFlowerUpdated(Flower updatedFlower) {
 		Platform.runLater(() -> {
-			for (int i = 0; i < flowerList.size(); i++) {
-				Flower flower = flowerList.get(i);
-				priceTexts.get(i).setText("Price:" + String.valueOf(flower.getPrice()) + "₪");
-				typeTexts.get(i).setText("Type:" + flower.getPrimaryType());
-				nameTexts.get(i).setText("Name:" + flower.getFlowerName());
+			if (FlowerCardCache.contains(updatedFlower.getId())) {
+				Item controller = FlowerCardCache.getController(updatedFlower.getId());
+				controller.setData(updatedFlower);  // מעדכן את הפרח הקיים
+			} else {
+				System.out.println("כרטיס לא קיים ב־cache! צריך ליצור אותו קודם");
 			}
 		});
 	}
-	@Subscribe
-	public void ChangePrice1(ChangePrice changePrice){
-		Platform.runLater(()->{
-			int index = changePrice.getId() - 1 ;
-			priceTexts.get(index).setText("Price:" + String.valueOf(changePrice.getPrice()) + "₪");
-		});
-	}
 
-	@Subscribe
-	public void SwitchToSecoundary(Flower flower){
+	@FXML
+	void ClearSelection(ActionEvent event) {
+		BranchGroup.selectToggle(null);
+		selectedColor.clear();
+		selectedBranch = null;
+		List<Flower> flowers = SimpleClient.getFlowers();
+		filtered = flowers;
+		EventBus.getDefault().post(flowers);
+	}
+	@FXML
+	void DoneMaxMin(ActionEvent event) {
+         String maxVal = Max.getText().trim();
+		 String minVal = Min.getText().trim();
+
+		 if (maxVal.isEmpty() || minVal.isEmpty()) return;
+		 else{
+			 try {
+		     	double maxPrice = Double.parseDouble(maxVal);
+				double minPrice = Double.parseDouble(minVal);
+				List<Flower> filtered1 = SimpleClient.getFlowers();
+				filtered1 = filtered1.stream().filter(flower -> flower.getPrice()>=minPrice && flower.getPrice()<=maxPrice).collect(Collectors.toList());
+				if (selectedColor != null) {
+					filtered1 = filtered1.stream().filter(flower -> flower.getColor().equals(selectedColor)).collect(Collectors.toList());
+				}
+				if (selectedBranch != null) {
+					filtered1 = filtered1.stream().filter(flower -> flower.getBranch().equals(selectedBranch)).collect(Collectors.toList());
+				}
+				filtered = filtered1;
+				EventBus.getDefault().post(filtered);
+			 }
+
+			 catch (NumberFormatException e) {return;}
+		 }
 
 	}
 
 	@FXML
-	void ChangeF1(ActionEvent event) {
-		if (Integer.parseInt(NewPrice1.getText())>=0 && NewPrice1.getText()!=null ) {
-			try {
-				SimpleClient.getClient().sendToServer("change," + NewPrice1.getText() + ",1");
-			} catch (IOException e) {
-				e.printStackTrace();
+	void HaifaBranch(ActionEvent event) {
+        selectedBranch = "Haifa";
+		filterFlowers();
+	}
+
+	@FXML
+	void PinkColor(ActionEvent event) {
+		if (Pink.isSelected() && !PinkSelected){
+			if(!selectedColor.contains("Pink")){
+				selectedColor.add("Pink");
 			}
+			PinkSelected = true;
 		}
+		else {
+			selectedColor.remove("Pink");
+			PinkSelected = false;
+		}
+		filterFlowers();
 	}
 
 	@FXML
-	void ChangeF2(ActionEvent event) {
-		if (Integer.parseInt(NewPrice2.getText())>=0 && NewPrice2.getText()!=null) {
-			try {
-				SimpleClient.getClient().sendToServer("change," + NewPrice2.getText() + ",2");
-			} catch (IOException e) {
-				e.printStackTrace();
+	void RedColor(ActionEvent event) {
+		if (Red.isSelected() && !RedSelected){
+			if(!selectedColor.contains("Red")){
+				selectedColor.add("Red");
 			}
+			RedSelected = true;
 		}
-
+		else {
+			selectedColor.remove("Red");
+			RedSelected = false;
+		}
+		filterFlowers();
 	}
 
 	@FXML
-	void ChangeF3(ActionEvent event) {
-		if (Integer.parseInt(NewPrice3.getText())>=0 && NewPrice3.getText()!=null) {
-			try {
-				SimpleClient.getClient().sendToServer("change," + NewPrice3.getText() + ",3");
-			} catch (IOException e) {
-				e.printStackTrace();
+	void TelAvivBranch(ActionEvent event) {
+         selectedBranch = "TelAviv";
+		 filterFlowers();
+	}
+
+	@FXML
+	void WhiteColor(ActionEvent event) {
+		if (White.isSelected() && !WhiteSelected){
+			if(!selectedColor.contains("White")){
+				selectedColor.add("White");
 			}
+			WhiteSelected = true;
 		}
+		else {
+			selectedColor.remove("White");
+			WhiteSelected = false;
+		}
+		filterFlowers();
 	}
 
 	@FXML
-	void ChangeF4(ActionEvent event) {
-		if (Integer.parseInt(NewPrice4.getText())>=0 && NewPrice4.getText()!=null) {
-			try {
-				SimpleClient.getClient().sendToServer("change," + NewPrice4.getText() + ",4");
-			} catch (IOException e) {
-				e.printStackTrace();
+	void YellowColor(ActionEvent event) {
+		if (Yellow.isSelected() && !YellowSelected){
+			if(!selectedColor.contains("Yellow")){
+				selectedColor.add("Yellow");
 			}
+			YellowSelected = true;
 		}
-	}
-
-	@FXML
-	void ChangeF5(ActionEvent event) {
-		if (Integer.parseInt(NewPrice5.getText())>=0 && NewPrice5.getText()!=null) {
-			try {
-				SimpleClient.getClient().sendToServer("change," + NewPrice5.getText() + ",5");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		else {
+			selectedColor.remove("Yellow");
+			YellowSelected = false;
 		}
+		filterFlowers();
 	}
-
 	@FXML
-	void image_1(MouseEvent event) {
+	void Customizethebouquet(ActionEvent event) {
+
+	}
+	@FXML
+	void LogOut(ActionEvent event) {
+		 Object Current = CurrentCustomer.getCurrentUser();
+		 String NameClass;
+		 int id;
+		 if(Current instanceof BranchManager){
+			 id = ((BranchManager) Current).getId();
+			 NameClass = "BranchManager";
+		 }
+		 else if(Current instanceof CostumerServiceEmployee){
+			 id = ((CostumerServiceEmployee) Current).getId();
+			 NameClass = "CostumerServiceEmployee";
+		 }
+		 else if(Current instanceof Customer){
+			 NameClass = "Customer";
+			 id = ((Customer) Current).getId();
+		 }
+		 else if(Current instanceof NetworkWorker){
+			 NameClass = "NetworkWorker";
+			 id = ((NetworkWorker) Current).getId();
+		 }
+		 else if(Current instanceof StoreChainManager){
+			 NameClass = "StoreChainManager";
+			 id = ((StoreChainManager) Current).getId();
+		 }
+		 else{
+			 NameClass = "SystemAdmin";
+			 id = ((SystemAdmin) Current).getId();
+		 }
+		 try {
+			 SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
+		 }
+		 catch (IOException e) {
+			 e.printStackTrace();
+		 }
+	}
+	@FXML
+	void UpdateCatalog(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("image1");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	void image_2(MouseEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("image2");
+			App.setRoot("InsertFlower", 900, 730);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
 	@FXML
-	void image_3(MouseEvent event) {
+	void GoToCart(ActionEvent event) {
 		try {
-			SimpleClient.getClient().sendToServer("image3");
+			App.setRoot("OrderCart", 900, 730);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	@FXML
-	void image_4(MouseEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("image4");
+	void Refresh(ActionEvent event) {
+		List<Flower> refreshFlowers = new ArrayList<Flower>();
+		List<Flower> flowers = SimpleClient.getFlowers();
+		for (Flower flower : filtered){
+             int NumID = flower.getId();
+			 NumID = NumID - 1;
+			 Flower flower1 = flowers.get(NumID);
+			 refreshFlowers.add(flower1);
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		init(refreshFlowers);
 	}
 
 	@FXML
-	void image_5(MouseEvent event) {
-		try {
-			SimpleClient.getClient().sendToServer("image5");
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+	void ViewingReports(ActionEvent event) {
+
 	}
+
+
 
 }

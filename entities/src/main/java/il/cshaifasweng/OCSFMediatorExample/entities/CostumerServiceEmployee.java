@@ -1,6 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
+import javax.persistence.Entity;
 import java.io.Serializable;
+
+@Entity
 
 public class CostumerServiceEmployee extends Employee implements Serializable {
 

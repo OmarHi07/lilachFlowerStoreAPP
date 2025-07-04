@@ -7,6 +7,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="employee")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Employee implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

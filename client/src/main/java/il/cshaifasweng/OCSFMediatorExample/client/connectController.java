@@ -50,7 +50,7 @@ public class connectController {
             client.openConnection();
 
             // Navigate to the next screen
-            App.setRoot("primary",900,690);
+            App.setRoot("SignIn",650,500);
 
         } catch (Exception e) {
             e.printStackTrace();

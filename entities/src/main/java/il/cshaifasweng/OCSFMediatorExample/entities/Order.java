@@ -1,0 +1,208 @@
+package il.cshaifasweng.OCSFMediatorExample.entities;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name="orders")
+public class Order implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @ManyToOne
+    private Customer customer;
+
+    @ManyToOne
+    private Branch branch;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", orphanRemoval = true)
+    private List<CartProduct> products;
+
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
+    private Complain complain;
+
+    private String dateReceive;
+    private String timeReceive;
+    private String dateOrder;
+    private String timeOrder;
+    private double sum;
+    private String greeting;
+    private String nameReceives;
+    private String phoneReceives;
+    private String address;
+    private int status; //1- cancel ,2-delivered, 3-pending
+    private String type;
+    private boolean isCanceled;
+
+    public Order(Customer user, Branch store, String dateReceive, String timeReceive, String dateOrder, String timeOrder, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
+        this.customer = user;
+        this.branch = store;
+        this.dateReceive = dateReceive;
+        this.timeReceive = timeReceive;
+        this.dateOrder = dateOrder;
+        this.timeOrder = timeOrder;
+        this.sum = sum;
+        this.greeting = greeting;
+        this.nameReceives = nameReceives;
+        this.phoneReceives = phoneReceives;
+        this.address = address;
+        this.status=3;
+        this.isCanceled = isCanceled;
+        this.products = new ArrayList<CartProduct>();
+    }
+
+    public Order() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public Customer getCustomer() {
+        return customer;
+    }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+    public String getPhoneReceives() {
+        return phoneReceives;
+    }
+
+    public void setPhoneReceives(String phoneReceives) {
+        this.phoneReceives = phoneReceives;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public List<CartProduct> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<CartProduct> products) {
+        this.products = products;
+    }
+
+    public void addProduct(CartProduct product){
+        this.products.add(product);
+        product.setOrder(this);
+        this.sum+=product.getPrice();
+    }
+
+    public void removeProduct(CartProduct product){
+        this.products.remove(product);
+        this.sum-=product.getPrice();
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        isCanceled = canceled;
+    }
+
+    public String getDateReceive() {
+        return dateReceive;
+    }
+
+    public void setDateReceive(String dateReceive) {
+        this.dateReceive = dateReceive;
+    }
+
+    public String getTimeReceive() {
+        return timeReceive;
+    }
+
+    public void setTimeReceive(String timeReceive) {
+        this.timeReceive = timeReceive;
+    }
+
+    public String getDateOrder() {
+        return dateOrder;
+    }
+
+    public void setDateOrder(String dateOrder) {
+        this.dateOrder = dateOrder;
+    }
+
+    public String getTimeOrder() {
+        return timeOrder;
+    }
+
+    public void setTimeOrder(String timeOrder) {
+        this.timeOrder = timeOrder;
+    }
+
+    public double getSum() {
+        return sum;
+    }
+
+    public void setSum(double sum) {
+        this.sum = sum;
+    }
+
+    public String getGreeting() {
+        return greeting;
+    }
+
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    public String getNameReceives() {
+        return nameReceives;
+    }
+
+    public void setNameReceives(String nameReceives) {
+        this.nameReceives = nameReceives;
+    }
+
+    public String getPhoneRecives() {
+        return phoneReceives;
+    }
+
+    public void setPhoneRecives(String phoneRecives) {
+        this.phoneReceives = phoneRecives;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public Complain getComplain() {
+        return complain;
+    }
+
+    public void setComplain(Complain complain) {
+        this.complain = complain;
+        complain.setOrder(this);
+    }
+
+
+
+}
