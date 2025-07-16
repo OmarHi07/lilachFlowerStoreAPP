@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -61,23 +62,23 @@ public class DataBaseManagement {
         if (count == 0 ) {
             InputStream is = DataBaseManagement.class.getResourceAsStream("/images/0.png");
             byte[] imageBytes = is.readAllBytes();
-            Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red");
+            Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red", 1);
             session.save(flower1);
             is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
             imageBytes = is.readAllBytes();
-            Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow");
+            Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow", 1);
             session.save(flower2);
             is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
             imageBytes = is.readAllBytes();
-            Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow");
+            Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow", 1);
             session.save(flower3);
             is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
             imageBytes = is.readAllBytes();
-            Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue");
+            Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue", 1);
             session.save(flower4);
             is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
             imageBytes = is.readAllBytes();
-            Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White");
+            Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White", 2);
             session.save(flower5);
             /*
              * The call to session.flush() updates the DB immediately without ending the transaction.
@@ -112,24 +113,7 @@ public class DataBaseManagement {
         }
     }
 
-    public void initDataBase(){
-        try{
-            session.beginTransaction();
 
-            generateFlowers();
-            generateBranches();
-            generateUsers();
-
-            session.getTransaction().commit();
-        }
-        catch (Exception exception) {
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-            System.err.println("An error occured, changes have been rolled back.");
-            exception.printStackTrace();
-        }
-    }
     public Flower addFlower(Flower flower) {
         try {
             session.beginTransaction();
@@ -149,7 +133,6 @@ public class DataBaseManagement {
     public List<Flower> getAllFlowers() throws Exception {
         try {
             session.beginTransaction();
-
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
             criteria.from(Flower.class);
@@ -169,11 +152,11 @@ public class DataBaseManagement {
         }
     }
 
-    public NetworkWorker getUser(int id) {
-        NetworkWorker user = null;
+    public Customer getUser(int id) {
+        Customer user = null;
         try {
             session.beginTransaction();
-            user = session.get(NetworkWorker.class, id);
+            user = session.get(Customer.class, id);
             session.getTransaction().commit();
         } catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
@@ -227,7 +210,6 @@ public class DataBaseManagement {
     public List<Branch> getAllBranches() throws Exception {
         try {
             session.beginTransaction();
-
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Branch> criteria = builder.createQuery(Branch.class);
             criteria.from(Branch.class);
@@ -246,8 +228,45 @@ public class DataBaseManagement {
             throw exception; // propagate the exception or return an empty list
         }
     }
+    public List<Flower> getAllFlowersNoTx() throws Exception {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
+        criteria.from(Flower.class);
+        return session.createQuery(criteria).getResultList();
+    }
+
+    public List<Branch> getAllBranchesNoTx() throws Exception {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Branch> criteria = builder.createQuery(Branch.class);
+        criteria.from(Branch.class);
+        return session.createQuery(criteria).getResultList();
+    }
 
 
+    public void initDataBase(){
+        try{
+            session.beginTransaction();
+
+            generateFlowers();
+            generateBranches();
+            generateUsers();
+            List<Flower> flowers = getAllFlowersNoTx();
+            List<Branch> branches = getAllBranchesNoTx();
+            for (Flower flower : flowers) {
+                flower.setBranch(new ArrayList<>(branches));
+                session.update(flower);
+            }
+
+            session.getTransaction().commit();
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            System.err.println("An error occured, changes have been rolled back.");
+            exception.printStackTrace();
+        }
+    }
     public Flower ChangeDetails(ChangeFlower flowerEdit) {
         Flower flower1 = null;
         try {

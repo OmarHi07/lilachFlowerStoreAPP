@@ -82,6 +82,7 @@ public class PrimaryController{
 	@FXML
 	void initialize(){
 		EventBus.getDefault().register(this);
+
         BranchGroup = new ToggleGroup();
 		//colorGroup = new ToggleGroup();
 		Haifa.setToggleGroup(BranchGroup);
@@ -118,18 +119,27 @@ public class PrimaryController{
 	@Subscribe
 	public void init(List<Flower> flowers) {
 			flowers.sort(Comparator.comparingInt(Flower::getId));
+		    filtered = SimpleClient.getFlowers();
 			Platform.runLater(()->{
+				System.out.println("Entered");
 				if (CurrentCustomer.getCurrentEmployee() != null) {
-					System.out.println("Hi");
 					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
 					System.out.println(employee.getUsername());
 					if(employee.getPermission() == 5) {
-						System.out.println("Hi");
 						UpdateCatalogBU.setVisible(true);
 					}
 				}
 				else {
+					if (CurrentCustomer.getCurrentUser() != null) {
+						Customer customer = (Customer) CurrentCustomer.getCurrentUser();
+						if(customer.getCustomerType() == 1){
+							Haifa.setDisable(false);
+							TelAviv.setDisable(false);
+						}
+					}
 					UpdateCatalogBU.setVisible(false);
+					ReportBU.setDisable(false);
+
 				}
 			   Grid.getChildren().clear();
                NumCol = 0;
@@ -175,9 +185,17 @@ public class PrimaryController{
 		if (selectedColor != null && !selectedColor.isEmpty()) {
 			filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
 		}
-		if(selectedBranch != null){
-			filteredFlowers = filteredFlowers.stream().filter(f -> selectedBranch.equals(f.getColor())).collect(Collectors.toList());
 
+		if (selectedBranch != null) {
+			List<Branch> branchList = SimpleClient.getAllBranches();
+
+			final Branch matchedBranch = branchList.stream().filter(branch -> branch.getAddress().equals(selectedBranch)).findFirst().orElse(null);  // עכשיו זה final
+
+			if (matchedBranch != null) {
+				filteredFlowers =filteredFlowers.stream()
+						.filter(flower -> flower.getBranch().contains(matchedBranch))
+						.collect(Collectors.toList());
+			}
 		}
 		filtered = filteredFlowers;
 		init(filteredFlowers);
@@ -235,8 +253,19 @@ public class PrimaryController{
 					filtered1 = filtered1.stream().filter(flower -> flower.getColor().equals(selectedColor)).collect(Collectors.toList());
 				}
 				if (selectedBranch != null) {
-					filtered1 = filtered1.stream().filter(flower -> flower.getBranch().equals(selectedBranch)).collect(Collectors.toList());
-				}
+					 List<Branch> branchList = SimpleClient.getAllBranches();
+
+					 final Branch matchedBranch = branchList.stream()
+							 .filter(branch -> branch.getAddress().equals(selectedBranch))
+							 .findFirst()
+							 .orElse(null);  // עכשיו זה final
+
+					 if (matchedBranch != null) {
+						 filtered1 = filtered1.stream()
+								 .filter(flower -> flower.getBranch().contains(matchedBranch))
+								 .collect(Collectors.toList());
+					 }
+				 }
 				filtered = filtered1;
 				EventBus.getDefault().post(filtered);
 			 }
@@ -249,6 +278,9 @@ public class PrimaryController{
 	@FXML
 	void HaifaBranch(ActionEvent event) {
         selectedBranch = "Haifa";
+		List<Branch> branchList = SimpleClient.getAllBranches();
+		Branch branch = branchList.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
+		CurrentCustomer.setSelectedBranch(branch);
 		filterFlowers();
 	}
 
@@ -284,8 +316,12 @@ public class PrimaryController{
 
 	@FXML
 	void TelAvivBranch(ActionEvent event) {
-         selectedBranch = "TelAviv";
-		 filterFlowers();
+		selectedBranch = "TelAviv";
+		List<Branch> branchList = SimpleClient.getAllBranches();
+		Branch branch = branchList.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
+		CurrentCustomer.setSelectedBranch(branch);
+		filterFlowers();
+
 	}
 
 	@FXML
@@ -319,6 +355,9 @@ public class PrimaryController{
 	}
 	@FXML
 	void Customizethebouquet(ActionEvent event) {
+		List<Flower> listFlowers = SimpleClient.getFlowers();
+		List<Flower> flowersCusomized = listFlowers.stream().filter(flower -> flower.getTypeOfFlower() == 2).collect(Collectors.toList());
+		init(flowersCusomized);
 
 	}
 	@FXML

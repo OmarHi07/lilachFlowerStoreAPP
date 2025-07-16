@@ -28,7 +28,7 @@ public class Branch implements Serializable {
        @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
        private transient Set<Order> ListOrders;
 
-       @OneToMany(mappedBy = "Branch", fetch = FetchType.EAGER)
+       @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
        private transient Set<Complain> ListComplains;
 
        public Branch(){}

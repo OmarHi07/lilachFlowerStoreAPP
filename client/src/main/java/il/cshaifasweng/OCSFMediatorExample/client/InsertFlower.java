@@ -140,7 +140,7 @@ public class InsertFlower {
             AlertImage.setVisible(true);
         }
         else{
-            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, color);
+            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, color, 1);
             if(!(sale.isEmpty())){
                 flower.setSale(Integer.parseInt(sale));
             }

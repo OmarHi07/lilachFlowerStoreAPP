@@ -31,18 +31,19 @@ public class Flower implements Serializable {
 
     private int Sale;
 
+    private int TypeOfFlower; // =1 Bouquet , =2 Single
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "flower_branch", joinColumns = @JoinColumn(name = "flower_id"), inverseJoinColumns = @JoinColumn(name = "branch_id"))
     private List<Branch>  BranchesAvailable;
 
 
-    public Flower() {
-    }
+    public Flower() {}
 
-    public Flower(String flowerName, String Type, double price, byte[] image, String color) {
+    public Flower(String flowerName, String Type, double price, byte[] image, String color, int TypeOfFlower) {
         super();
         this.flowerName = flowerName;
+        this.TypeOfFlower = TypeOfFlower;
         this.type = Type;
         this.price = price;
         this.image = image;
@@ -52,11 +53,16 @@ public class Flower implements Serializable {
     }
 
     public List<Branch> getBranch() {return BranchesAvailable; }
+    public void setBranch(List<Branch> branch) {
+        BranchesAvailable = branch;
+    }
     public void AddBranch(Branch branch) {
         BranchesAvailable.add(branch);
         branch.AddFlower(this);
 
     }
+    public void setTypeOfFlower(int TypeOfFlower) {this.TypeOfFlower = TypeOfFlower;}
+    public int getTypeOfFlower() {return TypeOfFlower;}
     public void RemoveBranch(Branch branch) {BranchesAvailable.remove(branch);}
 
     public int getSale() {return Sale;}

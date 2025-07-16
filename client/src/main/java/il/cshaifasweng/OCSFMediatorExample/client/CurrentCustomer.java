@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Customer;
 import il.cshaifasweng.OCSFMediatorExample.entities.Employee;
 
@@ -7,6 +8,7 @@ public class CurrentCustomer {
     private static String currentCustomer;
     private static Customer currentuser;
     private static Employee currentEmployee;
+    private static Branch selectedBranch;
 
     public CurrentCustomer() {}
 
@@ -29,5 +31,11 @@ public class CurrentCustomer {
     }
     public static void setCurrentCustomer(String currentCustomer) {
         CurrentCustomer.currentCustomer = currentCustomer;
+    }
+    public static Branch getSelectedBranch() {
+        return selectedBranch;
+    }
+    public static void setSelectedBranch(Branch selectedBranch) {
+        CurrentCustomer.selectedBranch = selectedBranch;
     }
 }

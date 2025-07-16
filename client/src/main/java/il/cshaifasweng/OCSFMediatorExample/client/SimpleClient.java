@@ -48,13 +48,17 @@ public class SimpleClient extends AbstractClient {
                 Employee customer = (Employee) addClient.getEmployee();
                 CurrentCustomer.setCurrentEmployee(customer);
             }
-            System.out.println("Employee " + CurrentCustomer.getCurrentEmployee().getUsername());
-            System.out.println("Received AddClient with flowerList size: " + (addClient.getFlowerList() == null ? "null" : addClient.getFlowerList().size()));
-            System.out.println("Received AddClient with branchList size: " + (addClient.getBranchList() == null ? "null" : addClient.getBranchList().size()));
-            CurrentCustomer.setCurrentCustomer("Worker");
+            if (addClient.getCustomer() != null) {
+                System.out.println("Hello from Java!");
+                Customer customer = (Customer) addClient.getCustomer();
+                CurrentCustomer.setSelectedBranch(null);
+                CurrentCustomer.setCurrentUser(customer);
+                CurrentCustomer.setCurrentCustomer("Customer");
+            }
             flowers = addClient.getFlowerList();
             AllBranches = addClient.getBranchList();
-            EventBus.getDefault().post(flowers);
+            List<Flower> flowerList = flowers.stream().filter(f -> f.getTypeOfFlower() == 1).collect(Collectors.toList());
+            EventBus.getDefault().post(flowerList);
         }
 
         //gets answer if username already in use

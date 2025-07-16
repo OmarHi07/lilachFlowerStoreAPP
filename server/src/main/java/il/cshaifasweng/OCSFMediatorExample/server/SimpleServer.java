@@ -31,7 +31,7 @@ public class SimpleServer extends AbstractServer {
 			SubscribersList.add(connection);
 			AddClient testClient = new AddClient();
 			System.out.println(testClient);
-			NetworkWorker user = instance.getUser(1);
+			Customer user = instance.getUser(1);
 			AddClient client1 = null;
 			List<Flower> flowerList=null;
 			List<Branch> branchList=null;
@@ -51,10 +51,12 @@ public class SimpleServer extends AbstractServer {
 			client1 = new AddClient();
 			client1.setBranchList(branchList);
 			client1.setFlowerList(flowerList);
-			client1.setEmployee(user);
+			client1.setCustomer(user);
 			if (client1 != null) {
 				try {
 					client.sendToClient(client1);
+					System.out.println("AddClient message sent successfully.");
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

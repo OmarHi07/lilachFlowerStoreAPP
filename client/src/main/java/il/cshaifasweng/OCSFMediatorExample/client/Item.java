@@ -4,8 +4,7 @@
 
 package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
@@ -18,8 +17,6 @@ import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
 
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 
 public class Item {
@@ -255,17 +252,26 @@ public class Item {
     }
     @FXML
     void AddToTheCart(ActionEvent event) {
-        int idValue = Integer.parseInt(ID.getText());
-        List<Flower> flowers = SimpleClient.getFlowers();
-        Flower flower = flowers.stream().filter(f -> f.getId() == idValue).findFirst().orElse(null);
-        double price = flower.getPrice();
-        CartProduct cart = new CartProduct(1, price, flower);
-        //هون
+        if(CurrentCustomer.getCurrentUser() != null) {
+            Customer customer = (Customer) CurrentCustomer.getCurrentUser();
+            if (customer.getCustomerType() == 2 && CurrentCustomer.getSelectedBranch() == null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Select Branch");
+                    alert.setHeaderText("Select a Branch");
+                    alert.setContentText("Please select a branch before adding item to the cart");
+                    alert.showAndWait();
+            }
+            else {
+                int idValue = Integer.parseInt(ID.getText());
+                List<Flower> flowers = SimpleClient.getFlowers();
+                Flower flower = flowers.stream().filter(f -> f.getId() == idValue).findFirst().orElse(null);
+                double price = flower.getPrice();
+                CartProduct cart = new CartProduct(1, price, flower);
+                //هون
 
-
-
-
-
+                AddCart.setDisable(false);
+            }
+        }
     }
 
     @FXML
