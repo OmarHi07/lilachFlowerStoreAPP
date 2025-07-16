@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.CategoryAxis?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ComplaintController"
+            prefWidth="920" prefHeight="500">
+
+    <TableView fx:id="complaintTable" layoutX="10" layoutY="10" prefWidth="500" prefHeight="480" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <columns>
+            <TableColumn fx:id="customerColumn" text="Customer" prefWidth="50"/>
+            <TableColumn fx:id="branchColumn" text="Branch" prefWidth="50"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="50"/>
+            <TableColumn fx:id="timeColumn" text="Time" prefWidth="50"/>
+            <TableColumn fx:id="textColumn" text="Complaint" prefWidth="50"/>
+            <TableColumn fx:id="answerColumn" text="Answer" prefWidth="50"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="50"/>
+            <TableColumn fx:id="refundColumn" text="Refund" prefWidth="50"/>
+
+        </columns>
+
+
+    </TableView>
+    <BarChart fx:id="complaintBarChart" layoutX="920" layoutY="10" prefWidth="400" prefHeight="480"
+              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"
+              title="Complaint Status Summary">
+        <xAxis>
+            <CategoryAxis label="Status"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Count"/>
+        </yAxis>
+    </BarChart>
+</AnchorPane>
