@@ -34,8 +34,8 @@ public class connectController {
 
     @FXML
     void initialize(){
-        Image image_background = new Image(String.valueOf(connectController.class.getResource("/images/connect1.png")));
-        backgroundImage.setImage(image_background);
+        //Image image_background = new Image(String.valueOf(connectController.class.getResource("/images/connect1.png")));
+        //backgroundImage.setImage(image_background);
     }
 
     @FXML
@@ -50,7 +50,7 @@ public class connectController {
             client.openConnection();
 
             // Navigate to the next screen
-            App.setRoot("SignIn",650,500);
+            App.setRoot("SystemManager",700,600);
 
         } catch (Exception e) {
             e.printStackTrace();

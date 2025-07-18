@@ -14,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import javafx.scene.input.MouseEvent;
+
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -77,6 +79,9 @@ public class SignInController {
 
     @FXML // fx:id="note"
     private TextArea note; // Value injected by FXMLLoader
+
+    @FXML
+    private Label loginRedirectLabel;
 
     @FXML
     void initialize() {
@@ -298,6 +303,14 @@ public class SignInController {
         }
 
     }
+
+    // need to implement it
+    @FXML
+    void goToLogin(MouseEvent event) {
+
+    }
+
+
 
 
 
