@@ -12,6 +12,7 @@ public class SimpleClient extends AbstractClient {
 
     private static SimpleClient client = null;
     private static List<Flower> flowers;
+    private static List<Flower> flowersSingles;
     private static List<Branch> AllBranches;
 
     private SimpleClient(String host, int port) {
@@ -43,22 +44,11 @@ public class SimpleClient extends AbstractClient {
         }
         else if(msg instanceof AddClient){
             AddClient addClient = (AddClient) msg;
-            if(addClient.getEmployee() != null) {
-                System.out.println("Hello from Java!");
-                Employee customer = (Employee) addClient.getEmployee();
-                CurrentCustomer.setCurrentEmployee(customer);
-            }
-            if (addClient.getCustomer() != null) {
-                System.out.println("Hello from Java!");
-                Customer customer = (Customer) addClient.getCustomer();
-                CurrentCustomer.setSelectedBranch(null);
-                CurrentCustomer.setCurrentUser(customer);
-                CurrentCustomer.setCurrentCustomer("Customer");
-            }
-            flowers = addClient.getFlowerList();
+            List<Flower> flowerList = addClient.getFlowerList();
             AllBranches = addClient.getBranchList();
-            List<Flower> flowerList = flowers.stream().filter(f -> f.getTypeOfFlower() == 1).collect(Collectors.toList());
-            EventBus.getDefault().post(flowerList);
+            flowers = flowerList.stream().filter(f -> f.getTypeOfFlower() == 1).collect(Collectors.toList());
+            flowersSingles = flowerList.stream().filter(f -> f.getTypeOfFlower() == 2).collect(Collectors.toList());
+            EventBus.getDefault().post(flowers);
         }
 
         //gets answer if username already in use
@@ -72,6 +62,20 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(response);
         }
 
+
+        else if (msg instanceof LoginResponse) {
+            // ANDLOS ADD THIS: handle login response from server
+            LoginResponse response = (LoginResponse) msg;
+            if (response.getCustomer()!=null) {
+                CurrentCustomer.setCurrentUser(response.getCustomer());
+                CurrentCustomer.setCurrentCustomer("Customer");
+            }
+            if (response.getEmployee()!=null) {
+                CurrentCustomer.setCurrentEmployee(response.getEmployee());
+                CurrentCustomer.setCurrentCustomer("Employee");
+            }
+            EventBus.getDefault().post(response);
+        }
 
         String msgString = msg.toString();
 
@@ -118,8 +122,16 @@ public class SimpleClient extends AbstractClient {
             int Id = Integer.parseInt(parts[1]);
             SimpleClient.getFlowers().remove(Id);
         }
+        else if (msg instanceof GetEntitiesResponse) {
+            EventBus.getDefault().post(msg); // post directly to EventBus
+        }
+        else if (msg instanceof UpdateUserResponse) {
+            EventBus.getDefault().post(msg);
+        }
+        else if (msg instanceof BlockUserResponse) {
+            EventBus.getDefault().post(msg);
 
-
+        }
         if(msg instanceof ChangeFlower){
             ChangeFlower changeFlower = (ChangeFlower) msg;
             int id = changeFlower.getId();
@@ -162,6 +174,7 @@ public class SimpleClient extends AbstractClient {
     }
     public static List<Branch> getAllBranches() {return AllBranches;}
     public static List<Flower> getFlowers() {return flowers;}
+    public static List<Flower> getFlowersSingles(){return flowersSingles;}
     public static SimpleClient getClient(String host, int port) {
         if (client == null) {
             client = new SimpleClient(host, port);

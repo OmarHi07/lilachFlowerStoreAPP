@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+
+
+<?import javafx.scene.image.Image?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController"
+            prefWidth="600" prefHeight="400">
+
+    <!-- תמונת רקע -->
+    <ImageView fx:id="backgroundImage"
+               fitWidth="600" fitHeight="400"
+               preserveRatio="false"
+               layoutX="0" layoutY="0" />
+
+    <!-- תיבת התחברות ממורכזת -->
+    <VBox fx:id="loginBox" spacing="10" alignment="CENTER"
+          prefWidth="280"
+          layoutX="160" layoutY="80"
+          AnchorPane.leftAnchor="160" AnchorPane.rightAnchor="160"
+          AnchorPane.topAnchor="80"
+          style="-fx-background-color: rgba(255,255,255,0.85); -fx-background-radius: 10; -fx-padding: 20;">
+
+        <Label text="🌸 Welcome to Lilach System 🌸"
+               style="-fx-font-size: 16px; -fx-text-fill: #6A1B9A;" />
+
+        <TextField fx:id="usernameField" promptText="Username" prefWidth="240"/>
+        <PasswordField fx:id="passwordField" promptText="Password" prefWidth="240"/>
+        <Button text="Login" onAction="#handleLogin" prefWidth="240"/>
+        <Label fx:id="errorLabel" textFill="red" />
+        <Button text="Login as Employee" onAction="#handleEmployeeLogin" prefWidth="240"/>
+        <Button text="Don't have an account? Sign Up" onAction="#goToSignUp" />
+    </VBox>
+
+</AnchorPane>

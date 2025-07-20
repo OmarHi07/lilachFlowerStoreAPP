@@ -19,6 +19,9 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "blocked",nullable = false)
+    private Boolean blocked = false; // default: not blocked
+
     private String firstName;
     private String lastName;
 
@@ -65,11 +68,19 @@ public class Customer implements Serializable {
         this.creditCardCVV = creditCardCVV;
         this.identifyingNumber = identifyingNumber;
         this.customerType = customerType;
-
+        this.blocked = false;
         this.listOrders = new ArrayList<Order>();
         this.listComplains = new ArrayList<Complain>();
         this.listBranch = new ArrayList<Branch>();
 
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public int getId(){

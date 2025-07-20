@@ -15,7 +15,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class DataBaseManagement {
     public DataBaseManagement() {
@@ -353,6 +355,62 @@ public class DataBaseManagement {
             return true; // Fail-safe: assume taken on error
         }
     }
+    public static LoginResponse loginCustomer(String username, String password) {
+        try {
+            session.beginTransaction();
+
+            Customer customer = (Customer) session.createQuery(
+                            "FROM Customer WHERE username = :username AND password = :password")
+                    .setParameter("username", username)
+                    .setParameter("password", password)
+                    .uniqueResult();
+
+            session.getTransaction().commit();
+
+            if (customer != null) {
+                LoginResponse newLogIn = new LoginResponse(true, "Login successful!");
+                newLogIn.setCustomer(customer);
+                return newLogIn;
+            } else {
+                return new LoginResponse(false, "Incorrect username or password.");
+            }
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return new LoginResponse(false, "Server error during login.");
+        }
+    }
+
+    public static LoginResponse loginEmployee(String username, String password) {
+        try {
+            session.beginTransaction();
+
+            Employee employee = (Employee) session.createQuery(
+                            "FROM Employee WHERE username = :username AND password = :password")
+                    .setParameter("username", username)
+                    .setParameter("password", password)
+                    .uniqueResult();
+
+            session.getTransaction().commit();
+
+            if (employee != null) {
+                LoginResponse newLogin = new LoginResponse(true,"Employee login successful!");
+                newLogin.setEmployee(employee);
+                return newLogin;
+            } else {
+                return new LoginResponse(false,"Incorrect employee credentials.");
+            }
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return new LoginResponse(false, "Server error during employee login.");
+        }
+    }
+
 
     public static SignUpResponse registerCustomer(SignUpRequest req) {
         try {
@@ -420,6 +478,267 @@ public class DataBaseManagement {
         }
     }
 
+    public void LogOutCustomer(int id) {
+        try{
+            session.beginTransaction();
+            Customer customer = session.get(Customer.class, id);
+            if (customer != null) {
+                customer.setLoggedIn(false);
+                session.update(customer);
+                session.getTransaction().commit();
+            }
+            else {
+                System.out.println("Customer with ID " + id + " not found.");
+            }
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+    }
+    public void LogOutEmployee(int id) {
+        try{
+            session.beginTransaction();
+            Employee employee = session.get(Employee.class, id);
+            if (employee != null) {
+                employee.setLogin(false);
+                session.update(employee);
+                session.getTransaction().commit();
+            }
+            else {
+                System.out.println("employee with ID " + id + " not found.");
+            }
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+    }
+
+
+    public static List<?> getAllEntities(String entityType) throws Exception {
+        try {
+            session.beginTransaction();
+
+            List<?> result;
+
+            if (entityType.equals("customer")) {
+                System.out.println("Querying all customers...");
+                result = session.createQuery("FROM Customer", Customer.class).getResultList();
+                System.out.println("Customer query returned " + result.size() + " results.");
+            } else {
+                List<Employee> allEmployees = session.createQuery("FROM Employee", Employee.class).getResultList();
+
+                result = switch (entityType) {
+                    case "networkWorker" -> allEmployees.stream()
+                            .filter(emp -> emp.getPermission() == 5)
+                            .map(emp -> session.get(NetworkWorker.class, emp.getId()))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                    case "branchManager" -> allEmployees.stream()
+                            .filter(emp -> emp.getPermission() == 3)
+                            .map(emp -> session.get(BranchManager.class, emp.getId()))
+                            .collect(Collectors.toList());
+                    case "costumerService" -> allEmployees.stream()
+                            .filter(emp -> emp.getPermission() == 2)
+                            .map(emp -> session.get(CostumerServiceEmployee.class, emp.getId()))
+                            .collect(Collectors.toList());
+                    case "storeChainManager" -> allEmployees.stream()
+                            .filter(emp -> emp.getPermission() == 4)
+                            .map(emp -> session.get(StoreChainManager.class, emp.getId()))
+                            .collect(Collectors.toList());
+                    default -> throw new IllegalArgumentException("Unknown entity type: " + entityType);
+                };
+            }
+
+            session.getTransaction().commit();
+            return result;
+
+        } catch (Exception e) {
+            System.err.println("FAILED to get " + entityType);
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public static Object findUserByUsername(String role, String username) {
+        try {
+            session.beginTransaction();
+
+            if (role.equals("customer")) {
+                Customer customer = session.createQuery(
+                                "FROM Customer WHERE username = :username", Customer.class)
+                        .setParameter("username", username)
+                        .uniqueResult();
+                session.getTransaction().commit();
+                return customer;
+            }
+
+            // Query the base Employee table
+            Employee employee = session.createQuery(
+                            "FROM Employee WHERE username = :username", Employee.class)
+                    .setParameter("username", username)
+                    .uniqueResult();
+
+            session.getTransaction().commit();
+
+            if (employee == null) {
+                return null;
+            }
+
+            // Now determine subclass based on permission
+            return switch (employee.getPermission()) {
+                case 2 -> session.get(CostumerServiceEmployee.class, employee.getId());
+                case 3 -> session.get(BranchManager.class, employee.getId());
+                case 4 -> session.get(StoreChainManager.class, employee.getId());
+                case 5 -> session.get(NetworkWorker.class, employee.getId());
+                default -> employee; // Fallback: return base class if no match
+            };
+
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) session.getTransaction().rollback();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    public static boolean isUsernameTakenIn(String role, String username) {
+        try {
+            session.beginTransaction();
+
+            Long count;
+
+            if (role.equals("customer")) {
+                count = session.createQuery(
+                                "SELECT COUNT(c) FROM Customer c WHERE c.username = :username", Long.class)
+                        .setParameter("username", username)
+                        .uniqueResult();
+            } else {
+                count = session.createQuery(
+                                "SELECT COUNT(e) FROM Employee e WHERE e.username = :username", Long.class)
+                        .setParameter("username", username)
+                        .uniqueResult();
+            }
+
+            session.getTransaction().commit();
+            return count != null && count > 0;
+
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) session.getTransaction().rollback();
+            e.printStackTrace();
+            return true; // Assume taken on error
+        }
+    }
+
+
+
+    public static UpdateUserResponse updateUser(UpdateUserRequest request) {
+        String role = request.getRole();
+        String originalUsername = request.getOriginalUsername();
+        String newUsername = role.equals("customer") ? request.getNewUsername() : request.getWorkerNewUsername();
+
+        // Check if new username is taken by someone else
+        if (!originalUsername.equals(newUsername) && isUsernameTakenIn(role, newUsername)) {
+            return new UpdateUserResponse(false, "The new username is already taken.");
+        }
+
+        Object user = findUserByUsername(role, originalUsername);
+        if (user == null) {
+            return new UpdateUserResponse(false, "Original user not found.");
+        }
+
+        try {
+            session.beginTransaction();
+
+            if (user instanceof Customer ) {
+                Customer customer = (Customer) user;
+
+                if (!request.getNewUsername().isEmpty()) customer.setUsername(request.getNewUsername());
+                if (!request.getFirstName().isEmpty()) customer.setFirstName(request.getFirstName());
+                if (!request.getLastName().isEmpty()) customer.setLastName(request.getLastName());
+                if (!request.getEmail().isEmpty()) customer.setEmail(request.getEmail());
+                if (!request.getPhone().isEmpty()) customer.setPhone(request.getPhone());
+                if (!request.getPassword().isEmpty()) customer.setPassword(request.getPassword());
+                // credit card fields and others if needed
+                session.update(customer);
+
+            } else if (user instanceof Employee ) {
+                Employee employee = (Employee) user;
+
+                if (!request.getWorkerNewUsername().isEmpty()) employee.setUsername(request.getWorkerNewUsername());
+                if (!request.getWorkerPassword().isEmpty()) employee.setPassword(request.getWorkerPassword());
+                if (!request.getName().isEmpty()) employee.setName(request.getName());
+                if (request.getPermision() != -1) employee.setPermission(request.getPermision());
+
+                if (employee instanceof BranchManager ) {
+                    BranchManager manager = (BranchManager) employee;
+                    // Update branch only if a new branch is provided
+                    if (request.getBranch() != null && !request.getBranch().isEmpty()) {
+                        Branch newBranch = session.createQuery(
+                                        "FROM Branch WHERE address = :address", Branch.class)
+                                .setParameter("address", request.getBranch())
+                                .uniqueResult();
+
+                        if (newBranch != null && newBranch != manager.getBranch()) {
+                            manager.setBranch(newBranch);
+                        }
+                    }
+                }
+
+                session.update(employee);
+            }
+
+            session.getTransaction().commit();
+            return new UpdateUserResponse(true, "User updated successfully.");
+
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) session.getTransaction().rollback();
+            e.printStackTrace();
+            return new UpdateUserResponse(false, "Error updating user: " + e.getMessage());
+        }
+    }
+
+
+    public static BlockUserResponse handleBlockUser(BlockUserRequest request) {
+        String role = request.getRole();
+        String username = request.getUsername();
+        boolean block = request.isBlock();
+
+        Object user = findUserByUsername(role, username);
+
+        if (user == null) {
+            return new BlockUserResponse(false, "User not found.");
+        }
+
+        try {
+            session.beginTransaction();
+
+            if (user instanceof Customer) {
+                ((Customer) user).setBlocked(block);
+                session.update(user);
+            } else if (user instanceof Employee) {
+                ((Employee) user).setBlocked(block);
+                session.update(user);
+            }
+
+            session.getTransaction().commit();
+            String msg = block ? "User blocked successfully." : "User unblocked successfully.";
+            return new BlockUserResponse(true, msg);
+
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) session.getTransaction().rollback();
+            e.printStackTrace();
+            return new BlockUserResponse(false, "Error: " + e.getMessage());
+        }
+    }
 
 
 
