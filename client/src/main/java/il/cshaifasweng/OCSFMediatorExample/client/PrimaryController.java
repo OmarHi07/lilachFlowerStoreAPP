@@ -86,9 +86,8 @@ public class PrimaryController{
 	private static List<Flower> filtered;
 
 	@FXML
-	void initialize(){
+	void initialize() {
 		EventBus.getDefault().register(this);
-
 		isCustomize = false;
 		ReturnBU.setVisible(false);
         BranchGroup = new ToggleGroup();
@@ -112,13 +111,7 @@ public class PrimaryController{
 		Grid.setHgap(20);     // רווח אופקי בין טורים
 		Grid.setVgap(20);     // רווח אנכי בין שורות
 		Grid.setPadding(new Insets(20)); // רווח מהשוליים
-
-		try{
-			SimpleClient.getClient().sendToServer("add client");
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		init(SimpleClient.getFlowers());
 
 	}
 
@@ -438,7 +431,7 @@ public class PrimaryController{
 	@FXML
 	void GoToCart(ActionEvent event) {
 		try {
-			App.setRoot("OrderCart", 900, 730);
+			App.setRoot("Ordercart", 900, 730);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

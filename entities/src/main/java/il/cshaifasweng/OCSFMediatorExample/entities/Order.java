@@ -38,13 +38,11 @@ public class Order implements Serializable {
     private String type;
     private boolean isCanceled;
 
-    public Order(Customer user, Branch store, String dateReceive, String timeReceive, String dateOrder, String timeOrder, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
+    public Order(Customer user, Branch store, String dateReceive, String timeReceive, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
         this.customer = user;
         this.branch = store;
         this.dateReceive = dateReceive;
         this.timeReceive = timeReceive;
-        this.dateOrder = dateOrder;
-        this.timeOrder = timeOrder;
         this.sum = sum;
         this.greeting = greeting;
         this.nameReceives = nameReceives;

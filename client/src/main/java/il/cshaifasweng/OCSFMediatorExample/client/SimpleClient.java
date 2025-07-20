@@ -48,7 +48,7 @@ public class SimpleClient extends AbstractClient {
             AllBranches = addClient.getBranchList();
             flowers = flowerList.stream().filter(f -> f.getTypeOfFlower() == 1).collect(Collectors.toList());
             flowersSingles = flowerList.stream().filter(f -> f.getTypeOfFlower() == 2).collect(Collectors.toList());
-            EventBus.getDefault().post(flowers);
+//            EventBus.getDefault().post(flowers);
         }
 
         //gets answer if username already in use
@@ -61,6 +61,7 @@ public class SimpleClient extends AbstractClient {
             SignUpResponse response = (SignUpResponse) msg;
             EventBus.getDefault().post(response);
         }
+
 
 
         else if (msg instanceof LoginResponse) {

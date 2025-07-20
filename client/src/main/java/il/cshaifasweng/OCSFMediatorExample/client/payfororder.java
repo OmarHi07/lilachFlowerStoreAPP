@@ -18,6 +18,9 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -141,7 +144,8 @@ public class payfororder {
                 locationn.setVisible(true);
                 pickup.setVisible(false);
 
-                String selectedBranch = PrimaryController.selectedBranch;
+                Branch selectedBranch = CurrentCustomer.getSelectedBranch();
+
                 if (selectedBranch != null) {
                         payattention.setText("Note: Delivery is only available within " + selectedBranch + ".");
                 }
@@ -174,19 +178,18 @@ public class payfororder {
                 dateErrorLabel.setVisible(false);
         }
 
-private void saveconfirm() {
+        private void saveconfirm() {
         // יצירת אובייקט הזמנה
-        String selectedBranch = PrimaryController.selectedBranch;
+            Branch selectedBranch = CurrentCustomer.getSelectedBranch();
 
 
-}
+        }
+
 
 
 
         @FXML
         void payy(ActionEvent event) {
-
-
 
                 boolean isValid = true;
 
@@ -251,8 +254,8 @@ private void saveconfirm() {
                 //order.setProducts(cartItems);
 
                 Order order = new Order( CurrentCustomer.getCurrentUser(),branch, LocalDate.now().toString(),currentTime,totalprice,  greetingmessage.getText().trim(), "", "", locationn.getText().trim(), false);
-                order.setProducts(cartItems);
 
+                order.setProducts(new ArrayList<>(cartItems));
 
                 clearFormFields();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -262,22 +265,21 @@ private void saveconfirm() {
                 alert.showAndWait();
 
 
-
-// פתיחת primary
                 try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("primary.fxml")); // שנה לשם הנכון אם צריך
-                        Parent root = loader.load();
-                        Stage primaryStage = new Stage();
-                        primaryStage.setScene(new Scene(root));
-                        primaryStage.show();
+                        SimpleClient.getClient().sendToServer(order);
+                        cartItems.clear();
+
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
+                try {
+                        App.setRoot("primary", 900, 730);
+                }
+                catch (IOException e) {
+                        e.printStackTrace();
+                }
 
-                // סגירת החלון הנוכחי
-                Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                currentStage.close();
-        }
+
 
 
         @FXML

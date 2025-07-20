@@ -81,11 +81,15 @@ public class LoginController {
         javafx.application.Platform.runLater(() -> {
             if (response.isSuccess()) {
                 errorLabel.setText("✅ " + response.getMessage());
-
-
+                try {
+                    SimpleClient.getClient().sendToServer("add client");
+                } catch (IOException e) {
+                    errorLabel.setText("failed in sendToServer.");
+                }
                 try {
                     App.setRoot("Primary", 600, 400);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     errorLabel.setText("Failed to load main screen.");
                 }
             } else {

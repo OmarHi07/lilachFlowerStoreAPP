@@ -200,7 +200,8 @@ public class SimpleServer extends AbstractServer {
 				throw new RuntimeException(e);
 			}
 
-		} else if (msg instanceof BlockUserRequest) {
+		}
+		else if (msg instanceof BlockUserRequest) {
 			BlockUserRequest request = (BlockUserRequest) msg;
 			BlockUserResponse response = instance.handleBlockUser(request);
 			try {
@@ -208,6 +209,11 @@ public class SimpleServer extends AbstractServer {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+		}
+		else if(msg instanceof Order){
+			Order newOrder = (Order)msg;
+			instance.saveorder(newOrder);
+
 		}
 
 	}

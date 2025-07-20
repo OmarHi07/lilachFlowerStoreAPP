@@ -3,7 +3,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class CartProduct {
+public class CartProduct implements Serializable{
           @Id
           @GeneratedValue(strategy = GenerationType.IDENTITY)
           private int id;
@@ -50,4 +50,8 @@ public class CartProduct {
           public void setOrder(Order order){
               this.order = order;
           }
+          public double getTotal(){
+              return price*quantity;
+          }
+
 }
