@@ -18,7 +18,9 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -143,6 +145,7 @@ public class payfororder {
                 pickup.setVisible(false);
 
                 Branch selectedBranch = CurrentCustomer.getSelectedBranch();
+
                 if (selectedBranch != null) {
                         payattention.setText("Note: Delivery is only available within " + selectedBranch + ".");
                 }
@@ -184,8 +187,10 @@ public class payfororder {
 
 
 
+
         @FXML
         void payy(ActionEvent event) {
+
                 boolean isValid = true;
 
                 String cardNumber = cardnum.getText().trim();
@@ -249,13 +254,16 @@ public class payfororder {
                 //order.setProducts(cartItems);
 
                 Order order = new Order( CurrentCustomer.getCurrentUser(),branch, LocalDate.now().toString(),currentTime,totalprice,  greetingmessage.getText().trim(), "", "", locationn.getText().trim(), false);
+
                 order.setProducts(new ArrayList<>(cartItems));
+
                 clearFormFields();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Payment");
                 alert.setHeaderText("Payment Submitted");
                 alert.setContentText("Thank you! Your payment is being processed.");
                 alert.showAndWait();
+
 
                 try {
                         SimpleClient.getClient().sendToServer(order);
@@ -271,7 +279,7 @@ public class payfororder {
                         e.printStackTrace();
                 }
 
-        }
+
 
 
         @FXML

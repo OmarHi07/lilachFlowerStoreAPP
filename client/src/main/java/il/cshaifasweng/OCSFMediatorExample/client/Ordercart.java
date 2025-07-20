@@ -181,6 +181,7 @@ public class Ordercart {
                         e.printStackTrace();
                         // אפשר להוסיף כאן התראה למשתמש במקרה של שגיאה
                 }
+
         }
 
         @FXML
