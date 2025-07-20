@@ -15,11 +15,12 @@ import javafx.scene.image.ImageView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import javafx.scene.input.MouseEvent;
-
-
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+
+
 
 public class SignInController {
 
@@ -29,7 +30,7 @@ public class SignInController {
     private TextField CVV; // Value injected by FXMLLoader
 
     @FXML // fx:id="noteLabel"
-    private Label noteLabel; // Value injected by FXMLLoade
+    private Label noteLabel; // Value injected by FXMLLoader
 
     @FXML
     private TextField visiblePassword;
@@ -48,7 +49,6 @@ public class SignInController {
 
     @FXML // fx:id="branch"
     private ComboBox<String> branch; // Value injected by FXMLLoader
-
 
     @FXML // fx:id="creditCard"
     private TextField creditCard; // Value injected by FXMLLoader
@@ -86,6 +86,8 @@ public class SignInController {
     @FXML
     void initialize() {
         EventBus.getDefault().register(this);
+
+
         // Add account types to ComboBox
         accountType.getItems().addAll("Regular", "Network Account", "Membership");
         branch.getItems().addAll("Makr", "Nazareth", "Kafr Manda", "Rame", "Sakhnin");
@@ -94,7 +96,6 @@ public class SignInController {
         accountDescriptions.put("Regular", "Regular: you can only shop in one of our branches , if you are sure please choose a branch");
         accountDescriptions.put("Network Account", "Network Account: you would get to shop in all our branches.");
         accountDescriptions.put("Membership", "One year subscription : By choosing this type you pay 100 NIS and get 10% discount in every purchase over 50 NIS");
-
 
         // Keep both password fields in sync
         password.textProperty().addListener((obs, oldText, newText) -> {
@@ -108,6 +109,13 @@ public class SignInController {
                 password.setText(newText);
             }
         });
+        try {
+            SimpleClient client = SimpleClient.getClient( "localhost", 3001);
+            client.openConnection();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -141,7 +149,8 @@ public class SignInController {
                 note.setVisible(true);
                 noteLabel.setVisible(true);
                 note.setText(desc);
-            }else {
+            }
+            else {
                 noteLabel.setVisible(false);
                 note.setVisible(false);
                 note.setText("");
@@ -307,11 +316,11 @@ public class SignInController {
     // need to implement it
     @FXML
     void goToLogin(MouseEvent event) {
-
+        try {
+            App.setRoot("Login", 900, 730);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-
-
-
-
 }

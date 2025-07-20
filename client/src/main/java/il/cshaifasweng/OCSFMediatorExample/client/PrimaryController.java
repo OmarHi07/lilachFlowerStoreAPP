@@ -31,6 +31,9 @@ public class PrimaryController{
 	@FXML // fx:id="Blue"
 	private RadioButton Blue; // Value injected by FXMLLoader
 
+	@FXML // fx:id="ReturnBU"
+	private Button ReturnBU; // Value injected by FXMLLoader
+
 	@FXML // fx:id="CartBU"
 	private Button CartBU; // Value injected by FXMLLoader
 
@@ -69,20 +72,25 @@ public class PrimaryController{
 
 	@FXML // fx:id="Grid"
 	private GridPane Grid; // Value injected by FXMLLoader
+
     private boolean RedSelected;
 	private boolean YellowSelected;
 	private boolean BlueSelected;
 	private boolean PinkSelected;
 	private boolean WhiteSelected;
+	private boolean isCustomize;
 	private ToggleGroup BranchGroup;
 	private ToggleGroup colorGroup;
     private static String selectedBranch;
 	private static List<String> selectedColor;
 	private static List<Flower> filtered;
+
 	@FXML
 	void initialize(){
 		EventBus.getDefault().register(this);
 
+		isCustomize = false;
+		ReturnBU.setVisible(false);
         BranchGroup = new ToggleGroup();
 		//colorGroup = new ToggleGroup();
 		Haifa.setToggleGroup(BranchGroup);
@@ -106,8 +114,6 @@ public class PrimaryController{
 		Grid.setPadding(new Insets(20)); // רווח מהשוליים
 
 		try{
-			SimpleClient client = SimpleClient.getClient( "localhost", 3001);
-			client.openConnection();
 			SimpleClient.getClient().sendToServer("add client");
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -176,7 +182,13 @@ public class PrimaryController{
 	private void filterFlowers(){
 		NumCol = 0;
 		NumRow = 0;
-		List<Flower> flowers1 = SimpleClient.getFlowers();
+		List<Flower> flowers1;
+		if(isCustomize){
+			flowers1 = SimpleClient.getFlowersSingles();
+		}
+		else {
+			flowers1 = SimpleClient.getFlowers();
+		}
 		List<Flower> filteredFlowers = flowers1;
 		if(filteredFlowers==null){
 			System.out.println("Hello from Java!!!!");
@@ -231,12 +243,31 @@ public class PrimaryController{
 	@FXML
 	void ClearSelection(ActionEvent event) {
 		BranchGroup.selectToggle(null);
+		Yellow.setSelected(false);
+		YellowSelected = false;
+		Blue.setSelected(false);
+		BlueSelected = false;
+		Pink.setSelected(false);
+		PinkSelected = false;
+		Red.setSelected(false);
+		RedSelected = false;
+		White.setSelected(false);
+		WhiteSelected = false;
 		selectedColor.clear();
 		selectedBranch = null;
-		List<Flower> flowers = SimpleClient.getFlowers();
+		Max.setText(null);
+		Min.setText(null);
+		List<Flower> flowers;
+		if(isCustomize) {
+		  flowers = SimpleClient.getFlowersSingles();
+		}
+		else {
+			flowers = SimpleClient.getFlowers();
+		}
 		filtered = flowers;
 		EventBus.getDefault().post(flowers);
 	}
+
 	@FXML
 	void DoneMaxMin(ActionEvent event) {
          String maxVal = Max.getText().trim();
@@ -247,10 +278,17 @@ public class PrimaryController{
 			 try {
 		     	double maxPrice = Double.parseDouble(maxVal);
 				double minPrice = Double.parseDouble(minVal);
-				List<Flower> filtered1 = SimpleClient.getFlowers();
+				List<Flower> filtered1;
+				if(isCustomize){
+					filtered1 = SimpleClient.getFlowersSingles();
+				}
+				else {
+					filtered1 = SimpleClient.getFlowers();
+				}
 				filtered1 = filtered1.stream().filter(flower -> flower.getPrice()>=minPrice && flower.getPrice()<=maxPrice).collect(Collectors.toList());
-				if (selectedColor != null) {
-					filtered1 = filtered1.stream().filter(flower -> flower.getColor().equals(selectedColor)).collect(Collectors.toList());
+				if (selectedColor != null && !selectedColor.isEmpty()) {
+					filtered1 = filtered1.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
+
 				}
 				if (selectedBranch != null) {
 					 List<Branch> branchList = SimpleClient.getAllBranches();
@@ -265,7 +303,7 @@ public class PrimaryController{
 								 .filter(flower -> flower.getBranch().contains(matchedBranch))
 								 .collect(Collectors.toList());
 					 }
-				 }
+				}
 				filtered = filtered1;
 				EventBus.getDefault().post(filtered);
 			 }
@@ -353,44 +391,36 @@ public class PrimaryController{
 		}
 		filterFlowers();
 	}
+
 	@FXML
 	void Customizethebouquet(ActionEvent event) {
-		List<Flower> listFlowers = SimpleClient.getFlowers();
-		List<Flower> flowersCusomized = listFlowers.stream().filter(flower -> flower.getTypeOfFlower() == 2).collect(Collectors.toList());
-		init(flowersCusomized);
-
+		isCustomize = true;
+		filtered = SimpleClient.getFlowersSingles();
+		ReturnBU.setVisible(true);
+		List<Flower> listFlowers = SimpleClient.getFlowersSingles();
+		init(listFlowers);
 	}
+
 	@FXML
 	void LogOut(ActionEvent event) {
 		 Object Current = CurrentCustomer.getCurrentUser();
 		 String NameClass;
 		 int id;
-		 if(Current instanceof BranchManager){
-			 id = ((BranchManager) Current).getId();
-			 NameClass = "BranchManager";
-		 }
-		 else if(Current instanceof CostumerServiceEmployee){
-			 id = ((CostumerServiceEmployee) Current).getId();
-			 NameClass = "CostumerServiceEmployee";
-		 }
-		 else if(Current instanceof Customer){
+		 if(Current instanceof Customer){
 			 NameClass = "Customer";
 			 id = ((Customer) Current).getId();
 		 }
-		 else if(Current instanceof NetworkWorker){
-			 NameClass = "NetworkWorker";
-			 id = ((NetworkWorker) Current).getId();
-		 }
-		 else if(Current instanceof StoreChainManager){
-			 NameClass = "StoreChainManager";
+		 else {
+			 NameClass = "Employee";
 			 id = ((StoreChainManager) Current).getId();
-		 }
-		 else{
-			 NameClass = "SystemAdmin";
-			 id = ((SystemAdmin) Current).getId();
 		 }
 		 try {
 			 SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
+			 CurrentCustomer.setCurrentUser(null);
+			 CurrentCustomer.setCurrentEmployee(null);
+			 CurrentCustomer.setCurrentCustomer(null);
+			 CurrentCustomer.setSelectedBranch(null);
+			 App.setRoot("SignIn", 900, 760);
 		 }
 		 catch (IOException e) {
 			 e.printStackTrace();
@@ -415,11 +445,25 @@ public class PrimaryController{
 		}
 
 	}
+	@FXML
+	void ReturnToCA(ActionEvent event) {
+		isCustomize = false;
+		ReturnBU.setVisible(false);
+		filtered = SimpleClient.getFlowers();
+		List<Flower> listFlowers = SimpleClient.getFlowers();
+		init(listFlowers);
 
+	}
 	@FXML
 	void Refresh(ActionEvent event) {
 		List<Flower> refreshFlowers = new ArrayList<Flower>();
-		List<Flower> flowers = SimpleClient.getFlowers();
+		List<Flower> flowers;
+		if(isCustomize) {
+			flowers = SimpleClient.getFlowersSingles();
+		}
+		else {
+			flowers = SimpleClient.getFlowers();
+		}
 		for (Flower flower : filtered){
              int NumID = flower.getId();
 			 NumID = NumID - 1;
@@ -430,10 +474,5 @@ public class PrimaryController{
 	}
 
 	@FXML
-	void ViewingReports(ActionEvent event) {
-
-	}
-
-
-
+	void ViewingReports(ActionEvent event) {}
 }

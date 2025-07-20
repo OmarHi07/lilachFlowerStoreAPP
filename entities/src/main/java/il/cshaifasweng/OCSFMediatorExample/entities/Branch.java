@@ -31,7 +31,12 @@ public class Branch implements Serializable {
        @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
        private transient Set<Complain> ListComplains;
 
-       public Branch(){}
+       public Branch(){
+              this.ListUsers = new HashSet<>();
+              this.ListOrders = new HashSet<>();
+              this.ListComplains = new HashSet<>();
+              this.flowers = new HashSet<>();
+       }
 
        public Branch(String address){
               this.address = address;

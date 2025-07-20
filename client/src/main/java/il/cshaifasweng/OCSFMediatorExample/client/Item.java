@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
-
 import javafx.stage.FileChooser;
+
 
 public class Item {
 
@@ -71,8 +71,10 @@ public class Item {
 
     @FXML // fx:id="AddHaifa"
     private RadioButton AddHaifa; // Value injected by FXMLLoader
+
     @FXML // fx:id="AddTelAviv"
     private RadioButton AddTelAviv; // Value injected by FXMLLoader
+
     @FXML // fx:id="PutNewName"
     private TextField PutNewName; // Value injected by FXMLLoader
 
@@ -91,10 +93,8 @@ public class Item {
     @FXML // fx:id="SaleText"
     private TextField SaleText; // Value injected by FXMLLoader
 
-
     @FXML // fx:id="RemoveSaleBU"
     private Button RemoveSaleBU; // Value injected by FXMLLoader
-
 
     @FXML // fx:id="ChangeImageBU"
     private Button ChangeImageBU; // Value injected by FXMLLoader
@@ -137,6 +137,7 @@ public class Item {
                 Permission = false;
             }
             if (!Permission) {
+                ChangesBU.setVisible(false);
                 ChangeImageBU.setVisible(false);
                 Done4.setVisible(false);
                 SaleText.setVisible(false);
@@ -156,6 +157,8 @@ public class Item {
                 Edit4.setVisible(false);
                 SoldOut.setVisible(false);
             } else {
+                AddCart.setVisible(false);
+                ChangesBU.setVisible(true);
                 ChangeImageBU.setVisible(true);
                 Done4.setVisible(true);
                 SaleText.setVisible(true);
