@@ -133,7 +133,7 @@ public class Item {
                     Permission = true;
                 }
             }
-            else if(CurrentCustomer.getCurrentUser() instanceof Customer) {
+            else if(CurrentCustomer.getCurrentUser()!=null) {
                 Permission = false;
             }
             if (!Permission) {
@@ -270,8 +270,7 @@ public class Item {
                 Flower flower = flowers.stream().filter(f -> f.getId() == idValue).findFirst().orElse(null);
                 double price = flower.getPrice();
                 CartProduct cart = new CartProduct(1, price, flower);
-                //هون
-
+                Ordercart.cartItems.add(cart);
                 AddCart.setDisable(false);
             }
         }

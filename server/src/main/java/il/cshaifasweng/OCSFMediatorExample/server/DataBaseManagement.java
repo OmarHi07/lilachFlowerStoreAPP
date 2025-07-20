@@ -107,7 +107,7 @@ public class DataBaseManagement {
     private static void generateUsers() throws Exception {
         Long count = (Long) session.createQuery("select count(b) from Customer b").uniqueResult();
         if (count == 0) {
-            Customer Cu1 = new Customer("Arkan", "Issa", "Arkanissa7@gmail.com", "0500118796", "Arkan7", "123456", "1457125896543267", "0727", "148", "872136", 87);
+            Customer Cu1 = new Customer("Arkan", "Issa", "Arkanissa7@gmail.com", "0500118796", "Arkan7", "123456", "1457125896543267", "0727", "148", "872136", 2);
             NetworkWorker nw = new NetworkWorker("ACS", "AERT", "ghty");
             session.save(nw);
             session.save(Cu1);
@@ -496,6 +496,21 @@ public class DataBaseManagement {
                 session.getTransaction().rollback();
             }
             exception.printStackTrace();
+        }
+    }
+    public void saveorder(Order order) {
+        try {
+            session.beginTransaction();
+            session.save(order);
+            session.getTransaction().commit();
+        } catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            else {
+                System.err.println("An error occured on saving order.");
+                exception.printStackTrace();
+            }
         }
     }
     public void LogOutEmployee(int id) {

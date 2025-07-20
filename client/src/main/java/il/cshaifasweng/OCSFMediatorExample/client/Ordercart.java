@@ -181,10 +181,6 @@ public class Ordercart {
                         e.printStackTrace();
                         // אפשר להוסיף כאן התראה למשתמש במקרה של שגיאה
                 }
-
-                // סגירת החלון הנוכחי
-                Stage stage = (Stage) conttinue.getScene().getWindow(); // מקבל את החלון מהכפתור
-                stage.close();
         }
 
         @FXML
