@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
+import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.AddClient;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -145,6 +147,53 @@ public class SimpleServer extends AbstractServer {
 			}
 
 		}
+		else if (msgString.startsWith("Give Orders")){
+			String[] parts = msgString.split(",");
+			int id = Integer.parseInt(parts[1]);
+			List<Order> Orders1= instance.getUser(id);
+			if (Orders1.isEmpty()||Orders1==null) {
+				System.out.println("Orders1 is empty");
+			}
+			try{
+				client.sendToClient(Orders1);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+
+		else if (msgString.startsWith("delete Order")) {
+			String[] parts = msgString.split(",");
+			int id = Integer.parseInt(parts[1]);
+			int orderId = Integer.parseInt(parts[2]);
+
+			List<Order> ordersList = instance.getUser(id); // שליפת ההזמנות של המשתמש
+			Order orderToDelete = null;
+
+			if (ordersList != null) {
+				for (Order order : ordersList) {
+					if (order.getId() == orderId) {
+						orderToDelete = order;
+						break;
+					}
+				}
+			}
+
+			if (orderToDelete != null) {
+				// מחיקה מהמסד נתונים
+				instance.deleteorder(orderToDelete);
+			}
+
+			try {
+				List<Order> ordersList1 = instance.getUser(id);
+				client.sendToClient(ordersList1); // שלח חזרה את הרשימה לאחר עדכון
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
 		//Add customer to the table
 		//Add customer to the table
 		else if (msg instanceof SignUpRequest) {
@@ -210,9 +259,10 @@ public class SimpleServer extends AbstractServer {
 				throw new RuntimeException(e);
 			}
 		}
+
 		else if(msg instanceof Order){
-			Order newOrder = (Order)msg;
-			instance.saveorder(newOrder);
+			Order order = (Order) msg;
+			instance.saveorder(order);
 
 		}
 

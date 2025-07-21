@@ -8,12 +8,14 @@ import il.cshaifasweng.OCSFMediatorExample.entities.CartProduct;
 import il.cshaifasweng.OCSFMediatorExample.entities.Order;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 public class spesifcpastorder {
 
@@ -46,33 +48,44 @@ public class spesifcpastorder {
         for (CartProduct item : order.getProducts()) {
             // תמונה
             ImageView imageView = new ImageView(new Image(new ByteArrayInputStream(item.getFlower().getImage())));
-            imageView.setFitHeight(80);
-            imageView.setFitWidth(80);
+            imageView.setFitHeight(70);
+            imageView.setFitWidth(70);
             imageView.setPreserveRatio(true);
+
 
             // שם פרח
             Label nameLabel = new Label(item.getFlower().getFlowerName());
             nameLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4e3620;");
 
+
             // כמות
             Label quantityLabel = new Label("x" + item.getQuantity());
             quantityLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4e3620;");
+
 
             // מחיר
             double total = item.getQuantity() * item.getPrice();
             Label priceLabel = new Label(String.format("%.2f ₪", total));
             priceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4e3620;");
 
+
             pastorder.add(imageView, 0, row);
+            GridPane.setHalignment(imageView, HPos.CENTER);
             pastorder.add(nameLabel, 1, row);
+            GridPane.setHalignment(nameLabel, HPos.CENTER);
             pastorder.add(quantityLabel, 2, row);
+            GridPane.setHalignment(quantityLabel, HPos.CENTER);
             pastorder.add(priceLabel, 3, row);
+            GridPane.setHalignment(priceLabel, HPos.CENTER);
             row++;
         }
     }
 
     @FXML
-    void goback(ActionEvent event) {
+    void gobackk(ActionEvent event) {
+        Button source = (Button) event.getSource(); // הכפתור שהפעיל את האירוע
+        Stage stage = (Stage) source.getScene().getWindow(); // מקבל את החלון מהכפתור
+        stage.close();
 
     }
 
