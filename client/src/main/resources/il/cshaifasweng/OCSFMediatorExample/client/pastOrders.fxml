@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="previes" prefHeight="731.0" prefWidth="996.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.pastOrders">
    <children>
@@ -19,6 +20,8 @@
          <content>
             <GridPane fx:id="ordersbefore" prefHeight="491.0" prefWidth="994.0">
               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -31,5 +34,15 @@
             </GridPane>
          </content>
       </ScrollPane>
+      <Text fill="#4e3620" layoutX="235.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Browse your previous purchases" textAlignment="CENTER" wrappingWidth="526.800048828125">
+         <font>
+            <Font name="Serif Regular" size="34.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="235.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" manage follow-up actions." textAlignment="CENTER" wrappingWidth="526.800048828125">
+         <font>
+            <Font name="Serif Regular" size="18.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

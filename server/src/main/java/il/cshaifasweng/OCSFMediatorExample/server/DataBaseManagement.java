@@ -154,11 +154,13 @@ public class DataBaseManagement {
         }
     }
 
-    public Customer getUser(int id) {
+    public List<Order> getUser(int id) {
         Customer user = null;
+        List<Order> orders = null;
         try {
             session.beginTransaction();
             user = session.get(Customer.class, id);
+            orders= user.getListOrders();
             session.getTransaction().commit();
         } catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
@@ -166,7 +168,8 @@ public class DataBaseManagement {
             }
             e.printStackTrace();
         }
-        return user;
+        return orders;
+
     }
     public Flower getFlower(int id) {
         Flower flower = null;
@@ -500,8 +503,16 @@ public class DataBaseManagement {
     }
     public void saveorder(Order order) {
         try {
+            Customer user;
             session.beginTransaction();
+            for(CartProduct product: order.getProducts()) {
+                product.setOrder(order); // חובה – שיהיה קישור הפוך
+                session.save(product);
+            }
             session.save(order);
+            user = session.get(Customer.class, order.getCustomer().getId());
+            user.addOrder(order);
+            session.update(user);
             session.getTransaction().commit();
         } catch (Exception exception) {
             if (session != null && session.getTransaction().isActive()) {
@@ -512,7 +523,45 @@ public class DataBaseManagement {
                 exception.printStackTrace();
             }
         }
+
     }
+
+    public void deleteorder(Order order) {
+        try {
+            if (!session.getTransaction().isActive()) {
+                session.beginTransaction();
+            }
+
+            // טען מחדש את הלקוח אם צריך
+            Customer user = session.get(Customer.class, order.getCustomer().getId());
+            for (CartProduct product: order.getProducts()) {
+                order.removeProduct(product);
+                session.delete(product);
+            }
+
+            // ניתוק הקשר של ההזמנה מהלקוח (אם צריך)
+            if (user != null) {
+                user.removeOrder(order);
+                session.update(user);
+            }
+
+            // מחיקת ההזמנה (Hibernate יטפל במוצרים הקשורים בזכות orphanRemoval)
+            session.delete(order);
+
+            session.getTransaction().commit();
+        } catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            } else {
+                System.err.println("An error occurred while deleting order:");
+                exception.printStackTrace();
+            }
+        }
+    }
+
+
+
+
     public void LogOutEmployee(int id) {
         try{
             session.beginTransaction();

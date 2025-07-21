@@ -430,12 +430,15 @@ public class PrimaryController{
 	}
 	@FXML
 	void GoToCart(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
+
 		try {
-			App.setRoot("Ordercart", 900, 730);
+			App.setRoot("Ordercart", 1016, 760);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+
 
 	}
 	@FXML

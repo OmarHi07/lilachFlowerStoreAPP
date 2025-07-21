@@ -175,7 +175,7 @@ public class Ordercart {
                         return;
                 }
                 try {
-                        App.setRoot("payfororder", 900, 730);
+                        App.setRoot("payfororder", 640, 640);
 
                 } catch (IOException e) {
                         e.printStackTrace();
@@ -187,7 +187,7 @@ public class Ordercart {
         @FXML
         void goback(ActionEvent event) {
                 try {
-                        App.setRoot("primary", 900, 730);
+                        App.setRoot("primary", 1040, 780);
                 }
                 catch (IOException e) {
                         e.printStackTrace();
@@ -267,14 +267,8 @@ public class Ordercart {
 
         @FXML
         void pastOrders(ActionEvent actionEvent) {
-
                 try {
-                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("pastOrders.fxml"));
-                        Parent root = fxmlLoader.load();
-                        Stage stage = new Stage();
-                        stage.setTitle("Past Orders");
-                        stage.setScene(new Scene(root));
-                        stage.show();
+                App.setRoot("pastorders", 1006, 750);
                 } catch (IOException e) {
                         e.printStackTrace();
                 }

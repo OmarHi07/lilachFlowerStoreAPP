@@ -46,7 +46,7 @@
         <ScrollPane fitToWidth="true" layoutY="142.0" prefHeight="500.0" prefWidth="996.0" style="-fx-background: transparent; -fx-background-color: transparent;">
             <!-- עושה את ScrollPane שקוף -->
             <content>
-                <GridPane fx:id="myorder" prefHeight="503.0" prefWidth="998.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100% 28.0303%, #c7bca6 0%, #eaeaea 100%);">
+                <GridPane fx:id="myorder" prefHeight="503.0" prefWidth="996.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100% 28.0303%, #c7bca6 0%, #eaeaea 100%);">
 
 
                 <columnConstraints>

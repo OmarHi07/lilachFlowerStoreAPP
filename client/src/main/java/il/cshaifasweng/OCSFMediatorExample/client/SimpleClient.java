@@ -23,14 +23,13 @@ public class SimpleClient extends AbstractClient {
     protected void handleMessageFromServer(Object msg) {
         if (msg instanceof List<?>) {
             List<?> msgList = (List<?>) msg;
-            boolean allAreFlowers = msgList.stream().allMatch(o -> o instanceof Flower);
-            if (allAreFlowers) {
-                System.out.println("Hello from Java!");
-                flowers = msgList.stream().map(o -> (Flower) o).collect(Collectors.toList());
-                flowers.sort(Comparator.comparingInt(Flower::getId));
-                EventBus.getDefault().post(flowers);
+            boolean allAreorders = msgList.stream().allMatch(o -> o instanceof Order);
+            if (allAreorders) {
+                List<Order> orders = msgList.stream().map(o -> (Order) o).collect(Collectors.toList());
+                EventBus.getDefault().post(orders);
             }
-        } else if (msg instanceof Flower) {
+        }
+        else if (msg instanceof Flower) {
             Flower flower = (Flower) msg;
             int id = flower.getId();
             id = id -1;
@@ -63,13 +62,13 @@ public class SimpleClient extends AbstractClient {
         }
 
 
-
         else if (msg instanceof LoginResponse) {
             // ANDLOS ADD THIS: handle login response from server
             LoginResponse response = (LoginResponse) msg;
             if (response.getCustomer()!=null) {
                 CurrentCustomer.setCurrentUser(response.getCustomer());
                 CurrentCustomer.setCurrentCustomer("Customer");
+                CurrentCustomer.setOrders(response.getCustomer().getListOrders());
             }
             if (response.getEmployee()!=null) {
                 CurrentCustomer.setCurrentEmployee(response.getEmployee());

@@ -41,6 +41,7 @@ public class LoginController {
 
         try {
             LoginRequest request = new LoginRequest(username, password, "customer");
+            SimpleClient.getClient().sendToServer("add client");
             SimpleClient.getClient().sendToServer(request);
         } catch (IOException e) {
             errorLabel.setText("❌ שגיאת תקשורת עם השרת.");
@@ -87,7 +88,7 @@ public class LoginController {
                     errorLabel.setText("failed in sendToServer.");
                 }
                 try {
-                    App.setRoot("Primary", 600, 400);
+                    App.setRoot("Primary", 1006, 750);
                 }
                 catch (IOException e) {
                     errorLabel.setText("Failed to load main screen.");

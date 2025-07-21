@@ -29,6 +29,7 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import jdk.jfr.Event;
 
 import javax.transaction.Transaction;
 
@@ -111,44 +112,39 @@ public class payfororder {
                 Optional<ButtonType> result = alert.showAndWait();
 
 
-
                 if (result.isPresent() && result.get() == yesButton) {
                         try {
-                                // טוען את מסך ה‑Ordercart
-                                FXMLLoader loader = new FXMLLoader(getClass().getResource("/il/cshaifasweng/OCSFMediatorExample/client/Ordercart.fxml"));
-                                Parent root = loader.load();
-
-                                // יוצר סצנה חדשה
-                                Scene scene = new Scene(root);
-                                Stage stage = new Stage();
-                                stage.setTitle("Ordercart"); // הכותרת
-                                stage.setScene(scene);
-                                stage.show();
-
-                                // סוגר את החלון הנוכחי
-                                ((Stage) goback.getScene().getWindow()).close();
+                               App.setRoot("Ordercart", 1040, 780);
+                                // סגירת החלון הנוכחי
+                                Stage stage = (Stage) cancel.getScene().getWindow(); // מקבל את החלון מהכפתור
+                                stage.close();
+                                // If "No" is clicked, do nothing
                         } catch (IOException e) {
                                 e.printStackTrace();
                         }
                 }
+                else{
+                        alert.close();
+                }
 
-                // סגירת החלון הנוכחי
-                Stage stage = (Stage) cancel.getScene().getWindow(); // מקבל את החלון מהכפתור
-                stage.close();
-                // If "No" is clicked, do nothing
         }
 
 
         @FXML
         void delivery(ActionEvent event) {
                 locationn.setVisible(true);
-                pickup.setVisible(false);
 
-                Branch selectedBranch = CurrentCustomer.getSelectedBranch();
-
+                String selectedBranch = CurrentCustomer.getSelectedBranch().getAddress();
+                payattention.setVisible(true);
                 if (selectedBranch != null) {
                         payattention.setText("Note: Delivery is only available within " + selectedBranch + ".");
                 }
+                // הדלקת pickup
+                delivery.setStyle("-fx-background-color:  #613b23; -fx-text-fill: white;");
+
+                // כיבוי delivery
+                pickup.setStyle("-fx-background-color:#a18674; -fx-text-fill: white");
+
         }
 
 
@@ -162,7 +158,6 @@ public class payfororder {
         void handleLocationSelection(ActionEvent event) {
 
         }
-
 
 
         private void clearFormFields() {
@@ -179,17 +174,15 @@ public class payfororder {
         }
 
         private void saveconfirm() {
-        // יצירת אובייקט הזמנה
-            Branch selectedBranch = CurrentCustomer.getSelectedBranch();
+                // יצירת אובייקט הזמנה
+                Branch selectedBranch = CurrentCustomer.getSelectedBranch();
 
 
         }
 
 
-
-
         @FXML
-        void payy(ActionEvent event) {
+        void payy(ActionEvent event) throws IOException {
 
                 boolean isValid = true;
 
@@ -237,26 +230,21 @@ public class payfororder {
                 }
 
 
-
                 // אם יש שגיאות – עצור
                 if (!isValid) return;
 
-                List<Branch> branches=SimpleClient.getAllBranches();
-               //Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
+                List<Branch> branches = SimpleClient.getAllBranches();
+                //Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
                 Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals("Haifa")).findFirst().orElse(null);
 
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
                 String currentTime = LocalTime.now().format(timeFormatter);
-
-                //String phone=CurrentCustomer.getCurrentUser().getPhone();
-
-                //Order order = new Order( CurrentCustomer.getCurrentUser(),branch, LocalDate.now().toString(),currentTime,totalprice,  greetingmessage.getText().trim(), "", phone, locationn.getText().trim(), false);
-                //order.setProducts(cartItems);
-
-                Order order = new Order( CurrentCustomer.getCurrentUser(),branch, LocalDate.now().toString(),currentTime,totalprice,  greetingmessage.getText().trim(), "", "", locationn.getText().trim(), false);
+                String phone=CurrentCustomer.getCurrentUser().getPhone();
+                Order order = new Order(CurrentCustomer.getCurrentUser(), branch, LocalDate.now().toString(), currentTime, totalprice, greetingmessage.getText().trim(), "", phone, locationn.getText().trim(), false);
+                order.setDateOrder(LocalDate.now().toString());
+                order.setTimeOrder(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
 
                 order.setProducts(new ArrayList<>(cartItems));
-
                 clearFormFields();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Payment");
@@ -273,40 +261,43 @@ public class payfororder {
                         e.printStackTrace();
                 }
                 try {
-                        App.setRoot("primary", 900, 730);
-                }
-                catch (IOException e) {
+                        App.setRoot("primary", 1040, 780);
+                } catch (IOException e) {
                         e.printStackTrace();
                 }
-
-
-
-
-        @FXML
-        void initialize() {
-                assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert cardnum != null : "fx:id=\"cardnum\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert cvv != null : "fx:id=\"cvv\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert date != null : "fx:id=\"date\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert delivery != null : "fx:id=\"delivery\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert goback != null : "fx:id=\"goback\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert greeting != null : "fx:id=\"greeting\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert greetingmessage != null : "fx:id=\"greetingmessage\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert locationn != null : "fx:id=\"locationn\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert payy != null : "fx:id=\"payy\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert pickup != null : "fx:id=\"pickup\" was not injected: check your FXML file 'payfororder.fxml'.";
-                assert totaal != null : "fx:id=\"totaal\" was not injected: check your FXML file 'payfororder.fxml'.";
-                totaal.setText(totalprice + " ₪");
-                greetingmessage.setVisible(false);
-                locationn.setVisible(false);
         }
+
+                @FXML
+                void initialize () {
+                        assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert cardnum != null : "fx:id=\"cardnum\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert cvv != null : "fx:id=\"cvv\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert date != null : "fx:id=\"date\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert delivery != null : "fx:id=\"delivery\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert goback != null : "fx:id=\"goback\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert greeting != null : "fx:id=\"greeting\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert greetingmessage != null : "fx:id=\"greetingmessage\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert locationn != null : "fx:id=\"locationn\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert payy != null : "fx:id=\"payy\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert pickup != null : "fx:id=\"pickup\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        assert totaal != null : "fx:id=\"totaal\" was not injected: check your FXML file 'payfororder.fxml'.";
+                        totaal.setText(totalprice + " ₪");
+                        greetingmessage.setVisible(false);
+                        locationn.setVisible(false);
+                }
+
+
+
+                public void pickup (ActionEvent event) {
+                        locationn.setVisible(false);
+                        payattention.setVisible(false);
+                        // הדלקת pickup
+                        pickup.setStyle("-fx-background-color:  #613b23; -fx-text-fill: white;");
+
+                        // כיבוי delivery
+                        delivery.setStyle("-fx-background-color:#a18674; -fx-text-fill: white");
+                }
 
         public void gobackk(MouseEvent mouseEvent) {
-
-        }
-
-        public void pickup(){
-                delivery.setVisible(false);
-                locationn.setVisible(false);
         }
 }
