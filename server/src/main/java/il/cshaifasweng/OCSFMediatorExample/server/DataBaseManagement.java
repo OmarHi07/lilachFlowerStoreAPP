@@ -4,12 +4,15 @@ import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import org.hibernate.query.Query;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.io.InputStream;
@@ -63,22 +66,27 @@ public class DataBaseManagement {
         Long count = (Long) session.createQuery("select count(f) from Flower f").uniqueResult();
         if (count == 0 ) {
             InputStream is = DataBaseManagement.class.getResourceAsStream("/images/0.png");
+            assert is != null;
             byte[] imageBytes = is.readAllBytes();
             Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red", 1);
             session.save(flower1);
             is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
+            assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow", 1);
             session.save(flower2);
             is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
+            assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow", 1);
             session.save(flower3);
             is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
+            assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue", 1);
             session.save(flower4);
             is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
+            assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White", 2);
             session.save(flower5);
@@ -803,9 +811,144 @@ public class DataBaseManagement {
             return new BlockUserResponse(false, "Error: " + e.getMessage());
         }
     }
+    public static void insertDummyBranches() {
+        System.out.println("bb");
+        try (Session session = getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
 
+            Branch b1 = new Branch("סניף חיפה");
+            Branch b2 = new Branch("סניף תל אביב");
 
+            session.save(b1);
+            session.save(b2);
 
+            tx.commit();
+            System.out.println("הוזנו סניפים לדוגמה");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static List<?> getReportData(LocalDate from, LocalDate to, int branchId, String reportType) {
+        List<?> result = new ArrayList<>();
 
+        try {
+            session.beginTransaction();
+
+            if (reportType.equals("complain")) {
+                String hql = "FROM Complain c WHERE c.Date BETWEEN :from AND :to";
+                if (branchId != -1) {
+                    hql += " AND c.branch.id = :branchId";
+                }
+                Query<Complain> query = session.createQuery(hql, Complain.class);
+                query.setParameter("from", from);
+                query.setParameter("to", to);
+                if (branchId != -1) {
+                    query.setParameter("branchId", branchId);
+                }
+                result = query.getResultList();
+            }
+
+            // תוכל להרחיב כאן לפי סוגי דוחות אחרים כמו orders, income וכו'
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static void insertDummyComplaints() {
+        System.out.println("cc");
+        try (Session session = getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // קבל את שני הסניפים הראשונים (שנה לפי IDs קיימים במסד הנתונים שלך)
+            Branch branch1 = session.get(Branch.class, 1);
+            Branch branch2 = session.get(Branch.class, 2);
+
+            if (branch1 == null || branch2 == null) {
+                System.out.println("סניפים לדוגמה לא נמצאו במסד הנתונים.");
+                return;
+            }
+
+            for (int i = 1; i <= 6; i++) {
+                Complain c = new Complain();
+                c.setComplain_text("תלונה מספר " + i);
+                c.setAnswer_text("");
+                c.setStatus(false);
+                c.setRefund(0.0);
+                c.setDate(LocalDate.now().minusDays(i));
+                c.setBranch(i % 2 == 0 ? branch1 : branch2);
+
+                session.save(c);
+            }
+
+            tx.commit();
+            System.out.println("הוזנו תלונות לדוגמה למסד הנתונים");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void insertBranchesWithComplaints() {
+        System.out.println("insertBranchesWithComplaints");
+        try (Session session = getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            Branch b1 = new Branch("סניף חיפה");
+            Branch b2 = new Branch("סניף תל אביב");
+
+            session.save(b1);
+            session.save(b2);
+
+            for (int i = 1; i <= 6; i++) {
+                Complain c = new Complain();
+                c.setComplain_text("תלונה לדוגמה מספר " + i);
+                c.setAnswer_text("");
+                c.setStatus(false);
+                c.setRefund(0.0);
+
+                // תאריכים בטווח של 30 עד 60 ימים אחורה
+                LocalDate complaintDate = LocalDate.now().minusDays(30 + i);
+                c.setDate(complaintDate);
+                c.setBranch(i % 2 == 0 ? b1 : b2);
+
+                System.out.println("📅 תלונה " + i + ": " + complaintDate + " לסניף " + c.getBranch().getAddress());
+                session.save(c);
+            }
+
+            tx.commit();
+            System.out.println("✅ הוזנו תלונות בטווח תאריכים תקין");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<String, Long> getComplaintsCountPerBranch(LocalDate fromDate, LocalDate toDate) {
+        System.out.println("eereeeeeeeeeeeeeeeeeegwrgerhtrtf");
+        Map<String, Long> result = new HashMap<>();
+        try {
+            Session session = getSessionFactory().openSession();
+            String hql = "SELECT c.branch.id, COUNT(c) FROM Complain c WHERE c.Date BETWEEN :fromDate AND :toDate GROUP BY c.branch.id"
+                    ;
+            Query<Object[]> query = session.createQuery(hql, Object[].class);
+            query.setParameter("fromDate", fromDate);
+            query.setParameter("toDate", toDate);
+            List<Object[]> list = query.list();
+
+            for (Object[] row : list) {
+                String branchName = (String) row[0];
+                Long count = (Long) row[1];
+                result.put(branchName, count);
+            }
+
+            session.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }
