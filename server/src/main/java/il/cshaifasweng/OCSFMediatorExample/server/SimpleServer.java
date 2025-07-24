@@ -8,6 +8,7 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,29 +47,30 @@ public class SimpleServer extends AbstractServer {
 
 		if (msg instanceof HistogramReportRequest) {
 			System.out.println("Received message of type HistogramReportRequest");
-			ReportRequest request = (ReportRequest) msg;
 
-			if (request.getReportType().equals("complain")) {
-				System.out.println("Fetching complaints from database...");
-				List<Complain> complaintsList = (List<Complain>) DataBaseManagement.getReportData(
-						request.getFromDate(),
-						request.getToDate(),
-						request.getBranchId(),
-						"complain"
-				);
-				System.out.println("Complaints retrieved: " + complaintsList.size());
+			LocalDate fromDate = ((HistogramReportRequest) msg).getFromDate();
+			LocalDate toDate = ((HistogramReportRequest) msg).getToDate();
 
-				try {
-					System.out.println("Sending GetReportEvent with complaints to client...");
-					client.sendToClient(new GetReportEvent("complain", complaintsList));
-//					client.sendToClient();
-					System.out.println("GetReportEvent sent successfully.");
-				} catch (IOException e) {
-					System.out.println("Error sending GetReportEvent to client:");
-					e.printStackTrace();
-				}
+			System.out.println("Fetching complaints from database...");
+			List<Complain> complaintsList = (List<Complain>) DataBaseManagement.getReportData(
+					fromDate,
+					toDate,
+					1,
+					"complain"
+			);
+
+			System.out.println("Complaints retrieved: " + complaintsList.size());
+
+			try {
+				System.out.println("Sending GetReportEvent with complaints to client...");
+				client.sendToClient(new GetReportEvent("complain", complaintsList)); // throw catch fix later
+				System.out.println("GetReportEvent sent successfully.");
+			} catch (IOException e) {
+				System.out.println("Error sending GetReportEvent to client:");
+				e.printStackTrace();
 			}
 		}
+
 
 
 		if (msgString.startsWith("add client")) {
