@@ -21,6 +21,10 @@ public class SimpleClient extends AbstractClient {
 
     @Override
     protected void handleMessageFromServer(Object msg) {
+       if (msg instanceof GetReportEvent){
+            System.out.println("We got GetReportEvent class");
+        }
+
         if (msg instanceof List<?>) {
             List<?> msgList = (List<?>) msg;
             boolean allAreorders = msgList.stream().allMatch(o -> o instanceof Order);
@@ -59,6 +63,10 @@ public class SimpleClient extends AbstractClient {
         else if (msg instanceof SignUpResponse) {
             SignUpResponse response = (SignUpResponse) msg;
             EventBus.getDefault().post(response);
+        }
+
+        else if (msg instanceof GetReportEvent){
+            System.out.println("We got GetReportEvent class");
         }
 
 
