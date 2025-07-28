@@ -169,8 +169,60 @@ public class DataBaseManagement {
             e.printStackTrace();
         }
         return orders;
-
     }
+
+    public static void updateComplaint(Complain complaint) {
+        try {
+            session.beginTransaction();
+            // merge is safer for detached objects—copies your state into a managed entity
+            //update?
+            session.merge(complaint);
+            session.getTransaction().commit();
+            System.out.println("Complaint updated in database.");
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            // clear first-level cache so that the next query truly re-fetches from DB
+            session.clear();
+        }
+    }
+    public List<Complain> getAllComplaints() {
+        try {
+            // ensure no stale state lingers
+            // session.clear();
+            session.beginTransaction();
+            List<Complain> list = session
+                    .createQuery("FROM Complain", Complain.class)
+                    .getResultList();
+            session.getTransaction().commit();
+            return list;
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public static void saveComplaint(Complain complaint) {
+        try {
+            session.beginTransaction();
+            session.save(complaint);
+            session.getTransaction().commit();
+            System.out.println("Complaint saved to database.");
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            System.err.println("Error saving complaint:");
+            e.printStackTrace();
+        }
+    }
+
     public Flower getFlower(int id) {
         Flower flower = null;
         try {

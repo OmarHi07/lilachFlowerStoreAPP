@@ -22,7 +22,7 @@ public class Order implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", orphanRemoval = true)
     private List<CartProduct> products;
 
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(mappedBy = "order",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Complain complain;
 
     private String dateReceive;

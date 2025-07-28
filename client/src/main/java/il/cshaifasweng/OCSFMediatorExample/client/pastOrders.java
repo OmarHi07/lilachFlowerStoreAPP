@@ -50,7 +50,6 @@ public class pastOrders {
     @FXML
     private ResourceBundle resources;
 
-
     @FXML
     private Button Exit;
 
@@ -148,6 +147,13 @@ public class pastOrders {
                 Button complainButton = new Button("Submit Complaint");
                 complainButton.setStyle("-fx-background-color: #613b23; -fx-text-fill: white; -fx-font-size: 13px;");
                 complainButton.setOnAction(e -> {
+                    try{
+                        ComplaintController.order = order;
+                        App.setRoot("ComplaintScreen", 1040, 780);
+                    }
+                    catch (IOException e1){
+                        e1.printStackTrace();
+                    }
                     System.out.println("Complaint clicked for order ID: " + order.getId());
                 });
                 GridPane.setHalignment(complainButton, HPos.CENTER);
