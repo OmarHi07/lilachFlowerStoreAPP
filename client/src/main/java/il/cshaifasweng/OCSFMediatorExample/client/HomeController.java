@@ -11,7 +11,15 @@ import javafx.scene.control.Button;
 
 import java.io.IOException;
 
+import javafx.scene.control.Label;
+
+import javafx.scene.input.MouseEvent;
+
+
 public class HomeController  {
+
+    @FXML
+    private Label createAcount;
 
     @FXML // fx:id="ExitButton"
     private Button ExitButton; // Value injected by FXMLLoader
@@ -39,5 +47,15 @@ public class HomeController  {
         App.setRoot("Login", 600, 400);
     }
 
+    @FXML
+    void createAcount(MouseEvent event) throws IOException {
+         App.setRoot("SignIn",650,530);
+    }
+
+
+    @FXML
+    void loginAsAguest(ActionEvent event) throws IOException {
+         App.setRoot("primary",996.0,731.0);
+    }
 
 }
