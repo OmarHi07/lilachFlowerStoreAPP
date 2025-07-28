@@ -317,7 +317,7 @@ public class SignInController {
     @FXML
     void goToLogin(MouseEvent event) {
         try {
-            App.setRoot("Login", 900, 730);
+            App.setRoot("Login", 600, 400);
         }
         catch (IOException e) {
             e.printStackTrace();
