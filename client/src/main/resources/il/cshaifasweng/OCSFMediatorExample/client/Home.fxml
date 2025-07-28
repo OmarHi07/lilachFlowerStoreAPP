@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.HomeController">
+   <children>
+      <AnchorPane prefHeight="406.0" prefWidth="65.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);">
+         <effect>
+            <DropShadow />
+         </effect>
+      </AnchorPane>
+      <AnchorPane layoutX="439.0" prefHeight="406.0" prefWidth="65.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);">
+         <effect>
+            <DropShadow />
+         </effect>
+      </AnchorPane>
+      <Label layoutX="162.0" layoutY="14.0" text="Lilach Flower Shop ">
+         <font>
+            <Font name="Gabriola" size="30.0" />
+         </font>
+      </Label>
+      <Label layoutX="193.0" layoutY="64.0" text="Profile selection">
+         <font>
+            <Font name="David" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="147.0" layoutY="119.0" text="Which profile would you like to log into?">
+         <font>
+            <Font name="System Italic" size="12.0" />
+         </font>
+      </Label>
+      <Button fx:id="loginAsCustomerButton" layoutX="178.0" layoutY="176.0" mnemonicParsing="false" onAction="#loginAsCustomer" prefHeight="37.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="👤 Login as Customer">
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Button fx:id="loginAsEmployeeButton" layoutX="178.0" layoutY="242.0" mnemonicParsing="false" onAction="#loginAsEmployee" prefHeight="37.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="🛠 Login as Employee">
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Button fx:id="ExitButton" layoutX="230.0" layoutY="340.0" mnemonicParsing="false" onAction="#Exit" prefHeight="25.0" prefWidth="43.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="Exit">
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+   </children>
+</AnchorPane>

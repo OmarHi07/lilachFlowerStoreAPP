@@ -1,42 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-
-<?import javafx.scene.image.Image?>
-
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController"
-            prefWidth="600" prefHeight="400">
-
-    <!-- תמונת רקע -->
-    <ImageView fx:id="backgroundImage"
-               fitWidth="600" fitHeight="400"
-               preserveRatio="false"
-               layoutX="0" layoutY="0" />
-
-    <!-- תיבת התחברות ממורכזת -->
-    <VBox fx:id="loginBox" spacing="10" alignment="CENTER"
-          prefWidth="280"
-          layoutX="160" layoutY="80"
-          AnchorPane.leftAnchor="160" AnchorPane.rightAnchor="160"
-          AnchorPane.topAnchor="80"
-          style="-fx-background-color: rgba(255,255,255,0.85); -fx-background-radius: 10; -fx-padding: 20;">
-
-        <Label text="🌸 Welcome to Lilach System 🌸"
-               style="-fx-font-size: 16px; -fx-text-fill: #6A1B9A;" />
-
-        <TextField fx:id="usernameField" promptText="Username" prefWidth="240"/>
-        <PasswordField fx:id="passwordField" promptText="Password" prefWidth="240"/>
-        <Button text="Login" onAction="#handleLogin" prefWidth="240"/>
-        <Label fx:id="errorLabel" textFill="red" />
-        <Button text="Login as Employee" onAction="#handleEmployeeLogin" prefWidth="240"/>
-        <Button text="Don't have an account? Sign Up" onAction="#goToSignUp" />
-    </VBox>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
+     <Label fx:id="errorLabel" layoutX="138.0" layoutY="220.0" prefHeight="17.0" prefWidth="31.0" textFill="red" />
+   <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);">
+      <children>
+         <Label layoutX="338.0" layoutY="25.0" text="Welcome to lilach flower shop ">
+            <font>
+               <Font name="Gabriola" size="24.0" />
+            </font>
+         </Label>
+         <ImageView blendMode="MULTIPLY" fitHeight="200.0" fitWidth="240.0" layoutX="329.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
+            <effect>
+               <DropShadow blurType="GAUSSIAN" />
+            </effect>
+         </ImageView>
+         <Text layoutX="387.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fresh flowers, local love.">
+            <font>
+               <Font name="System Italic" size="12.0" />
+            </font>
+         </Text>
+         <Text layoutX="356.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Serving our community since 2020." />
+      </children>
+   </AnchorPane>
+   <AnchorPane prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: #ffffff;">
+      <children>
+         <Label layoutX="43.0" layoutY="318.0" prefHeight="17.0" prefWidth="131.0" text="don't have an account ? " />
+         <Label fx:id="goTosignUpLabel" layoutX="173.0" layoutY="319.0" onMouseClicked="#goToSignUp" text="click here to signup">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Label>
+           <Button fx:id="employeeLogInButton" layoutX="91.0" layoutY="241.0" onAction="#handleEmployeeLogin" prefHeight="25.0" prefWidth="131.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="Login as Employee">
+            <effect>
+               <DropShadow />
+            </effect>
+         </Button>
+           <Button fx:id="customerLogInButton" layoutX="96.0" layoutY="242.0" onAction="#handleLogin" prefHeight="25.0" prefWidth="121.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="Login">
+            <effect>
+               <DropShadow />
+            </effect>
+         </Button>
+           <PasswordField fx:id="passwordField" layoutX="40.0" layoutY="171.0" prefHeight="25.0" prefWidth="223.0" promptText="Password                                            🔐 " />
+         <Button fx:id="showPasswordButton" layoutX="263.0" layoutY="171.0" mnemonicParsing="false" onAction="#showPassword" prefHeight="25.0" prefWidth="31.0" style="-fx-background-color: #ffffff;" text="👁" />
+         <Label layoutX="42.0" layoutY="135.0" text="Enter your password :">
+            <font>
+               <Font name="Gabriola" size="17.0" />
+            </font>
+         </Label>
+      
+                 <TextField fx:id="usernameField" layoutX="40.0" layoutY="100.0" prefHeight="25.0" prefWidth="223.0" promptText="Username                                           👤" />
+         <Label layoutX="41.0" layoutY="69.0" text="Enter your username :">
+            <font>
+               <Font name="Gabriola" size="17.0" />
+            </font>
+         </Label>
+         <Label fx:id="EmployeeLog" layoutX="91.0" layoutY="17.0" prefHeight="27.0" prefWidth="121.0" text="Employee Log In ">
+            <font>
+               <Font name="Gabriola" size="22.0" />
+            </font>
+         </Label>
+         <Label fx:id="CustomerLog" layoutX="86.0" layoutY="17.0" prefHeight="27.0" prefWidth="121.0" text="Customer Log In ">
+            <font>
+               <Font name="Gabriola" size="22.0" />
+            </font>
+         </Label>
+         <Button fx:id="goBackButton" layoutY="-1.0" mnemonicParsing="false" onAction="#goBack" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="go back" />
+         <TextField fx:id="visiblePasswordField" layoutX="41.0" layoutY="171.0" prefHeight="25.0" prefWidth="223.0" />
+      </children>
+      <effect>
+         <DropShadow />
+      </effect>
+   </AnchorPane>
 
 </AnchorPane>
