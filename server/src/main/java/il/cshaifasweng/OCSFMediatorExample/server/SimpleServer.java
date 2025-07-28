@@ -9,6 +9,8 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import il.cshaifasweng.OCSFMediatorExample.entities.AddClient;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
 import org.hibernate.Hibernate;
@@ -58,6 +60,62 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
+
+
+		else if (msg instanceof String && msg.equals("get complaints")) {
+			// Fetch *all* complaints from the database
+			List<Complain> all = instance.getAllComplaints();
+
+			// Keep only those still unanswered (status == false)
+			List<Complain> open = all.stream()
+					.filter(c -> !c.getStatus())
+					.collect(Collectors.toList());
+
+			// Send the filtered list back, catching IOException
+			try {
+				client.sendToClient(open);
+			} catch (IOException e) {
+				e.printStackTrace();
+				// Optionally log an error or notify admin
+			}
+		}
+		else if (msg instanceof Complain) {
+			Complain complaint = (Complain) msg;
+
+			if (!complaint.getStatus()) {
+				// New complaint (not saved yet, no ID)
+				System.out.println("Server received new complaint: " + complaint.getComplain_text());
+				instance.saveComplaint(complaint);
+			} else {
+				// Existing complaint (has ID, update it)
+				System.out.println("Server received update for complaint ID: " + complaint.getId());
+				instance.updateComplaint(complaint);
+
+				// sending email after setting the response
+				String answer = complaint.getAnswer_text();
+				if (answer != null && !answer.isEmpty()) {
+					if (complaint.getCustomer() == null) {// atester customer to test if the email sending is working
+						Customer dummy = new Customer();
+						dummy.setEmail("adanemran150@gmail.com");
+						dummy.setFirstName("Test User");
+						complaint.setCustomer(dummy);  // set it just for the test
+					}//end of tester customer
+					String email   = complaint.getCustomer().getEmail();
+					String name    = complaint.getCustomer().getFirstName();
+					String subject = "Response to Your Complaint";
+					String body    = "Dear " + name + ",\n\n"
+							+ "We have responded to your complaint:\n\n"
+							+ answer + "\n\n"
+							+ "Thank you for your patience,\n"
+							+ "— The Lilach Team";
+
+
+					EmailSender.sendEmail(email, subject, body); //here we send an email after the response of the complaint is completed
+					System.out.println("Email sent to: " + email);
+				}
+			}
+		}
+
 		if (msgString.startsWith("add client1")) {
 			try {
 				System.out.println("Hello from Java!");

@@ -15,4 +15,4 @@ public class StoreChainManager extends Employee implements Serializable {
         super(name, username, password);
         this.permission=4;
     }
-        }
+}

@@ -49,6 +49,7 @@ public class ComplaintController {
         // Create a basic complaint object (without customer/order/branch for now)
         Complain c = new Complain(LocalDate.now(), LocalTime.now(), order, complaint);
         c.setStatus(false);
+        c.setCustomer(order.getCustomer());
 
         try {
             SimpleClient.getClient().sendToServer(c); // Send to server
@@ -66,10 +67,15 @@ public class ComplaintController {
     @FXML
     void Back(ActionEvent event) {//to return to the previous screen
         try {
-            App.setRoot("connect", 400, 600);
+            App.setRoot("primary", 400, 600);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
+
+    public void setOrder(Order order1) {
+        order = order1;
+    }
+
 }
