@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 public class Branch implements Serializable {
@@ -17,29 +19,34 @@ public class Branch implements Serializable {
 
        private String address;
 
-       @ManyToMany(mappedBy = "BranchesAvailable")
-       private List<Flower> flowers;
+       @ManyToMany(mappedBy = "BranchesAvailable", fetch = FetchType.EAGER)
+       private transient Set<Flower> flowers;
 
-       @ManyToMany(mappedBy = "ListBranch")
-       private List<Customer> ListUsers;
+       @ManyToMany(mappedBy = "ListBranch" , fetch = FetchType.EAGER)
+       private transient Set<Customer> ListUsers;
 
-       @OneToMany(mappedBy = "branch")
-       private List<Order> ListOrders;
+       @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
+       private transient Set<Order> ListOrders;
 
-       @OneToMany(mappedBy = "Branch")
-       private List<Complain> ListComplains;
+       @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
+       private transient Set<Complain> ListComplains;
 
-       public Branch(){}
+       public Branch(){
+              this.ListUsers = new HashSet<>();
+              this.ListOrders = new HashSet<>();
+              this.ListComplains = new HashSet<>();
+              this.flowers = new HashSet<>();
+       }
 
        public Branch(String address){
               this.address = address;
-              this.ListUsers = new ArrayList<Customer>();
-              this.ListOrders = new ArrayList<Order>();
-              this.ListComplains = new ArrayList<Complain>();
-              this.flowers = new ArrayList<Flower>();
+              this.ListUsers = new HashSet<Customer>();
+              this.ListOrders = new HashSet<Order>();
+              this.ListComplains = new HashSet<Complain>();
+              this.flowers = new HashSet<Flower>();
        }
 
-       public List<Flower> getFlowers() { return flowers; };
+       public List<Flower> getFlowers() { return new ArrayList<>(flowers); };
        public void AddFlower (Flower flower) {
               flowers.add(flower);
        }
@@ -71,14 +78,14 @@ public class Branch implements Serializable {
               this.ListUsers.remove(user);
        }
 
+       public int getId(){return this.id;}
+       public void setListComplains(List<Complain> listComplains){ this.ListComplains = new HashSet<>(listComplains);}
+       public List<Complain> getListComplains() {return new ArrayList<>(ListComplains);}
 
-       public void setListComplains(List<Complain> listComplains){ListComplains = listComplains; }
-       public List<Complain> getListComplains() {return ListComplains;}
+       public void setListOrders(List<Order> listOrders) {ListOrders = new HashSet<>(listOrders);}
+       public List<Order> getListOrders() {return new ArrayList<>(ListOrders);}
 
-       public void setListOrders(List<Order> listOrders) {ListOrders = listOrders;}
-       public List<Order> getListOrders() {return ListOrders;}
-
-       public List<Customer> getListUsers() {return ListUsers;}
-       public void setListUsers(List<Customer> listUsers) {ListUsers = listUsers;}
+       public List<Customer> getListUsers() {return new ArrayList<>(ListUsers);}
+       public void setListUsers(List<Customer> listUsers) {ListUsers = new HashSet<>(listUsers);}
 
 }

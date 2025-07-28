@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="731.0" prefWidth="899.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.InsertFlower">
+   <children>
+      <Text fill="#4d3420" layoutX="225.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Item To The Cataloge" textAlignment="CENTER" wrappingWidth="448.7999145507813">
+         <font>
+            <Font name="Serif Regular" size="34.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="133.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Flower Name:" textAlignment="CENTER" wrappingWidth="184.79997062683105">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#101010" layoutX="32.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Put the details of the Flower:" textAlignment="CENTER" wrappingWidth="302.3999996185303">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="166.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Price:" wrappingWidth="71.99996757507324">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="166.0" layoutY="356.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Color:" wrappingWidth="84.79995536804199">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="166.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type:" wrappingWidth="84.79995536804199">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="166.0" layoutY="473.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image:" wrappingWidth="84.79995536804199">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="165.0" layoutY="532.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Available Branches:" wrappingWidth="170.39994621276855">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <Text fill="#4e3620" layoutX="165.0" layoutY="589.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sale:" wrappingWidth="170.39994621276855">
+         <font>
+            <Font name="Gabriola" size="28.0" />
+         </font>
+      </Text>
+      <TextField fx:id="Price" layoutX="405.0" layoutY="272.0" prefHeight="39.0" prefWidth="246.0" promptText="Price in ₪" />
+      <TextField fx:id="Name" layoutX="405.0" layoutY="210.0" prefHeight="39.0" prefWidth="246.0" promptText="Name" />
+      <TextField fx:id="Type" layoutX="405.0" layoutY="395.0" prefHeight="39.0" prefWidth="246.0" promptText="Type" />
+      <TextField fx:id="Color" layoutX="405.0" layoutY="334.0" prefHeight="39.0" prefWidth="246.0" promptText="Color: Yellow, Blue,  Pink, Red, White" />
+      <Button fx:id="ImageBU" layoutX="405.0" layoutY="449.0" mnemonicParsing="false" onAction="#ImageFlower" prefHeight="39.0" prefWidth="246.0" style="-fx-background-color: #c4b3a3;" text="Insert Image From Your Computer" textFill="#634730">
+         <font>
+            <Font name="Serif Regular" size="16.0" />
+         </font>
+      </Button>
+      <TextField fx:id="Branches" layoutX="405.0" layoutY="508.0" prefHeight="39.0" prefWidth="246.0" promptText="Branches: TelAviv, Haifa" />
+      <TextField fx:id="Sale" layoutX="405.0" layoutY="565.0" prefHeight="39.0" prefWidth="246.0" promptText="Enter discount (in %), if applicable." />
+      <Button layoutX="312.0" layoutY="647.0" mnemonicParsing="false" onAction="#SaveFlower" prefHeight="39.0" prefWidth="185.0" style="-fx-background-color: #c4b3a3;" text="Save Flower" textFill="#634730">
+         <font>
+            <Font name="Serif Regular" size="16.0" />
+         </font>
+      </Button>
+      <Text fill="#c41515" layoutX="26.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All fields are required, except Sale and Available Branches" textAlignment="CENTER" wrappingWidth="448.7999145507813">
+         <font>
+            <Font name="Gabriola" size="21.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertName" fill="#c41515" layoutX="651.0" layoutY="237.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter a name!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertPrice" fill="#c41515" layoutX="651.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter a price!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertColor" fill="#c41515" layoutX="651.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter a Color!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertType" fill="#c41515" layoutX="651.0" layoutY="419.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter a Type!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertImage" fill="#c41515" layoutX="659.0" layoutY="476.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter an Image!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertBranch" fill="#c41515" layoutX="651.0" layoutY="534.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Correct Branches" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#LogOut" style="-fx-background-color: #a18674;" text="Log Out" textFill="#613b23">
+         <font>
+            <Font name="Georgia" size="11.0" />
+         </font>
+      </Button>
+      <Button layoutX="68.0" layoutY="14.0" mnemonicParsing="false" onAction="#BackToCataloge" style="-fx-background-color: #a18674;" text="Back To Catalog" textFill="#613b23">
+         <font>
+            <Font name="Georgia" size="11.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

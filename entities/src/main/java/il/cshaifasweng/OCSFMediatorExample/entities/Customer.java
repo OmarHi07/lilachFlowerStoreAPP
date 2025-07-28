@@ -19,6 +19,9 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "blocked",nullable = false)
+    private Boolean blocked = false; // default: not blocked
+
     private String firstName;
     private String lastName;
 
@@ -40,7 +43,7 @@ public class Customer implements Serializable {
     @OneToMany (mappedBy = "customer")
     private List<Order> listOrders;
 
-    @OneToMany(mappedBy = "Customer")
+    @OneToMany(mappedBy = "customer")
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Complain> listComplains;
 
@@ -49,7 +52,7 @@ public class Customer implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "branch_id")
     )
-    private List<Branch> ListBranch;
+    private List<Branch> listBranch;
 
     public Customer() {}
 
@@ -65,11 +68,19 @@ public class Customer implements Serializable {
         this.creditCardCVV = creditCardCVV;
         this.identifyingNumber = identifyingNumber;
         this.customerType = customerType;
-
+        this.blocked = false;
         this.listOrders = new ArrayList<Order>();
         this.listComplains = new ArrayList<Complain>();
-        this.ListBranch = new ArrayList<Branch>();
+        this.listBranch = new ArrayList<Branch>();
 
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public int getId(){
@@ -164,19 +175,19 @@ public class Customer implements Serializable {
     }
 
     public void addStore(Branch store){
-        if (!this.ListBranch.contains(store)) {
-            this.ListBranch.add(store);      // Update my own list
+        if (!this.listBranch.contains(store)) {
+            this.listBranch.add(store);      // Update my own list
             store.AddUser(this);             // Update the other side once
         }
     }
     public void removeStore(Branch store){
-        this.ListBranch.remove(store);
+        this.listBranch.remove(store);
         store.RemoveUser(this);
     }
 
     public void addStore2(List<Branch> stores) {
         for (Branch store : stores) {
-            this.ListBranch.add(store);
+            this.listBranch.add(store);
             store.addCustomer2(this);
         }
     }
@@ -198,11 +209,11 @@ public class Customer implements Serializable {
     }
 
     public void removeOrderByID(int orderID){
-        for(Order order : listOrders){
-            if(order.getId() == orderID){
-                this.listOrders.remove(order);
-            }
-        }
+        listOrders.removeIf(order -> order.getId() == orderID);
+
+    }
+    public List<Branch> getListBranch() {
+        return this.listBranch;
     }
 
 

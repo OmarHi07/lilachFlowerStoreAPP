@@ -12,15 +12,15 @@ public class Complain implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Customer Customer;
+    private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
-    private Branch Branch;
+    private Branch branch;
 
     @Column(name = "Complain_date")
     private LocalDate Date;
-    @Column(name = "complain time")
+    @Column(name = "complain_time")
     private LocalTime Time;
     @OneToOne
     private Order order;
@@ -39,7 +39,7 @@ public class Complain implements Serializable {
         this.complain_text = text;
     }
 
-    public void setCustomer(Customer customer){this.Customer = customer;}
+    public void setCustomer(Customer customer){this.customer = customer;}
     public void setRefund(double refund) {this.refund = refund;}
     public double getRefund() {return refund;}
     public void setStatus(boolean status) {this.status = status;}
@@ -48,11 +48,17 @@ public class Complain implements Serializable {
     public void setComplain_text(String complain_text) {this.complain_text = complain_text;}
     public String getAnswer_text() {return answer_text;}
     public void setAnswer_text(String answer_text) {this.answer_text = answer_text;}
-    public Customer getCustomer() {return Customer;}
-    public Branch getBranch() {return Branch;}
-    public void setBranch(Branch branch) {this.Branch = branch;}
+    public Customer getCustomer() {return customer;}
+    public Branch getBranch() {return branch;}
+    public void setBranch(Branch branch) {this.branch = branch;}
     public void setOrder(Order order) {this.order = order;}
     public Order getOrder() {return order;}
+    public LocalDate getDate() {
+        return Date;
+    }
+    public LocalTime getTime() {
+        return Time;
+    }
 
 
 }

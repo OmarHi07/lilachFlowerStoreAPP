@@ -21,6 +21,9 @@ public abstract class Employee implements Serializable{
     protected String identifyNumbers;
     boolean login;
 
+    @Column(name = "blocked", nullable = false)
+    private Boolean blocked = false; // default: not blocked
+
 
     public Employee(){}
 
@@ -90,6 +93,14 @@ public abstract class Employee implements Serializable{
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public void setUsername(String username) {

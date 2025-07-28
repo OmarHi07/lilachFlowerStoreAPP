@@ -10,6 +10,7 @@ public class NetworkWorker extends Employee implements Serializable{
 
     public NetworkWorker() {
         super();
+        this.permission = 5;
     }
 
     public NetworkWorker(String name, String username, String pass) {
