@@ -13,7 +13,11 @@ public class App
     public static DataBaseManagement instance = new DataBaseManagement();
 
     public static void main( String[] args ) throws IOException
-    {
+    {    DataBaseManagement.insertBranchesWithComplaints();
+
+        DataBaseManagement.insertDummyBranches();
+
+        DataBaseManagement.insertDummyComplaints();
         server = new SimpleServer(3001);
         instance.initDataBase();
         server.listen();

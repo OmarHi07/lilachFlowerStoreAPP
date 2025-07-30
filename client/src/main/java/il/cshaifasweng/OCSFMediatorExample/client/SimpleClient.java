@@ -15,12 +15,16 @@ public class SimpleClient extends AbstractClient {
     private static List<Flower> flowersSingles;
     private static List<Branch> AllBranches;
 
-    private SimpleClient(String host, int port) {
+    protected SimpleClient(String host, int port) {
         super(host, port);
     }
 
     @Override
     protected void handleMessageFromServer(Object msg) {
+       if (msg instanceof GetReportEvent){
+            System.out.println("We got GetReportEvent class");
+        }
+
         if (msg instanceof List<?>) {
             List<?> msgList = (List<?>) msg;
             boolean allAreorders = msgList.stream().allMatch(o -> o instanceof Order);
@@ -47,7 +51,7 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(flower);
         }
         else if (msg instanceof AddFlower){
-            SimpleClient.flowers.add((Flower) msg);
+            SimpleClient.flowers.add(((AddFlower) msg).getFlower());
         }
         else if(msg instanceof AddClient){
             AddClient addClient = (AddClient) msg;
@@ -69,8 +73,12 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(response);
         }
 
+        else if (msg instanceof GetReportEvent){
+            System.out.println("We got GetReportEvent class");
+        }
 
-        else if (msg instanceof LoginResponse) {
+
+      /*  else if (msg instanceof LoginResponse) {
             // ANDLOS ADD THIS: handle login response from server
             LoginResponse response = (LoginResponse) msg;
             if (response.getCustomer()!=null) {
@@ -83,7 +91,7 @@ public class SimpleClient extends AbstractClient {
             }
             EventBus.getDefault().post(response);
         }
-
+*/
         String msgString = msg.toString();
 
        // if (msgString.startsWith("change")) {
@@ -188,6 +196,11 @@ public class SimpleClient extends AbstractClient {
         }
         return client;
     }
+    public static void setClient(SimpleClient newClient) {
+        System.out.println("initialize1111111");
+        client = newClient;
+    }
+
 }
 
 

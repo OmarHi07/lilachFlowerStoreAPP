@@ -1,14 +1,17 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import com.mysql.cj.xdevapi.Client;
+import il.cshaifasweng.OCSFMediatorExample.client.GetReportEvent;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.AddClient;
@@ -21,7 +24,7 @@ import javax.persistence.NoResultException;
 import static il.cshaifasweng.OCSFMediatorExample.server.App.instance;
 
 public class SimpleServer extends AbstractServer {
-	private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+	private static final ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
 
 	public SimpleServer(int port) {
 		super(port);
@@ -30,6 +33,47 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		String msgString = msg.toString();
+		if (msg instanceof HistogramReportRequest) {
+			System.out.println("fiififififiiffifif");
+			HistogramReportRequest request = (HistogramReportRequest) msg;
+			Map<String, Long> data = DataBaseManagement.getComplaintsCountPerBranch(
+					request.getFromDate(), request.getToDate()
+			);
+			try {
+				client.sendToClient(new GetHistogramReportEvent("complaints", data));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (msg instanceof HistogramReportRequest) {
+			System.out.println("Received message of type HistogramReportRequest");
+
+			LocalDate fromDate = ((HistogramReportRequest) msg).getFromDate();
+			LocalDate toDate = ((HistogramReportRequest) msg).getToDate();
+
+			System.out.println("Fetching complaints from database...");
+			List<Complain> complaintsList = (List<Complain>) DataBaseManagement.getReportData(
+					fromDate,
+					toDate,
+					1,
+					"complain"
+			);
+
+			System.out.println("Complaints retrieved: " + complaintsList.size());
+
+			try {
+				System.out.println("Sending GetReportEvent with complaints to client...");
+				client.sendToClient(new GetReportEvent("complain", complaintsList)); // throw catch fix later
+				System.out.println("GetReportEvent sent successfully.");
+			} catch (IOException e) {
+				System.out.println("Error sending GetReportEvent to client:");
+				e.printStackTrace();
+			}
+		}
+
+
+
 		if (msgString.startsWith("add client")) {
 			SubscribedClient connection = new SubscribedClient(client);
 			SubscribersList.add(connection);
@@ -150,7 +194,6 @@ public class SimpleServer extends AbstractServer {
 			}
 		}
 
-
 		//Added by arkan
 		else if (msgString.startsWith("Delete")) {
 			String[] parts = msgString.split(",");
@@ -162,9 +205,9 @@ public class SimpleServer extends AbstractServer {
 			LoginResponse response;
 
 			if ("employee".equals(request.getUserType())) {
-				response = instance.loginEmployee(request.getUsername(), request.getPassword());
+				response = DataBaseManagement.loginEmployee(request.getUsername(), request.getPassword());
 			} else {
-				response = instance.loginCustomer(request.getUsername(), request.getPassword());
+				response = DataBaseManagement.loginCustomer(request.getUsername(), request.getPassword());
 			}
 			try {
 				client.sendToClient(response);
@@ -256,7 +299,7 @@ public class SimpleServer extends AbstractServer {
 		//Add customer to the table
 		else if (msg instanceof SignUpRequest) {
 			SignUpRequest request = (SignUpRequest) msg;
-			SignUpResponse response = instance.registerCustomer(request);
+			SignUpResponse response = DataBaseManagement.registerCustomer(request);
 			try {
 				if (response.isSuccess()) {
 					// Send confirmation email
@@ -271,7 +314,7 @@ public class SimpleServer extends AbstractServer {
 			GetEntitiesRequest request = (GetEntitiesRequest) msg;
 			String type = request.getEntityType();
 			try {
-				List<?> result = instance.getAllEntities(type);  // ✅ Use the new helper
+				List<?> result = DataBaseManagement.getAllEntities(type);  // ✅ Use the new helper
 				client.sendToClient(new GetEntitiesResponse(result));
 			} catch (Exception e) {
 				e.printStackTrace();
