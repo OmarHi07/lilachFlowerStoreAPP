@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainReportsMenuController">
+
+    <VBox alignment="CENTER" spacing="20.0"
+          AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="30"
+          AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <Label text="Reports Menu" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+
+        <Button text="Income Report" prefWidth="120" onAction="#openIncomeReport"/>
+        <Button text="Complaints Report" prefWidth="120" onAction="#openDetailedReports"/>
+        <Button text="Orders Report" prefWidth="120" onAction="#openOrdersHistogram"/>
+
+    </VBox>
+</AnchorPane>

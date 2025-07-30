@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.Integer?>
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
+
+    <VBox alignment="TOP_CENTER" spacing="10.0"
+          AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
+          AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"
+          prefHeight="500.0" prefWidth="880.0">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+
+        <Label text="Income Report - Orders Summary"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+        <TableView fx:id="ordersTable" prefWidth="860" prefHeight="160">
+            <columns>
+                <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
+                <TableColumn fx:id="addressColumn" prefWidth="120" text="Address" />
+                <TableColumn fx:id="dateOrderColumn" prefWidth="100" text="Order Date" />
+                <TableColumn fx:id="dateReceiveColumn" prefWidth="100" text="Receive Date" />
+                <TableColumn fx:id="greetingColumn" prefWidth="100" text="Greeting" />
+                <TableColumn fx:id="nameReceivesColumn" prefWidth="120" text="Receiver Name" />
+                <TableColumn fx:id="phoneReceivesColumn" prefWidth="120" text="Receiver Phone" />
+                <TableColumn fx:id="statusColumn" prefWidth="70" text="Status" />
+                <TableColumn fx:id="sumColumn" prefWidth="80" text="Sum" />
+                <TableColumn fx:id="typeColumn" prefWidth="100" text="Type" />
+                <TableColumn fx:id="branchIdColumn" prefWidth="80" text="Branch ID" />
+                <TableColumn fx:id="customerIdColumn" prefWidth="80" text="Customer ID" />
+                <TableColumn fx:id="timeOrderColumn" prefWidth="90" text="Order Time" />
+                <TableColumn fx:id="timeReceiveColumn" prefWidth="90" text="Receive Time" />
+            </columns>
+        </TableView>
+
+        <Label text="Histogram - Income by Date"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+        <BarChart fx:id="ordersBarChart" prefWidth="860" prefHeight="180">
+            <xAxis>
+                <CategoryAxis label="Date"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Total Income"/>
+            </yAxis>
+        </BarChart>
+
+        <Label fx:id="totalIncomeLabel"
+               style="-fx-font-size: 14px; -fx-font-weight: bold;"
+               text="Total Income: ₪0.00" />
+
+        <Label text="Select Date Range:"
+               style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+        <HBox alignment="CENTER" spacing="10">
+            <DatePicker fx:id="fromDatePicker" promptText="From Date" />
+            <DatePicker fx:id="toDatePicker" promptText="To Date" />
+        </HBox>
+        <!-- בחירת סניף -->
+        <Label text="Select Branch:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+        <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <Integer fx:value="1"/>
+                    <Integer fx:value="2"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Button text="Load Income Report" onAction="#loadOrdersHistogram" />
+    </VBox>
+</AnchorPane>

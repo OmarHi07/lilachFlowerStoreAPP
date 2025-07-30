@@ -67,4 +67,9 @@ public class Complain implements Serializable {
 
 
 
+    public void setDate(LocalDate localDate) {
+        System.out.println("mohammed");
+        this.Date = localDate;  // ✅ נכון: מקצה את הפרמטר לשדה
+    }
+
 }

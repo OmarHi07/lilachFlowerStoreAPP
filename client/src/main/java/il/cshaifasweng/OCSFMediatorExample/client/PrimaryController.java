@@ -1,25 +1,23 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
-/**
- * Sample Skeleton for 'primary.fxml' Controller Class
- */
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import org.greenrobot.eventbus.EventBus;
-import javafx.scene.control.Button;
 import org.greenrobot.eventbus.Subscribe;
-import javafx.scene.control.ToggleGroup;
+
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.geometry.Insets;
 
@@ -73,7 +71,24 @@ public class PrimaryController{
 	@FXML // fx:id="Grid"
 	private GridPane Grid; // Value injected by FXMLLoader
 
-    private boolean RedSelected;
+
+
+	@FXML
+	private TableView<HistogramEntry> histogramTable;
+	@FXML
+	private TableColumn<HistogramEntry, String> branchColumn;
+	@FXML
+	private TableColumn<HistogramEntry, Long> countColumn;
+
+	@FXML
+	private TableView<Complain> complainTable;
+
+
+	@FXML private TableColumn<Complain, Integer> idColumn;
+	@FXML private TableColumn<Complain, String> complainTextColumn;
+	@FXML private TableColumn<Complain, LocalDate> complainDateColumn;
+
+	private boolean RedSelected;
 	private boolean YellowSelected;
 	private boolean BlueSelected;
 	private boolean PinkSelected;
@@ -89,7 +104,7 @@ public class PrimaryController{
 	void initialize() {
 		EventBus.getDefault().register(this);
 		isCustomize = false;
-		ReturnBU.setVisible(false);
+	//	ReturnBU.setVisible(false);
         BranchGroup = new ToggleGroup();
 		//colorGroup = new ToggleGroup();
 		Haifa.setToggleGroup(BranchGroup);
@@ -99,6 +114,10 @@ public class PrimaryController{
 		BlueSelected = false;
 		PinkSelected = false;
 		WhiteSelected = false;
+		System.out.println("nnnnnnnnnnnnnnnooooooo");
+
+		branchColumn.setCellValueFactory(new PropertyValueFactory<>("branchName"));
+		countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 		//Pink.setToggleGroup(colorGroup);
 		//Red.setToggleGroup(colorGroup);
 		//Yellow.setToggleGroup(colorGroup);
@@ -112,8 +131,35 @@ public class PrimaryController{
 		Grid.setVgap(20);     // רווח אנכי בין שורות
 		Grid.setPadding(new Insets(20)); // רווח מהשוליים
 		init(SimpleClient.getFlowers());
+		EventBus.getDefault().register(this);
+		EventBus.getDefault().register(this);
+		System.out.println("impotannnnnnnnnnnnnnnnnnnnnnnntttttttttttttt");
+
+		branchColumn.setCellValueFactory(new PropertyValueFactory<>("branchName"));
+		countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+		complainTextColumn.setCellValueFactory(new PropertyValueFactory<>("complain_text"));
+		complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("complain_date"));
+		System.out.println("impotannnnnnnnnnnnnnnnnnnnnnnntttttttttttttt");
+
 
 	}
+
+
+	@Subscribe
+	public void onGetHistogramReportEvent(GetHistogramReportEvent event) {
+		System.out.println("onGetHistogramReportEventpri");
+		if (event.getType().equals("complaints")) {
+			Platform.runLater(() -> {
+				List<HistogramEntry> entries = new ArrayList<>();
+				for (Map.Entry<String, Long> entry : event.getData().entrySet()) {
+					entries.add(new HistogramEntry(entry.getKey(), entry.getValue()));
+				}
+				histogramTable.getItems().setAll(entries);
+			});
+		}
+	}
+
 
 	@Subscribe
 	public void init(List<Flower> flowers) {
@@ -188,7 +234,8 @@ public class PrimaryController{
 
 		}
 		if (selectedColor != null && !selectedColor.isEmpty()) {
-			filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
+            assert filteredFlowers != null;
+            filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
 		}
 
 		if (selectedBranch != null) {
@@ -197,14 +244,30 @@ public class PrimaryController{
 			final Branch matchedBranch = branchList.stream().filter(branch -> branch.getAddress().equals(selectedBranch)).findFirst().orElse(null);  // עכשיו זה final
 
 			if (matchedBranch != null) {
-				filteredFlowers =filteredFlowers.stream()
+                assert filteredFlowers != null;
+                filteredFlowers =filteredFlowers.stream()
 						.filter(flower -> flower.getBranch().contains(matchedBranch))
 						.collect(Collectors.toList());
 			}
 		}
 		filtered = filteredFlowers;
-		init(filteredFlowers);
+        assert filteredFlowers != null;
+        init(filteredFlowers);
   	}
+
+	@FXML
+	private void loadComplaintsHistogram() {
+		System.out.println("loadComplaintsHistogram");
+
+		LocalDate from = LocalDate.now().minusMonths(3);
+		LocalDate to = LocalDate.now();
+        try {
+            SimpleClient.getClient().sendToServer(new HistogramReportRequest(from, to));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 	@FXML
 	void BlueColor(ActionEvent event) {
@@ -445,7 +508,7 @@ public class PrimaryController{
 	@FXML
 	void ReturnToCA(ActionEvent event) {
 		isCustomize = false;
-		ReturnBU.setVisible(false);
+	//.......	ReturnBU.setVisible(false);
 		filtered = SimpleClient.getFlowers();
 		List<Flower> listFlowers = SimpleClient.getFlowers();
 		init(listFlowers);
