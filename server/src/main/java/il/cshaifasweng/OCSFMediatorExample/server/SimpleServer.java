@@ -200,7 +200,9 @@ public class SimpleServer extends AbstractServer {
 			int flowerId = Integer.parseInt(parts[1]);
 			instance.deleteFlower(flowerId);
 			sendToAllClients(msgString);
-		} else if (msg instanceof LoginRequest) {
+		}
+
+		else if (msg instanceof LoginRequest) {
 			LoginRequest request = (LoginRequest) msg;
 			LoginResponse response;
 
@@ -214,7 +216,8 @@ public class SimpleServer extends AbstractServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else if (msgString.startsWith("Change Sale")) {
+		}
+		else if (msgString.startsWith("Change Sale")) {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[2]);
 			int Sale = Integer.parseInt(parts[1]);
@@ -225,11 +228,13 @@ public class SimpleServer extends AbstractServer {
 			int flowerId = Integer.parseInt(parts[1]);
 			instance.PutSale(flowerId, 0);
 			sendToAllClients(msgString);
-		} else if (msg instanceof ChangeFlower) {
+		}
+		else if (msg instanceof ChangeFlower) {
 			ChangeFlower newFlower = (ChangeFlower) msg;
 			Flower flower = instance.ChangeDetails(newFlower);
 			sendToAllClients(flower);
-		} else if (msg instanceof Flower) {
+		}
+		else if (msg instanceof Flower) {
 			Flower flower = (Flower) msg;
 			Flower flower1 = instance.addFlower(flower);
 			AddFlower newFlower = new AddFlower(flower1);

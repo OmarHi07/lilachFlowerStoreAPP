@@ -44,14 +44,25 @@ public class SimpleClient extends AbstractClient {
         else if (msg instanceof Flower) {
             Flower flower = (Flower) msg;
             int id = flower.getId();
-            id = id -1;
-            flowers.remove(id);
-            flowers.add(flower);
-            flowers.sort(Comparator.comparingInt(Flower::getId));
+            if (flower.getTypeOfFlower() == 1) {
+                if(flowers.contains(flower)) {
+                    flowers.remove(id);
+                    flowers.add(flower);
+                }
+            }
+            else if (flower.getTypeOfFlower() == 2) {
+                if(flowers.contains(flower)) {
+                    flowersSingles.remove(id);
+                    flowersSingles.add(flower);
+                }
+            }
             EventBus.getDefault().post(flower);
         }
         else if (msg instanceof AddFlower){
-            SimpleClient.flowers.add(((AddFlower) msg).getFlower());
+
+            AddFlower newFlower = (AddFlower) msg;
+            Flower flower = newFlower.getFlower();
+            SimpleClient.flowers.add(flower);
         }
         else if(msg instanceof AddClient){
             AddClient addClient = (AddClient) msg;

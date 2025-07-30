@@ -459,16 +459,17 @@ public class PrimaryController{
 
 	@FXML
 	void LogOut(ActionEvent event) {
-		 Object Current = CurrentCustomer.getCurrentUser();
+	     int id;
 		 String NameClass;
-		 int id;
-		 if(Current != null){
+		 if(CurrentCustomer.getCurrentCustomer() == "Customer") {
+			 Customer Current = CurrentCustomer.getCurrentUser();
 			 NameClass = "Customer";
 			 id = ((Customer) Current).getId();
 		 }
 		 else {
+			 Employee employee = CurrentCustomer.getCurrentEmployee();
 			 NameClass = "Employee";
-			 id = ((StoreChainManager) null).getId();
+			 id = ((Employee) employee).getId();
 		 }
 		 try {
 			 SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
