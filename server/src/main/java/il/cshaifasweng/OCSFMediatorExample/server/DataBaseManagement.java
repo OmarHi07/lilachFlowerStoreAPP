@@ -901,18 +901,34 @@ public class DataBaseManagement {
                 result = query.getResultList();
             }
 
-            // תוכל להרחיב כאן לפי סוגי דוחות אחרים כמו orders, income וכו'
+            if (reportType.equals("orders")) {
+                String hql = "FROM Order o WHERE o.dateReceive BETWEEN :from AND :to";
+                ;
+                if (branchId != -1) {
+                    hql += " AND o.branch.id = :branchId";
+                }
+                Query<Order> query = session.createQuery(hql, Order.class);
+                query.setParameter("from", from);
+                query.setParameter("to", to);
+
+                if (branchId != -1) {
+                    query.setParameter("branchId", branchId);
+                }
+                result = query.getResultList();
+            }
+
             session.getTransaction().commit();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
+            System.out.println("❌ Exception occurred while fetching report data (" + reportType + ")");
             e.printStackTrace();
         }
 
         return result;
     }
-
     public static void insertDummyComplaints() {
         System.out.println("cc");
         try (Session session = getSessionFactory().openSession()) {

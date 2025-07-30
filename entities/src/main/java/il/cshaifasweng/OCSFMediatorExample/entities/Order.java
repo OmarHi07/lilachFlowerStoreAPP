@@ -201,6 +201,12 @@ public class Order implements Serializable {
         this.complain = complain;
         complain.setOrder(this);
     }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getType() {
+        return type;
+    }
 
 
 

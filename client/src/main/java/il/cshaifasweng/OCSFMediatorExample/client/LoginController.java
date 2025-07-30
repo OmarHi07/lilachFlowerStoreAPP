@@ -93,7 +93,6 @@ public class LoginController {
 
         try {
             LoginRequest request = new LoginRequest(username, password, "customer");
-            SimpleClient.getClient().sendToServer("add client");
             SimpleClient.getClient().sendToServer(request);
         } catch (IOException e) {
             errorLabel.setText("❌ שגיאת תקשורת עם השרת.");
@@ -121,7 +120,6 @@ public class LoginController {
     @Subscribe
     public void handleLoginResponse(LoginResponse response) {
         System.out.println(">> קיבלתי LoginResponse: " + response.getMessage());
-
         javafx.application.Platform.runLater(() -> {
             if (response.isSuccess()) {
                 errorLabel.setText("✅ " + response.getMessage());
