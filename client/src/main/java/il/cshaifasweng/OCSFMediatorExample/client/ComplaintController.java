@@ -1,93 +1,81 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
-import javafx.scene.chart.BarChart;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Complain;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
+import il.cshaifasweng.OCSFMediatorExample.entities.Order;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Button;
+import il.cshaifasweng.OCSFMediatorExample.entities.Complain;
+import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
+import javafx.scene.image.Image;
 
-import java.util.List;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 
 public class ComplaintController {
 
-    public static ComplaintController instance;
 
     @FXML
-    TableView<Complain> complaintTable;
+    private TextArea complaintText;
+
+    public static Order order;
 
     @FXML
-    private TableColumn<Complain, String> customerColumn;
+    private Button submitButton;
 
     @FXML
-    private TableColumn<Complain, String> branchColumn;
+    private Button backButton;
+
+
+
+
 
     @FXML
-    private TableColumn<Complain, String> dateColumn;
+    void handleSubmit(ActionEvent event) {//this function save the complaint in complaint
+        String complaint = complaintText.getText();
+        if (complaint == null || complaint.trim().isEmpty()) {//if the complaint is empty or spaces 
+            System.out.println("Complaint is empty!");
+            return;
+        }
 
-    @FXML
-    private TableColumn<Complain, String> timeColumn;
 
-    @FXML
-    private TableColumn<Complain, String> textColumn;
+        System.out.println("Complaint submitted: " + complaint);//printing success message
+        // Later: send complaint to server
 
-    @FXML
-    private TableColumn<Complain, String> answerColumn;
 
-    @FXML
-    private TableColumn<Complain, String> statusColumn;
+        // Create a basic complaint object (without customer/order/branch for now)
+        Complain c = new Complain(LocalDate.now(), LocalTime.now(), order, complaint);
+        c.setStatus(false);
+        c.setCustomer(order.getCustomer());
 
-    @FXML
-    public void initialize() {
-        instance = this;
+        try {
+            SimpleClient.getClient().sendToServer(c); // Send to server
+            System.out.println("Complaint sent to server.");
+            //checking if sending the complaint to the server sucesseded
+        } catch (IOException e) {
+            System.out.println("Failed to send complaint: " + e.getMessage());
+        }
 
-        customerColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getCustomer().getUsername()));
-
-        branchColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getBranch().getAddress()));
-
-        dateColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getDate().toString()));
-
-        timeColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getTime().toString()));
-
-        textColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getComplain_text()));
-
-        answerColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getAnswer_text()));
-
-        statusColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getStatus() ? "Handled" : "Pending"));
+        complaintText.setText(null);
     }
 
-    public static void handleComplaintList(List<Complain> complaints, ComplaintController controller) {
-        Platform.runLater(() -> {
-            ObservableList<Complain> observableList = FXCollections.observableArrayList(complaints);
-            controller.complaintTable.setItems(observableList);
-        });
-    }
+
+
     @FXML
-    private BarChart<String, Number> complaintBarChart;
+    void Back(ActionEvent event) {//to return to the previous screen
+        try {
+            App.setRoot("primary", 400, 600);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
-    public static void updateBarChart(List<Complain> complaints, ComplaintController controller) {
-        long handledCount = complaints.stream().filter(Complain::getStatus).count();
-        long pendingCount = complaints.size() - handledCount;
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.getData().add(new XYChart.Data<>("Handled", handledCount));
-        series.getData().add(new XYChart.Data<>("Pending", pendingCount));
-
-        Platform.runLater(() -> {
-            controller.complaintBarChart.getData().clear();
-            controller.complaintBarChart.getData().add(series);
-        });
+    public void setOrder(Order order1) {
+        order = order1;
     }
 
 }

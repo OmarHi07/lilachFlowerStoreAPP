@@ -10,9 +10,36 @@ import javafx.event.ActionEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+//import java.awt.event.MouseEvent;
+import javafx.scene.input.MouseEvent;
+
 import java.io.IOException;
 
 public class LoginController {
+
+    @FXML // fx:id="CustomerLog"
+    private Label CustomerLog; // Value injected by FXMLLoader
+
+    @FXML // fx:id="EmployeeLog"
+    private Label EmployeeLog; // Value injected by FXMLLoader
+
+    @FXML // fx:id="customerLogInButton"
+    private Button customerLogInButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="employeeLogInButton"
+    private Button employeeLogInButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="goBackButton"
+    private Button goBackButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="goTosignUp"
+    private Label goTosignUpLabel; // Value injected by FXMLLoader
+
+    @FXML // fx:id="showPasswordButton"
+    private Button showPasswordButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="visiblePasswordField"
+    private TextField visiblePasswordField; // Value injected by FXMLLoader
 
     @FXML
     private TextField usernameField;
@@ -23,14 +50,39 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
-    @FXML
-    private ImageView backgroundImage;
 
     @FXML
     public void initialize() {
         EventBus.getDefault().register(this);
 
+        visiblePasswordField.setVisible(false);
 
+        if (Session.selectedRole.equals("customer")) {
+            CustomerLog.setVisible(true);
+            customerLogInButton.setVisible(true);
+            EmployeeLog.setVisible(false);
+            employeeLogInButton.setVisible(false);
+        } else {
+            CustomerLog.setVisible(false);
+            customerLogInButton.setVisible(false);
+            EmployeeLog.setVisible(true);
+            employeeLogInButton.setVisible(true);
+        }
+
+    }
+
+    @FXML
+    void goBack(ActionEvent event) throws IOException {
+        App.setRoot("Home",500,400);
+    }
+
+    @FXML
+    void goToSignUp(MouseEvent event) {
+        try {
+            App.setRoot("SignIn", 600, 400);
+        } catch (IOException e) {
+            errorLabel.setText("❌ לא ניתן לעבור למסך הרשמה.");
+        }
     }
 
     // התחברות כלקוח
@@ -64,15 +116,6 @@ public class LoginController {
         }
     }
 
-    // מעבר למסך הרשמה
-    @FXML
-    public void goToSignUp(ActionEvent event) {
-        try {
-            App.setRoot("SignIn", 600, 400);
-        } catch (IOException e) {
-            errorLabel.setText("❌ לא ניתן לעבור למסך הרשמה.");
-        }
-    }
 
     // טיפול בתגובה מהשרת לאחר התחברות
     @Subscribe
@@ -98,4 +141,27 @@ public class LoginController {
             }
         });
     }
+
+
+    @FXML
+    void showPassword(ActionEvent event) {
+        if (visiblePasswordField.isVisible()) {
+            // Hide visible text, show password field
+            passwordField.setText(visiblePasswordField.getText());
+            visiblePasswordField.setVisible(false);
+            visiblePasswordField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            showPasswordButton.setText("👁");
+        } else {
+            // Show visible text field with password text
+            visiblePasswordField.setText(passwordField.getText());
+            visiblePasswordField.setVisible(true);
+            visiblePasswordField.setManaged(true);
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            showPasswordButton.setText("🙈");
+        }
+    }
+
 }

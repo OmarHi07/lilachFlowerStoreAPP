@@ -32,7 +32,15 @@ public class SimpleClient extends AbstractClient {
                 List<Order> orders = msgList.stream().map(o -> (Order) o).collect(Collectors.toList());
                 EventBus.getDefault().post(orders);
             }
+            // 2) New: handle complaint lists by yaman
+            boolean allAreComplaints = msgList.stream().allMatch(o -> o instanceof Complain);
+            if (allAreComplaints) {
+                @SuppressWarnings("unchecked")
+                List<Complain> complaints = (List<Complain>) msgList;
+                EventBus.getDefault().post(complaints);
+            }
         }
+
         else if (msg instanceof Flower) {
             Flower flower = (Flower) msg;
             int id = flower.getId();
@@ -76,7 +84,6 @@ public class SimpleClient extends AbstractClient {
             if (response.getCustomer()!=null) {
                 CurrentCustomer.setCurrentUser(response.getCustomer());
                 CurrentCustomer.setCurrentCustomer("Customer");
-                CurrentCustomer.setOrders(response.getCustomer().getListOrders());
             }
             if (response.getEmployee()!=null) {
                 CurrentCustomer.setCurrentEmployee(response.getEmployee());
