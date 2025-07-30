@@ -1,25 +1,40 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
-
+import javafx.scene.chart.XYChart;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import il.cshaifasweng.OCSFMediatorExample.entities.GetReportEvent;
+import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Complain;
-import il.cshaifasweng.OCSFMediatorExample.entities.GetHistogramReportEvent;
 import il.cshaifasweng.OCSFMediatorExample.entities.HistogramReportRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReportRequest;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 public class ReportsController {
+
+    @FXML
+    private DatePicker fromDatePicker;
+
+    @FXML
+    private DatePicker toDatePicker;
+
+    @FXML
+    private ComboBox<String> branchComboBox;
+
+
     @FXML
     private TableView<Complain> complainTable;
     @FXML
@@ -28,122 +43,91 @@ public class ReportsController {
     private TableColumn<Complain, String> textColumn;
     @FXML
     private TableColumn<Complain, LocalDate> dateColumn;
-
-
+    @FXML
+    private BarChart<String, Number> dailyComplaintsChart;
     @FXML
     private TableColumn<Complain, String> complainTextColumn;
-
     @FXML
     private TableColumn<Complain, LocalDate> complainDateColumn;
-
     @FXML
     private TableColumn<HistogramEntry, String> branchColumn;
-
     @FXML
     private TableColumn<HistogramEntry, Integer> countColumn;
-
     @FXML
     private TableView<HistogramEntry> histogramTable;
-
-
-
-
+    private Collectors Collectors;
     @FXML
     public void initialize() {
-        System.out.println("initialize1111111");
-
+        branchComboBox.getItems().addAll("All", "1", "2");
+        branchComboBox.setValue(("All")); // ברירת מחדל
         EventBus.getDefault().register(this);
-
-        branchColumn.setCellValueFactory(new PropertyValueFactory<>("branchName"));
         countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+        countColumn.setCellValueFactory(new PropertyValueFactory<>("branch.id"));
 
+        countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         complainTextColumn.setCellValueFactory(new PropertyValueFactory<>("complain_text"));
         complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // תואם ל-getDate()
-        System.out.println("initialize22222222");
-
     }
-
-
     @FXML
-    private void loadComplaintsHistogram() throws IOException {
-        LocalDate from = LocalDate.now().minusMonths(3);
-        LocalDate to = LocalDate.now();
+    private void loadOrdersHistogram() throws IOException {
+        LocalDate from = fromDatePicker.getValue();
+        LocalDate to = toDatePicker.getValue();
 
-        System.out.println("נשלחת בקשה לדוח (" + from + " עד " + to + ")");
+        // טיפול במקרה שלא נבחרו תאריכים
+        if (from == null || to == null) {
+            System.out.println("⚠️ יש לבחור טווח תאריכים לפני שליחה לשרת");
+            return;
+        }
+        Integer branchId = Integer.valueOf(branchComboBox.getValue());
+        if (branchId == null) {
+            System.out.println("⚠️ Please select a branch.");
+            return;
+        }
 
-        SimpleClient.getClient().sendToServer(new HistogramReportRequest(from, to));
 
+        SimpleClient.getClient().sendToServer(new HistogramReportRequest("complaints", from, to, branchId));
     }
-
 
     @Subscribe
-    public void onGetHistogramReportEvent(GetHistogramReportEvent event) {
-        System.out.println("onGetHistogramReportEvent");
-        System.out.println("aa " + event.getType());
-        System.out.println("bb " + event.getData());
-        if (event.getType().equals("Complaints")) {
-            Platform.runLater(() -> {
-                List<HistogramEntry> entries = new ArrayList<>();
-                for (Map.Entry<String, Long> entry : event.getData().entrySet()) {
-                    entries.add(new HistogramEntry(entry.getKey(), entry.getValue()));
-                }
-                histogramTable.getItems().setAll(entries);
-            });
-        }
-    }
     public void onReportReceived(GetReportEvent event) {
-        System.out.println("onReportReceived");
-
         if (!"complain".equals(event.getReportType())) {
             System.out.println("Skipped event, not a complain report.");
             return;
         }
-
         Object data = event.getReportData();
-
         if (data == null) {
             System.out.println("❌ reportData is null");
             return;
         }
-
-        System.out.println("Class of reportData: " + data.getClass().getName());
-
-        if (data instanceof List<?>) {
-            List<?> rawList = (List<?>) data;
-
-            if (!rawList.isEmpty()) {
-                System.out.println("First element class: " + rawList.get(0).getClass().getName());
-            } else {
-                System.out.println("⚠️ reportData list is empty");
-            }
-
-            try {
-                @SuppressWarnings("unchecked")
-                List<Complain> complaints = (List<Complain>) rawList;
-
-                Platform.runLater(() -> {
-                    complainTable.setItems(FXCollections.observableArrayList(complaints));
-                });
-            } catch (ClassCastException e) {
-                System.out.println("❌ Failed to cast to List<Complain>");
-                e.printStackTrace();
-            }
-        } else {
+        if (!(data instanceof List<?> rawList)) {
             System.out.println("❌ reportData is NOT a List");
+            return;
+        }
+        if (rawList.isEmpty()) {
+            System.out.println("⚠️ reportData list is empty");
+            return;
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            List<Complain> complaints = (List<Complain>) rawList;// ✅ מיון וספירה לפי תאריך
+            Map<LocalDate, Long> countsByDate = complaints.stream()
+                    .collect(Collectors.groupingBy(
+                            Complain::getDate,
+                            TreeMap::new,
+                            Collectors.counting()
+                    ));
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            for (Map.Entry<LocalDate, Long> entry : countsByDate.entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
+            }
+            Platform.runLater(() -> {
+                complainTable.setItems(FXCollections.observableArrayList(complaints));
+                dailyComplaintsChart.getData().clear();
+                dailyComplaintsChart.getData().add(series);
+            });
+        } catch (ClassCastException e) {
+            e.printStackTrace();
         }
     }
-    @FXML
-    private void loadDetailedComplaintsReport() throws IOException {
-        LocalDate from = LocalDate.now().minusMonths(1);
-        LocalDate to = LocalDate.now();
-        int branchId = 1; // או -1 אם אתה מנהל רשת
-
-        ReportRequest request = new ReportRequest("complain", from, to, branchId);
-        SimpleClient.getClient().sendToServer(request);
-    }
-
-
-
-
 }
