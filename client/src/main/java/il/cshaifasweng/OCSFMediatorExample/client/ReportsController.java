@@ -69,8 +69,9 @@ public class ReportsController {
         complainTextColumn.setCellValueFactory(new PropertyValueFactory<>("complain_text"));
         complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // תואם ל-getDate()
     }
+
     @FXML
-    private void loadOrdersHistogram() throws IOException {
+    private void loadOrdersHistogram(){
         LocalDate from = fromDatePicker.getValue();
         LocalDate to = toDatePicker.getValue();
 
@@ -84,9 +85,12 @@ public class ReportsController {
             System.out.println("⚠️ Please select a branch.");
             return;
         }
-
-
-        SimpleClient.getClient().sendToServer(new HistogramReportRequest("complaints", from, to, branchId));
+        try {
+            SimpleClient.getClient().sendToServer(new HistogramReportRequest("complaints", from, to, branchId));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Subscribe
@@ -100,10 +104,11 @@ public class ReportsController {
             System.out.println("❌ reportData is null");
             return;
         }
-        if (!(data instanceof List<?> rawList)) {
+        if (!(data instanceof List<?>)) {
             System.out.println("❌ reportData is NOT a List");
             return;
         }
+        List<?> rawList = (List<?>) data;
         if (rawList.isEmpty()) {
             System.out.println("⚠️ reportData list is empty");
             return;

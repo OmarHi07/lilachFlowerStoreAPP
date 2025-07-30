@@ -21,10 +21,12 @@ public class SimpleClient extends AbstractClient {
 
     @Override
     protected void handleMessageFromServer(Object msg) {
-       if (msg instanceof GetReportEvent){
-            System.out.println("We got GetReportEvent class");
-        }
 
+        if (msg instanceof GetReportEvent){
+            System.out.println("✅ We got GetReportEvent class");
+            EventBus.getDefault().post((GetReportEvent) msg);
+            return;
+        }
         if (msg instanceof List<?>) {
             List<?> msgList = (List<?>) msg;
             boolean allAreorders = msgList.stream().allMatch(o -> o instanceof Order);
@@ -89,7 +91,7 @@ public class SimpleClient extends AbstractClient {
         }
 
 
-      /*  else if (msg instanceof LoginResponse) {
+      else if (msg instanceof LoginResponse) {
             // ANDLOS ADD THIS: handle login response from server
             LoginResponse response = (LoginResponse) msg;
             if (response.getCustomer()!=null) {
@@ -102,7 +104,7 @@ public class SimpleClient extends AbstractClient {
             }
             EventBus.getDefault().post(response);
         }
-*/
+
         String msgString = msg.toString();
 
        // if (msgString.startsWith("change")) {
@@ -206,10 +208,6 @@ public class SimpleClient extends AbstractClient {
             client = new SimpleClient(host, port);
         }
         return client;
-    }
-    public static void setClient(SimpleClient newClient) {
-        System.out.println("initialize1111111");
-        client = newClient;
     }
 
 }

@@ -104,7 +104,7 @@ public class PrimaryController{
 	void initialize() {
 		EventBus.getDefault().register(this);
 		isCustomize = false;
-	//	ReturnBU.setVisible(false);
+		ReturnBU.setVisible(false);
         BranchGroup = new ToggleGroup();
 		//colorGroup = new ToggleGroup();
 		Haifa.setToggleGroup(BranchGroup);
@@ -114,10 +114,6 @@ public class PrimaryController{
 		BlueSelected = false;
 		PinkSelected = false;
 		WhiteSelected = false;
-		System.out.println("nnnnnnnnnnnnnnnooooooo");
-
-		branchColumn.setCellValueFactory(new PropertyValueFactory<>("branchName"));
-		countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 		//Pink.setToggleGroup(colorGroup);
 		//Red.setToggleGroup(colorGroup);
 		//Yellow.setToggleGroup(colorGroup);
@@ -130,36 +126,8 @@ public class PrimaryController{
 		Grid.setHgap(20);     // רווח אופקי בין טורים
 		Grid.setVgap(20);     // רווח אנכי בין שורות
 		Grid.setPadding(new Insets(20)); // רווח מהשוליים
-		init(SimpleClient.getFlowers());
-		EventBus.getDefault().register(this);
-		EventBus.getDefault().register(this);
-		System.out.println("impotannnnnnnnnnnnnnnnnnnnnnnntttttttttttttt");
-
-		branchColumn.setCellValueFactory(new PropertyValueFactory<>("branchName"));
-		countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-		complainTextColumn.setCellValueFactory(new PropertyValueFactory<>("complain_text"));
-		complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("complain_date"));
-		System.out.println("impotannnnnnnnnnnnnnnnnnnnnnnntttttttttttttt");
-
-
+        init(SimpleClient.getFlowers());
 	}
-
-
-	@Subscribe
-	public void onGetHistogramReportEvent(GetHistogramReportEvent event) {
-		System.out.println("onGetHistogramReportEventpri");
-		if (event.getType().equals("complaints")) {
-			Platform.runLater(() -> {
-				List<HistogramEntry> entries = new ArrayList<>();
-				for (Map.Entry<String, Long> entry : event.getData().entrySet()) {
-					entries.add(new HistogramEntry(entry.getKey(), entry.getValue()));
-				}
-				histogramTable.getItems().setAll(entries);
-			});
-		}
-	}
-
 
 	@Subscribe
 	public void init(List<Flower> flowers) {
@@ -234,7 +202,6 @@ public class PrimaryController{
 
 		}
 		if (selectedColor != null && !selectedColor.isEmpty()) {
-            assert filteredFlowers != null;
             filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
 		}
 
@@ -244,31 +211,14 @@ public class PrimaryController{
 			final Branch matchedBranch = branchList.stream().filter(branch -> branch.getAddress().equals(selectedBranch)).findFirst().orElse(null);  // עכשיו זה final
 
 			if (matchedBranch != null) {
-                assert filteredFlowers != null;
                 filteredFlowers =filteredFlowers.stream()
 						.filter(flower -> flower.getBranch().contains(matchedBranch))
 						.collect(Collectors.toList());
 			}
 		}
 		filtered = filteredFlowers;
-        assert filteredFlowers != null;
         init(filteredFlowers);
   	}
-
-	@FXML
-	private void loadComplaintsHistogram() {
-		System.out.println("loadComplaintsHistogram");
-
-		LocalDate from = LocalDate.now().minusMonths(3);
-		LocalDate to = LocalDate.now();
-        try {
-            SimpleClient.getClient().sendToServer(new HistogramReportRequest(from, to));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 	@FXML
 	void BlueColor(ActionEvent event) {
 		if (Blue.isSelected() && !BlueSelected){
@@ -508,7 +458,7 @@ public class PrimaryController{
 	@FXML
 	void ReturnToCA(ActionEvent event) {
 		isCustomize = false;
-	//.......	ReturnBU.setVisible(false);
+	    ReturnBU.setVisible(false);
 		filtered = SimpleClient.getFlowers();
 		List<Flower> listFlowers = SimpleClient.getFlowers();
 		init(listFlowers);
@@ -534,5 +484,13 @@ public class PrimaryController{
 	}
 
 	@FXML
-	void ViewingReports(ActionEvent event) {}
+	void ViewingReports(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
+		try {
+			App.setRoot("MainReportsMenu", 1016, 760);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

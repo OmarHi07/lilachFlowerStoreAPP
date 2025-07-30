@@ -12,31 +12,31 @@ public class MainReportsMenuController {
 
     @FXML
     private void openIncomeReport() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("IncomeReport.fxml"));
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Income Report");
-        stage.setScene(new Scene(root));
-        stage.show();
+        try {
+            App.setRoot("IncomeReport",1016, 760);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void openDetailedReports() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Reports.fxml"));
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Detailed Reports");
-        stage.setScene(new Scene(root));
-        stage.show();
+        try {
+            App.setRoot("Reports",1016, 760);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void openOrdersHistogram() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("OrdersHistogram.fxml"));
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Orders Histogram");
-        stage.setScene(new Scene(root));
-        stage.show();
+        try {
+            App.setRoot("OrdersHistogram", 1016, 760);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

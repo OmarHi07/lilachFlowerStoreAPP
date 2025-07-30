@@ -68,7 +68,7 @@ public class OrdersReportsController {
     }
 
     @FXML
-    private void loadOrdersHistogram() throws IOException {
+    private void loadOrdersHistogram(){
         LocalDate from = fromDatePicker.getValue();
         LocalDate to = toDatePicker.getValue();
 
@@ -79,7 +79,12 @@ public class OrdersReportsController {
         }
 
         int branchId = 1;
-        SimpleClient.getClient().sendToServer(new HistogramReportRequest("orders", from, to, branchId));
+        try {
+            SimpleClient.getClient().sendToServer(new HistogramReportRequest("orders", from, to, branchId));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -90,10 +95,17 @@ public class OrdersReportsController {
             return;
         }
         Object data = event.getReportData();
-        if (data == null || !(data instanceof List<?> rawList) || rawList.isEmpty()) {
+        if (data == null || !(data instanceof List<?>)) {
             System.out.println("⚠️ Invalid or empty report data");
             return;
         }
+
+        List<?> rawList = (List<?>) data;
+        if (rawList.isEmpty()) {
+            System.out.println("⚠️ Invalid or empty report data");
+            return;
+        }
+
         try {
             List<Order> orders = rawList.stream().filter(obj -> obj instanceof Order).map(obj -> (Order) obj)
                     .filter(order ->
@@ -106,11 +118,13 @@ public class OrdersReportsController {
                     .collect(Collectors.toList());
 
             Map<LocalDate, Double> incomeByDate = orders.stream()
+                    .filter(o -> o.getDateOrder() != null && !o.getDateOrder().isBlank())
                     .collect(Collectors.groupingBy(
-                            Order::getDateReceive,
+                            o -> LocalDate.parse(o.getDateOrder()),   // ← המרה מ-String ל-LocalDate
                             TreeMap::new,
                             Collectors.summingDouble(Order::getSum)
                     ));
+
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             for (Map.Entry<LocalDate, Double> entry : incomeByDate.entrySet()) {

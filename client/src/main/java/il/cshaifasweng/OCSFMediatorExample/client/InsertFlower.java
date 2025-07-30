@@ -6,12 +6,17 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
+import il.cshaifasweng.OCSFMediatorExample.entities.Customer;
 import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
+import il.cshaifasweng.OCSFMediatorExample.entities.StoreChainManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.greenrobot.eventbus.EventBus;
@@ -19,11 +24,10 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InsertFlower {
-
-    @FXML // fx:id="AlertBranch"
-    private Text AlertBranch; // Value injected by FXMLLoader
 
     @FXML // fx:id="AlertColor"
     private Text AlertColor; // Value injected by FXMLLoader
@@ -40,14 +44,19 @@ public class InsertFlower {
     @FXML // fx:id="AlertType"
     private Text AlertType; // Value injected by FXMLLoader
 
-    @FXML // fx:id="Branches"
-    private TextField Branches; // Value injected by FXMLLoader
+    @FXML // fx:id="SingleFlower"
+    private RadioButton SingleFlower; // Value injected by FXMLLoader
 
-    @FXML // fx:id="Color"
-    private TextField Color; // Value injected by FXMLLoader
+    @FXML // fx:id="Bouquet"
+    private RadioButton Bouquet; // Value injected by FXMLLoader
+
+    @FXML // fx:id="AlertTT"
+    private Text AlertTT; // Value injected by FXMLLoader
 
     @FXML // fx:id="ImageBU"
     private Button ImageBU; // Value injected by FXMLLoader
+
+    private List<Branch> branchesAvaliable;
 
     @FXML // fx:id="Name"
     private TextField Name; // Value injected by FXMLLoader
@@ -61,17 +70,56 @@ public class InsertFlower {
     @FXML // fx:id="Type"
     private TextField Type; // Value injected by FXMLLoader
 
+    @FXML // fx:id="Blue"
+    private RadioButton Blue; // Value injected by FXMLLoader
+
+    @FXML // fx:id="Green"
+    private RadioButton Green; // Value injected by FXMLLoader
+
+    @FXML // fx:id="Red"
+    private RadioButton Red; // Value injected by FXMLLoader
+
+    @FXML // fx:id="Pink"
+    private RadioButton Pink; // Value injected by FXMLLoader
+
+    @FXML // fx:id="White"
+    private RadioButton White; // Value injected by FXMLLoader
+
+    @FXML // fx:id="haifa"
+    private RadioButton haifa; // Value injected by FXMLLoader
+
+    @FXML // fx:id="telaviv"
+    private RadioButton telaviv; // Value injected by FXMLLoader
+
+    @FXML // fx:id="yellow"
+    private RadioButton yellow; // Value injected by FXMLLoader
+
+    private ToggleGroup TypeOfFlower;
+    private String selectedColor;
+    private int TypeOfFlowerSelected;
     private byte[] selectedImageBytes;
+    private ToggleGroup colorGroup;
 
     @FXML
     void initialize(){
        // EventBus.getDefault().register(this);
+        TypeOfFlowerSelected = 0;
+        colorGroup = new ToggleGroup();
+        TypeOfFlower = new ToggleGroup();
+        branchesAvaliable = new ArrayList<>();
+        SingleFlower.setToggleGroup(TypeOfFlower);
+        Bouquet.setToggleGroup(TypeOfFlower);
+        Blue.setToggleGroup(colorGroup);
+        Green.setToggleGroup(colorGroup);
+        Red.setToggleGroup(colorGroup);
+        Pink.setToggleGroup(colorGroup);
+        White.setToggleGroup(colorGroup);
+        yellow.setToggleGroup(colorGroup);
         AlertColor.setVisible(false);
         AlertImage.setVisible(false);
         AlertName.setVisible(false);
         AlertPrice.setVisible(false);
         AlertType.setVisible(false);
-        AlertBranch.setVisible(false);
         selectedImageBytes = null;
     }
 
@@ -94,132 +142,173 @@ public class InsertFlower {
 
     private EntityManager entityManager;
 
-    public Branch getBranchByName(String nameBranch) {
-        TypedQuery<Branch> query = entityManager.createQuery(
-                "SELECT b FROM Branch b WHERE b.address = :name", Branch.class);
-        query.setParameter("name", nameBranch);
+    @FXML
+    void BlueColor(ActionEvent event) {
+        selectedColor = "Blue";
+    }
 
-        Branch branch = query.getSingleResult(); // זורק חריגה אם לא נמצא
-        return branch;
+    @FXML
+    void GreenColor(ActionEvent event) {
+        selectedColor = "Green";
+    }
+
+    @FXML
+    void InHaifa(ActionEvent event) {
+        List<Branch> branchesList = SimpleClient.getAllBranches();
+        Branch branch = branchesList.stream().filter(branch1 -> branch1.getAddress().equals("Haifa")).findFirst().orElse(null);
+        if(haifa.isSelected()){
+            if(!branchesAvaliable.contains(branch)){
+                branchesAvaliable.add(branch);
+            }
+        }
+        else {
+            if(branchesAvaliable.contains(branch)) {
+                branchesAvaliable.remove(branch);
+            }
+        }
+    }
+
+    @FXML
+    void InTelAviv(ActionEvent event) {
+        List<Branch> branchesList = SimpleClient.getAllBranches();
+        Branch branch = branchesList.stream().filter(branch1 -> branch1.getAddress().equals("TelAviv")).findFirst().orElse(null);
+        if(telaviv.isSelected()){
+            if(!branchesAvaliable.contains(branch)){
+                branchesAvaliable.add(branch);
+            }
+        }
+        else {
+            if(branchesAvaliable.contains(branch)) {
+                branchesAvaliable.remove(branch);
+            }
+        }
+
+    }
+
+
+    @FXML
+    void SingleType(ActionEvent event) {
+         TypeOfFlowerSelected = 2;
+    }
+
+    @FXML
+    void BouquetType(ActionEvent event) {
+         TypeOfFlowerSelected = 1;
+    }
+
+
+    @FXML
+    void PinkColor(ActionEvent event) {
+        selectedColor = "Pink";
+    }
+
+    @FXML
+    void RedColor(ActionEvent event) {
+        selectedColor = "Red";
+    }
+
+    @FXML
+    void WhiteColor(ActionEvent event) {
+        selectedColor = "White";
+    }
+
+    @FXML
+    void yellowcolor(ActionEvent event) {
+        selectedColor = "Yellow";
     }
 
     void Clear(){
         Platform.runLater(()->{
-            Color.clear();
+            AlertTT.setText(null);
+            AlertName.setText(null);
+            AlertPrice.setText(null);
+            TypeOfFlowerSelected =0;
+            AlertType.setText(null);
+            AlertColor.setText(null);
+            AlertImage.setText(null);
+            haifa.setSelected(false);
+            Blue.setSelected(false);
+            Green.setSelected(false);
+            Red.setSelected(false);
+            Pink.setSelected(false);
+            White.setSelected(false);
+            yellow.setSelected(false);
+            telaviv.setSelected(false);
             Name.clear();
             Price.clear();
             Sale.clear();
             Type.clear();
-            Branches.clear();
         });
         selectedImageBytes = null;
     }
 
     @FXML
     void SaveFlower(ActionEvent event) {
-        String color = Color.getText();
         String type = Type.getText();
         String name = Name.getText();
         String price = Price.getText();
         double priceValue = Double.parseDouble(price);
         String sale = Sale.getText();
         byte[] image = ImageBU.getText().getBytes();
-        if(Color.getText().isEmpty()){
-            AlertColor.setVisible(true);
-        }
-        else if(Type.getText().isEmpty()){
+        if(Type.getText().isEmpty()){
             AlertType.setVisible(true);
         }
-        else if(Name.getText().isEmpty()){
+        if(Name.getText().isEmpty()){
             AlertName.setVisible(true);
         }
-        else if(Price.getText().isEmpty()){
+        if(Price.getText().isEmpty()){
             AlertPrice.setVisible(true);
         }
-        else if(selectedImageBytes == (null)){
+        if(selectedImageBytes == (null)){
             AlertImage.setVisible(true);
         }
+        if(TypeOfFlowerSelected==0){
+           AlertTT.setVisible(true);
+        }
+
         else{
-            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, color, 1);
+            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, selectedColor, 1);
             if(!(sale.isEmpty())){
                 flower.setSale(Integer.parseInt(sale));
             }
-            if(!Branches.getText().isEmpty()) {
-                if (Branches.getText().equals("Haifa")) {
-                    Branch branch = getBranchByName("Haifa");
-                    flower.AddBranch(branch);
-                }
-                else if (Branches.getText().equals("TelAviv")){
-                    Branch branch = getBranchByName("TelAviv");
-                    flower.AddBranch(branch);
-                }
-                else if (Branches.getText().contains(",")){
-                    String branchesTxt = Branches.getText();
-                    branchesTxt = branchesTxt.replaceAll("\\s+", "");
-                    String[] parts = Branches.getText().split(",");
-                    if(parts.length == 2 && ((parts[0].equals("Haifa") && parts[1].equals("TelAviv")) || (parts[0].equals("TelAviv") && parts[1].equals("Haifa")))){
-                        String branch1 = parts[0];
-                        String branch2 = parts[1];
-                        Branch branch11 = getBranchByName(branch1);
-                        Branch branch12 = getBranchByName(branch2);
-                        flower.AddBranch(branch11);
-                        flower.AddBranch(branch12);
-                        try {
-                            SimpleClient.getClient().sendToServer(flower);
-                            SimpleClient.getFlowers().add(flower);
-                            Clear();
-                        }
-                        catch(Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        AlertBranch.setVisible(true);
-                    }
-                }
-                else{
-                    String branchesTxt = Branches.getText();
-                    String[] parts = Branches.getText().split(" ");
-                    if(parts.length == 2 && ((parts[0].equals("Haifa") && parts[1].equals("TelAviv")) || (parts[0].equals("TelAviv") && parts[1].equals("Haifa")))){
-                        String branch1 = parts[0];
-                        String branch2 = parts[1];
-                        Branch branch11 = getBranchByName(branch1);
-                        Branch branch12 = getBranchByName(branch2);
-                        flower.AddBranch(branch11);
-                        flower.AddBranch(branch12);
-                        try {
-                            SimpleClient.getClient().sendToServer(flower);
-                            SimpleClient.getFlowers().add(flower);
-                            Clear();
-                        }
-                        catch(Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                    else {
-                        AlertBranch.setVisible(true);
-                    }
-                }
+            if(!branchesAvaliable.isEmpty()){
+                flower.setBranch(branchesAvaliable);
 
             }
-            else {
-                try {
+            try {
                     SimpleClient.getClient().sendToServer(flower);
-                   //תתקני את זה לכל ה Client
                     Clear();
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-
             }
-
+            catch(Exception e){
+                    e.printStackTrace();
+            }
         }
 
     }
     @FXML
     void LogOut(ActionEvent event) {
-
+        Object Current = CurrentCustomer.getCurrentUser();
+        String NameClass;
+        int id;
+        if(Current instanceof Customer){
+            NameClass = "Customer";
+            id = ((Customer) Current).getId();
+        }
+        else {
+            NameClass = "Employee";
+            id = ((StoreChainManager) Current).getId();
+        }
+        try {
+            SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
+            CurrentCustomer.setCurrentUser(null);
+            CurrentCustomer.setCurrentEmployee(null);
+            CurrentCustomer.setCurrentCustomer(null);
+            CurrentCustomer.setSelectedBranch(null);
+            App.setRoot("SignIn", 900, 760);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
