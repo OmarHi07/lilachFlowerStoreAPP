@@ -32,5 +32,11 @@ public class FlowerCardCache {
             controller.setData(updatedFlower);
         }
     }
+    public static void remove(int id) {
+        AnchorPane pane = cache.remove(id);
+        Item controller = controllerCache.remove(id);
+
+    }
+
 
 }

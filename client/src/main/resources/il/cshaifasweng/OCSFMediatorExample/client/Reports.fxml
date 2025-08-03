@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
 
 <?import java.lang.Integer?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
@@ -64,12 +66,13 @@
         <!-- בחירת סניף -->
         <Label text="Select Branch:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
         <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <Integer fx:value="1"/>
-                    <Integer fx:value="2"/>
-                </FXCollections>
-            </items>
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="All"/>
+                        <String fx:value="1"/>
+                        <String fx:value="2"/>
+                    </FXCollections>
+                </items>
         </ComboBox>
 
         <Button text="Load Complaints Report" onAction="#loadOrdersHistogram" />

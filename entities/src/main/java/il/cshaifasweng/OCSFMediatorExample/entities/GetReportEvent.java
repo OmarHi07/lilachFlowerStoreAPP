@@ -10,14 +10,20 @@ public class GetReportEvent implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final String reportType;
-    private final List<?> reportData;
+    private  String reportType;
+    private  List<?> reportData;
 
     public GetReportEvent(String reportType, List<?> reportData) {
         this.reportType = reportType;
         this.reportData = reportData;
     }
-
+    public GetReportEvent(){}
+    public void setReportType(String reportType1) {
+        this.reportType = reportType1;
+    }
+    public void setReportData(List<?> reportData1) {
+        this.reportData = reportData1;
+    }
     public String getReportType() {
         return reportType;
     }

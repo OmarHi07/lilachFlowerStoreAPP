@@ -7,6 +7,7 @@
 
 <?import javafx.collections.FXCollections?>
 <?import java.lang.Integer?>
+<?import java.lang.String?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1"
             fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
 
@@ -69,8 +70,9 @@
         <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <Integer fx:value="1"/>
-                    <Integer fx:value="2"/>
+                    <String fx:value="1"/>
+                    <String fx:value="2"/>
+                    <String fx:value="All"/>
                 </FXCollections>
             </items>
         </ComboBox>

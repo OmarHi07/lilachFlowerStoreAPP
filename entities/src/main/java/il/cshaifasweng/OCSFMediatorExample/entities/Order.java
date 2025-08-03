@@ -2,6 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +21,21 @@ public class Order implements Serializable {
     @ManyToOne
     private Branch branch;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "order",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,   // ← חשוב: כך מחיקה של Order תגרור מחיקת CartProduct
+            orphanRemoval = true
+    )
     private List<CartProduct> products;
 
     @OneToOne(mappedBy = "order",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Complain complain;
 
-    private String dateReceive;
-    private String timeReceive;
-    private String dateOrder;
-    private String timeOrder;
+    private LocalDate dateReceive;
+    private LocalTime timeReceive;
+    private LocalDate dateOrder;
+    private LocalTime timeOrder;
     private double sum;
     private String greeting;
     private String nameReceives;
@@ -38,7 +45,7 @@ public class Order implements Serializable {
     private String type;
     private boolean isCanceled;
 
-    public Order(Customer user, Branch store, String dateReceive, String timeReceive, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
+    public Order(Customer user, Branch store, LocalDate dateReceive, LocalTime timeReceive, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
         this.customer = user;
         this.branch = store;
         this.dateReceive = dateReceive;
@@ -102,6 +109,7 @@ public class Order implements Serializable {
 
     public void removeProduct(CartProduct product){
         this.products.remove(product);
+        product.setOrder(null);
         this.sum-=product.getPrice();
     }
 
@@ -113,35 +121,35 @@ public class Order implements Serializable {
         isCanceled = canceled;
     }
 
-    public String getDateReceive() {
+    public LocalDate getDateReceive() {
         return dateReceive;
     }
 
-    public void setDateReceive(String dateReceive) {
+    public void setDateReceive(LocalDate dateReceive) {
         this.dateReceive = dateReceive;
     }
 
-    public String getTimeReceive() {
+    public LocalTime getTimeReceive() {
         return timeReceive;
     }
 
-    public void setTimeReceive(String timeReceive) {
+    public void setTimeReceive(LocalTime timeReceive) {
         this.timeReceive = timeReceive;
     }
 
-    public String getDateOrder() {
+    public LocalDate getDateOrder() {
         return dateOrder;
     }
 
-    public void setDateOrder(String dateOrder) {
+    public void setDateOrder(LocalDate dateOrder) {
         this.dateOrder = dateOrder;
     }
 
-    public String getTimeOrder() {
+    public LocalTime getTimeOrder() {
         return timeOrder;
     }
 
-    public void setTimeOrder(String timeOrder) {
+    public void setTimeOrder(LocalTime timeOrder) {
         this.timeOrder = timeOrder;
     }
 
@@ -207,6 +215,7 @@ public class Order implements Serializable {
     public String getType() {
         return type;
     }
+
 
 
 

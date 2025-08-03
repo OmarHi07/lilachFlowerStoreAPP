@@ -238,11 +238,13 @@ public class payfororder {
                 Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals("Haifa")).findFirst().orElse(null);
 
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-                String currentTime = LocalTime.now().format(timeFormatter);
+                LocalTime currentTime = LocalTime.now();
                 String phone=CurrentCustomer.getCurrentUser().getPhone();
-                Order order = new Order(CurrentCustomer.getCurrentUser(), branch, LocalDate.now().toString(), currentTime, totalprice, greetingmessage.getText().trim(), "", phone, locationn.getText().trim(), false);
-                order.setDateOrder(LocalDate.now().toString());
-                order.setTimeOrder(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+                Order order = new Order(CurrentCustomer.getCurrentUser(), branch, LocalDate.now(), currentTime, totalprice, greetingmessage.getText().trim(), "", phone, locationn.getText().trim(), false);
+                order.setDateOrder(LocalDate.now());
+                order.setTimeOrder(LocalTime.now());
+                order.setTimeOrder(LocalTime.now().withSecond(0).withNano(0));
+
 
                 order.setProducts(new ArrayList<>(cartItems));
                 clearFormFields();
@@ -251,8 +253,6 @@ public class payfororder {
                 alert.setHeaderText("Payment Submitted");
                 alert.setContentText("Thank you! Your payment is being processed.");
                 alert.showAndWait();
-
-
                 try {
                         SimpleClient.getClient().sendToServer(order);
                         cartItems.clear();

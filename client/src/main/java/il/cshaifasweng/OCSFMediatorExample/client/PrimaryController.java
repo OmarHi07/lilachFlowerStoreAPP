@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import org.greenrobot.eventbus.EventBus;
@@ -17,14 +16,20 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.geometry.Insets;
+import javafx.scene.text.Text;
 
 public class PrimaryController{
 
 	private int NumCol;
 	private int NumRow;
+
+	@FXML // fx:id="ProfileBU"
+	private Button ProfileBU; // Value injected by FXMLLoader
+
+	@FXML // fx:id="ComplaintBU"
+	private Button ComplaintBU; // Value injected by FXMLLoader
 
 	@FXML // fx:id="Blue"
 	private RadioButton Blue; // Value injected by FXMLLoader
@@ -71,8 +76,28 @@ public class PrimaryController{
 	@FXML // fx:id="Grid"
 	private GridPane Grid; // Value injected by FXMLLoader
 
+	@FXML // fx:id="AddSaleBU"
+	private Button AddSaleBU; // Value injected by FXMLLoader
 
+	@FXML // fx:id="SaleSentence"
+	private Text SaleSentence; // Value injected by FXMLLoader
 
+	@FXML // fx:id="AddSaleEm"
+	private Text AddSaleEm; // Value injected by FXMLLoader
+
+	@FXML // fx:id="BranchBoxEm"
+	private ChoiceBox<String> BranchBoxEm; // Value injected by FXMLLoader
+
+	@FXML // fx:id="DiscountEm"
+	private Text DiscountEm; // Value injected by FXMLLoader
+
+	@FXML // fx:id="DiscountSS"
+	private Text DiscountSS; // Value injected by FXMLLoader
+	@FXML // fx:id="PutDiscountEm"
+	private TextField PutDiscountEm; // Value injected by FXMLLoader
+
+	@FXML // fx:id="SelectBranchEm"
+	private Text SelectBranchEm; // Value injected by FXMLLoader
 	@FXML
 	private TableView<HistogramEntry> histogramTable;
 	@FXML
@@ -100,9 +125,12 @@ public class PrimaryController{
 	private static List<String> selectedColor;
 	private static List<Flower> filtered;
 
+
 	@FXML
 	void initialize() {
 		EventBus.getDefault().register(this);
+		BranchBoxEm.getItems().addAll("Haifa", "TelAviv", "All");
+		BranchBoxEm.setValue(("All"));
 		isCustomize = false;
 		ReturnBU.setVisible(false);
         BranchGroup = new ToggleGroup();
@@ -132,10 +160,17 @@ public class PrimaryController{
 	@Subscribe
 	public void init(List<Flower> flowers) {
 			flowers.sort(Comparator.comparingInt(Flower::getId));
-		    filtered = SimpleClient.getFlowers();
+		    filtered = flowers;
 			Platform.runLater(()->{
 				System.out.println("Entered");
-				if (CurrentCustomer.getCurrentEmployee() != null) {
+				if(CurrentCustomer.getCurrentCustomer().equals("Guest")) {
+					CartBU.setDisable(false);
+					ReturnBU.setDisable(false);
+					ComplaintBU.setVisible(false);
+					ReportBU.setVisible(false);
+					UpdateCatalogBU.setVisible(false);
+				}
+				else if (CurrentCustomer.getCurrentEmployee() != null) {
 					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
 					System.out.println(employee.getUsername());
 					if(employee.getPermission() == 5) {
@@ -144,6 +179,13 @@ public class PrimaryController{
 				}
 				else {
 					if (CurrentCustomer.getCurrentUser() != null) {
+						AddSaleBU.setVisible(false);
+						SelectBranchEm.setVisible(false);
+						BranchBoxEm.setVisible(false);
+						DiscountEm.setVisible(false);
+						DiscountSS.setVisible(false);
+						PutDiscountEm.setVisible(false);
+						AddSaleEm.setVisible(false);
 						Customer customer = (Customer) CurrentCustomer.getCurrentUser();
 						if(customer.getCustomerType() == 1){
 							Haifa.setDisable(false);
@@ -161,13 +203,45 @@ public class PrimaryController{
 				   try {
 					  AnchorPane FlowerNode;
 					  if (FlowerCardCache.contains(flower.getId())) {
-					    	FlowerNode = FlowerCardCache.getPane(flower.getId());
+						  Item controller = FlowerCardCache.getController(flower.getId());
+						  FlowerNode = FlowerCardCache.getPane(flower.getId());
+						  if(CurrentCustomer.getSelectedBranch()!=null) {
+							  if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) )) {
+								  controller.PutSale(flower);
+							  }
+							  else{
+								  controller.setData(flower);
+							  }
+						  }
+						  else{
+							  if(flower.getSaleBranchNUM() == 3){
+								  controller.PutSale(flower);
+							  }
+							  else {
+								  controller.setData(flower);
+							  }
+						  }
 					  }
 					  else {
 						FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
 						FlowerNode = loader.load();
 						Item controller = loader.getController();
-						controller.setData(flower);
+						if(CurrentCustomer.getSelectedBranch()!=null) {
+							if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) )) {
+								controller.PutSale(flower);
+							}
+							else {
+								controller.setData(flower);
+							}
+						}
+						else {
+							if(flower.getSaleBranchNUM() == 3){
+								controller.PutSale(flower);
+							}
+							else{
+								controller.setData(flower);
+							}
+						}
 						FlowerCardCache.put(flower.getId(), FlowerNode, controller);
 					  }
 					  FlowerNode.setPrefHeight(520);
@@ -219,6 +293,31 @@ public class PrimaryController{
 		filtered = filteredFlowers;
         init(filteredFlowers);
   	}
+
+	@Subscribe
+	public void UpdateAfterSale(AddSale event) {
+		List<Flower> flowers = SimpleClient.getFlowers();
+		List<Flower> flowers1 = SimpleClient.getFlowersSingles();
+		List<Flower> filteredFlowers = new ArrayList<>();
+		for (Flower flower: filtered){
+			int index = flower.getId();
+			for (Flower flower1: flowers){
+				if(flower1.getId() == index){
+					filteredFlowers.add(flower1);
+					break;
+				}
+			}
+			for (Flower flower1: flowers1){
+				if(flower1.getId() == index){
+					filteredFlowers.add(flower1);
+					break;
+				}
+			}
+			filtered = filteredFlowers;
+			init(filteredFlowers);
+		}
+
+	}
 	@FXML
 	void BlueColor(ActionEvent event) {
 		if (Blue.isSelected() && !BlueSelected){
@@ -245,6 +344,18 @@ public class PrimaryController{
 			}
 		});
 	}
+	@Subscribe
+	public void DeleteFlower(DeletFlower deleteItem) {
+		Platform.runLater(() -> {
+			List<Flower> flowersList = new ArrayList<>();
+			for(Flower flower: filtered){
+				if(!flower.equals(deleteItem.getFlower())){
+					flowersList.add(flower);
+				}
+			}
+			EventBus.getDefault().post(flowersList);
+		});
+	}
 
 	@FXML
 	void ClearSelection(ActionEvent event) {
@@ -261,6 +372,7 @@ public class PrimaryController{
 		WhiteSelected = false;
 		selectedColor.clear();
 		selectedBranch = null;
+		CurrentCustomer.setSelectedBranch(null);
 		Max.setText(null);
 		Min.setText(null);
 		List<Flower> flowers;
@@ -411,30 +523,39 @@ public class PrimaryController{
 	void LogOut(ActionEvent event) {
 	     int id;
 		 String NameClass;
-		 if(CurrentCustomer.getCurrentCustomer() == "Customer") {
-			 Customer Current = CurrentCustomer.getCurrentUser();
-			 NameClass = "Customer";
-			 id = ((Customer) Current).getId();
-		 }
-		 else {
-			 Employee employee = CurrentCustomer.getCurrentEmployee();
-			 NameClass = "Employee";
-			 id = ((Employee) employee).getId();
-		 }
-		 try {
-			 SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
-			 CurrentCustomer.setCurrentUser(null);
-			 CurrentCustomer.setCurrentEmployee(null);
-			 CurrentCustomer.setCurrentCustomer(null);
-			 CurrentCustomer.setSelectedBranch(null);
-			 App.setRoot("SignIn", 900, 760);
-		 }
-		 catch (IOException e) {
-			 e.printStackTrace();
+		 FlowerCardCache.clear();
+		 if(CurrentCustomer.getCurrentCustomer().equals("Guest")){
+			 try {
+				 App.setRoot("SignIn", 900, 760);
+			 }
+			 catch (IOException e) {
+				 e.printStackTrace();
+			 }
+		 }else {
+		     if (CurrentCustomer.getCurrentCustomer() == "Customer") {
+				 Customer Current = CurrentCustomer.getCurrentUser();
+				 NameClass = "Customer";
+				 id = ((Customer) Current).getId();
+			 } else {
+				 Employee employee = CurrentCustomer.getCurrentEmployee();
+				 NameClass = "Employee";
+				 id = ((Employee) employee).getId();
+			 }
+			 try {
+				 SimpleClient.getClient().sendToServer("log out," + NameClass + "," + id);
+				 CurrentCustomer.setCurrentUser(null);
+				 CurrentCustomer.setCurrentEmployee(null);
+				 CurrentCustomer.setCurrentCustomer(null);
+				 CurrentCustomer.setSelectedBranch(null);
+				 App.setRoot("SignIn", 900, 760);
+			 } catch (IOException e) {
+				 e.printStackTrace();
+			 }
 		 }
 	}
 	@FXML
 	void UpdateCatalog(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
 		try {
 			App.setRoot("InsertFlower", 900, 730);
 		}
@@ -445,7 +566,6 @@ public class PrimaryController{
 	@FXML
 	void GoToCart(ActionEvent event) {
 		EventBus.getDefault().unregister(this);
-
 		try {
 			App.setRoot("Ordercart", 1016, 760);
 		}
@@ -475,10 +595,9 @@ public class PrimaryController{
 			flowers = SimpleClient.getFlowers();
 		}
 		for (Flower flower : filtered){
-             int NumID = flower.getId();
-			 NumID = NumID - 1;
-			 Flower flower1 = flowers.get(NumID);
-			 refreshFlowers.add(flower1);
+			if(flowers.contains(flower)) {
+				refreshFlowers.add(flower);
+			}
 		}
 		init(refreshFlowers);
 	}
@@ -492,5 +611,58 @@ public class PrimaryController{
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	@FXML
+	void HandleComplaint(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
+		try {
+			App.setRoot("HandleComplaints", 1016, 760);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+	@FXML
+	void AddSale(ActionEvent event) {
+		if(!PutDiscountEm.getText().isEmpty() && !BranchBoxEm.getValue().isEmpty()){
+			AddSale newsale = new AddSale();
+			if(BranchBoxEm.getValue().equals("Haifa")) {
+				newsale.setNumBranch(1);
+				newsale.setNumSale(Integer.parseInt(PutDiscountEm.getText()));
+			}
+			else if(BranchBoxEm.getValue().equals("TelAviv")){
+				newsale.setNumBranch(2);
+				newsale.setNumSale(Integer.parseInt(PutDiscountEm.getText()));
+			}
+			else {
+				newsale.setNumBranch(3);
+				newsale.setNumSale(Integer.parseInt(PutDiscountEm.getText()));
+			}
+			try {
+				PutDiscountEm.setText(null);
+				SimpleClient.getClient().sendToServer(newsale);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@FXML
+	void GoToMyprofile(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
+		try{
+			App.setRoot("AccountInformation", 1016, 760);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

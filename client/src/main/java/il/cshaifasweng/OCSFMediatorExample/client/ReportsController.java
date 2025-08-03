@@ -70,6 +70,12 @@ public class ReportsController {
         complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // תואם ל-getDate()
     }
 
+    private int parseBranchId() {
+        String v = branchComboBox.getValue();
+        if (v == null || v.equalsIgnoreCase("All")) return -1;   // ← תואם לשרת
+        try { return Integer.parseInt(v.trim()); } catch (NumberFormatException e) { return -1; }
+    }
+
     @FXML
     private void loadOrdersHistogram(){
         LocalDate from = fromDatePicker.getValue();
@@ -80,13 +86,11 @@ public class ReportsController {
             System.out.println("⚠️ יש לבחור טווח תאריכים לפני שליחה לשרת");
             return;
         }
-        Integer branchId = Integer.valueOf(branchComboBox.getValue());
-        if (branchId == null) {
-            System.out.println("⚠️ Please select a branch.");
-            return;
-        }
+
+        int branchId = parseBranchId();
+
         try {
-            SimpleClient.getClient().sendToServer(new HistogramReportRequest("complaints", from, to, branchId));
+            SimpleClient.getClient().sendToServer(new HistogramReportRequest("complain", from, to, branchId));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -115,7 +119,7 @@ public class ReportsController {
         }
         try {
             @SuppressWarnings("unchecked")
-            List<Complain> complaints = (List<Complain>) rawList;// ✅ מיון וספירה לפי תאריך
+            List<Complain> complaints = (List<Complain>) rawList;
             Map<LocalDate, Long> countsByDate = complaints.stream()
                     .collect(Collectors.groupingBy(
                             Complain::getDate,

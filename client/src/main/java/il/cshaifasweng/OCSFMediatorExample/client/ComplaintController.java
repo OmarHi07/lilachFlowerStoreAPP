@@ -1,9 +1,10 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
 
+package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Order;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Button;
 import il.cshaifasweng.OCSFMediatorExample.entities.Complain;
@@ -29,6 +30,12 @@ public class ComplaintController {
     @FXML
     private Button backButton;
 
+    @FXML
+    private Button cancelButton;
+
+    @FXML
+    private Label confirmationLabel;
+
 
 
 
@@ -36,7 +43,7 @@ public class ComplaintController {
     @FXML
     void handleSubmit(ActionEvent event) {//this function save the complaint in complaint
         String complaint = complaintText.getText();
-        if (complaint == null || complaint.trim().isEmpty()) {//if the complaint is empty or spaces 
+        if (complaint == null || complaint.trim().isEmpty()) {//if the complaint is empty or spaces
             System.out.println("Complaint is empty!");
             return;
         }
@@ -50,6 +57,7 @@ public class ComplaintController {
         Complain c = new Complain(LocalDate.now(), LocalTime.now(), order, complaint);
         c.setStatus(false);
         c.setCustomer(order.getCustomer());
+        c.setBranch(order.getBranch());
 
         try {
             SimpleClient.getClient().sendToServer(c); // Send to server
@@ -60,9 +68,26 @@ public class ComplaintController {
         }
 
         complaintText.setText(null);
+
+        confirmationLabel.setText("✅ Your complaint has been submitted.");
+        confirmationLabel.setStyle("-fx-text-fill: #6b8e23;"); // soft green/brown
     }
 
+    //to clear the message Your complaint has been submitted
+    @FXML
+    public void initialize() {
+        // clear the message whenever user types again
+        complaintText.textProperty().addListener((obs, oldText, newText) -> {
+            confirmationLabel.setText("");
+        });
+    }
 
+    @FXML
+    private void handleCancel(ActionEvent event) {
+        // Clear the complaint text area
+        complaintText.setText(null);
+        System.out.println("Complaint form cleared.");
+    }
 
     @FXML
     void Back(ActionEvent event) {//to return to the previous screen
@@ -73,9 +98,4 @@ public class ComplaintController {
             e.printStackTrace();
         }
     }
-
-    public void setOrder(Order order1) {
-        order = order1;
-    }
-
 }

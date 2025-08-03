@@ -31,6 +31,22 @@ public class HomeController  {
     private Button loginAsEmployeeButton; // Value injected by FXMLLoader
 
     @FXML
+    void initialize() {
+        try {
+            SimpleClient client = SimpleClient.getClient( "localhost", 3001);
+            client.openConnection();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            SimpleClient.getClient().sendToServer("add client");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
     void Exit(ActionEvent event) {
         Platform.exit();
     }
@@ -55,7 +71,10 @@ public class HomeController  {
 
     @FXML
     void loginAsAguest(ActionEvent event) throws IOException {
-         App.setRoot("primary",996.0,731.0);
+        CurrentCustomer.setCurrentCustomer("Guest");
+        CurrentCustomer.setCurrentEmployee(null);
+        CurrentCustomer.setCurrentUser(null);
+        App.setRoot("primary",996.0,731.0);
     }
 
 }

@@ -26,9 +26,8 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         EventBus.getDefault().register(this);
-
         primaryStage = stage;
-        scene = new Scene(loadFXML("SignIn"), 600, 400); // Set initial scene to 'connect'
+        scene = new Scene(loadFXML("Home"), 600, 400); // Set initial scene to 'connect'
         stage.setScene(scene);
         stage.setTitle("Connect to Server");
         stage.show();

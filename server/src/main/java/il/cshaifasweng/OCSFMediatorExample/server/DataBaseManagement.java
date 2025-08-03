@@ -4,13 +4,11 @@ import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.hibernate.query.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -69,26 +67,41 @@ public class DataBaseManagement {
             assert is != null;
             byte[] imageBytes = is.readAllBytes();
             Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red", 1);
+            flower1.setSaleBranchNUM(-1);
+            flower1.setSaleBranch(0);
+            flower1.setSale(0);
             session.save(flower1);
             is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow", 1);
+            flower2.setSaleBranchNUM(-1);
+            flower2.setSaleBranch(0);
+            flower2.setSale(0);
             session.save(flower2);
             is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow", 1);
+            flower3.setSaleBranchNUM(-1);
+            flower3.setSaleBranch(0);
+            flower3.setSale(0);
             session.save(flower3);
             is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue", 1);
+            flower4.setSaleBranchNUM(-1);
+            flower4.setSaleBranch(0);
+            flower4.setSale(0);
             session.save(flower4);
             is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White", 2);
+            flower5.setSaleBranchNUM(-1);
+            flower5.setSaleBranch(0);
+            flower5.setSale(0);
             session.save(flower5);
             /*
              * The call to session.flush() updates the DB immediately without ending the transaction.
@@ -253,6 +266,9 @@ public class DataBaseManagement {
     public void deleteFlower(int id){
         try{
             session.beginTransaction();
+            session.createQuery("DELETE FROM CartProduct cp WHERE cp.flower.id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
             Flower flower = session.get(Flower.class, id);
             if (flower != null) {
                 session.delete(flower);
@@ -382,6 +398,36 @@ public class DataBaseManagement {
         return flower1;
 
     }
+    public void PutSaleBranch(AddSale addSale) throws Exception {
+        try {
+            session.beginTransaction();
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
+            criteria.from(Flower.class);
+            List<Flower> result = session.createQuery(criteria).getResultList();
+            for (Flower flower : result) {
+                if(flower.getBranch().size()==2){
+                    flower.setSaleBranch(addSale.getNumSale());
+                    flower.setSaleBranchNUM(addSale.getNumBranch());
+                }
+                else {
+                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3) || flower.getBranch().get(0).getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) || flower.getSaleBranchNUM() == 3) {
+                        flower.setSaleBranch(addSale.getNumSale());
+                        flower.setSaleBranchNUM(addSale.getNumBranch());
+                    }
+                }
+                session.update(flower);
+            }
+            session.getTransaction().commit();
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+
+    }
     public void PutSale(int id, int newSale){
         try{
             session.beginTransaction();
@@ -431,18 +477,19 @@ public class DataBaseManagement {
             session.getTransaction().commit();
 
             if (customer != null) {
-                LoginResponse newLogIn = new LoginResponse(true, "Login successful!");
+                List<Order> copyOrders = new ArrayList<>(customer.getListOrders());
+                LoginResponse newLogIn = new LoginResponse(true,copyOrders ,"Login successful!");
                 newLogIn.setCustomer(customer);
                 return newLogIn;
             } else {
-                return new LoginResponse(false, "Incorrect username or password.");
+                return new LoginResponse(false, null,"Incorrect username or password.");
             }
         } catch (Exception e) {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
-            return new LoginResponse(false, "Server error during login.");
+            return new LoginResponse(false, null,"Server error during login.");
         }
     }
 
@@ -459,18 +506,18 @@ public class DataBaseManagement {
             session.getTransaction().commit();
 
             if (employee != null) {
-                LoginResponse newLogin = new LoginResponse(true,"Employee login successful!");
+                LoginResponse newLogin = new LoginResponse(true,null,"Employee login successful!");
                 newLogin.setEmployee(employee);
                 return newLogin;
             } else {
-                return new LoginResponse(false,"Incorrect employee credentials.");
+                return new LoginResponse(false,null,"Incorrect employee credentials.");
             }
         } catch (Exception e) {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
-            return new LoginResponse(false, "Server error during employee login.");
+            return new LoginResponse(false, null,"Server error during employee login.");
         }
     }
 
@@ -561,54 +608,76 @@ public class DataBaseManagement {
             exception.printStackTrace();
         }
     }
-    public void saveorder(Order order) {
+    public Order saveorder(Order order) {
         try {
-            Customer user;
             session.beginTransaction();
-            for(CartProduct product: order.getProducts()) {
-                product.setOrder(order); // חובה – שיהיה קישור הפוך
+
+            // שמירת המוצרים
+            for (CartProduct product : order.getProducts()) {
+                product.setOrder(order);
                 session.save(product);
             }
-            session.save(order);
-            user = session.get(Customer.class, order.getCustomer().getId());
+
+            // שמירת ההזמנה (order)
+            session.save(order); // כאן נוצר ה-ID ונשמר באובייקט
+
+            // עידכון הלקוח עם ההזמנה
+            Customer user = session.get(Customer.class, order.getCustomer().getId());
             user.addOrder(order);
             session.update(user);
+
             session.getTransaction().commit();
+
+            return order; // מחזיר את האובייקט עם ה-ID שכבר נקבע
         } catch (Exception exception) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
-            else {
-                System.err.println("An error occured on saving order.");
-                exception.printStackTrace();
-            }
+            exception.printStackTrace();
+            return null;
         }
-
     }
 
-    public void deleteorder(Order order) {
+    public Customer deleter(Order order) {
         try {
             if (!session.getTransaction().isActive()) {
                 session.beginTransaction();
             }
+            int id = order.getId();
 
-            // טען מחדש את הלקוח אם צריך
-            Customer user = session.get(Customer.class, order.getCustomer().getId());
-            for (CartProduct product: order.getProducts()) {
-                order.removeProduct(product);
-                session.delete(product);
+//            // טען מחדש את הלקוח אם צריך
+//            Customer user = session.get(Customer.class, order.getCustomer().getId());
+//            List<CartProduct> productsCopy = new ArrayList<>(order.getProducts());
+//            for (CartProduct product: productsCopy) {
+//                order.removeProduct(product);
+//                session.delete(product);
+//            }
+//
+//            // ניתוק הקשר של ההזמנה מהלקוח (אם צריך)
+//            if (user != null) {
+//                user.removeOrder(order);
+//                session.update(user);
+//            }
+//
+//            // מחיקת ההזמנה (Hibernate יטפל במוצרים הקשורים בזכות orphanRemoval)
+//            session.delete(order);
+//            session.getTransaction().commit();
+
+            Order order2 = session.get(Order.class, id);
+            if (order2 == null) {
+                session.getTransaction().commit();
+                return null;
             }
-
-            // ניתוק הקשר של ההזמנה מהלקוח (אם צריך)
+            Customer user = order2.getCustomer();
             if (user != null) {
+                user.setCredit(order.getSum());
                 user.removeOrder(order);
-                session.update(user);
             }
 
-            // מחיקת ההזמנה (Hibernate יטפל במוצרים הקשורים בזכות orphanRemoval)
-            session.delete(order);
-
+            session.update(user);
+            session.remove(order2);
             session.getTransaction().commit();
+            return user;
         } catch (Exception exception) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
@@ -617,7 +686,35 @@ public class DataBaseManagement {
                 exception.printStackTrace();
             }
         }
+        return null;
     }
+
+//        public void deleteorder(Order order) {
+//        try {
+//            System.out.println("Delete order in Data");
+//            if (!session.getTransaction().isActive()) {
+//                session.beginTransaction();
+//            }
+//
+//            // טען מחדש את הלקוח אם צריך
+//            Customer user = session.get(Customer.class, order.getCustomer().getId());
+//            List<CartProduct> productsCopy = new ArrayList<>(order.getProducts());
+//            for (CartProduct product: productsCopy) {
+//                order.removeProduct(product);
+//                session.delete(product);
+//            }
+//            session.delete(order);
+//            session.getTransaction().commit();
+//        } catch (Exception exception) {
+//            if (session != null && session.getTransaction().isActive()) {
+//                session.getTransaction().rollback();
+//            } else {
+//                System.err.println("An error occurred while deleting order:");
+//                exception.printStackTrace();
+//            }
+//        }
+//    }
+
 
 
 
@@ -771,12 +868,12 @@ public class DataBaseManagement {
 
         // Check if new username is taken by someone else
         if (!originalUsername.equals(newUsername) && isUsernameTakenIn(role, newUsername)) {
-            return new UpdateUserResponse(false, "The new username is already taken.");
+            return new UpdateUserResponse(false, request,"The new username is already taken.");
         }
 
         Object user = findUserByUsername(role, originalUsername);
         if (user == null) {
-            return new UpdateUserResponse(false, "Original user not found.");
+            return new UpdateUserResponse(false, request,"Original user not found.");
         }
 
         try {
@@ -791,6 +888,16 @@ public class DataBaseManagement {
                 if (!request.getEmail().isEmpty()) customer.setEmail(request.getEmail());
                 if (!request.getPhone().isEmpty()) customer.setPhone(request.getPhone());
                 if (!request.getPassword().isEmpty()) customer.setPassword(request.getPassword());
+                if(!request.getCvv().isEmpty()) customer.setCreditCardCVV(request.getCvv());
+                if(!request.getCardNumber().isEmpty()) customer.setCreditCardNumber(request.getCardNumber());
+                if(!request.getExpiryDate().isEmpty()) customer.setCreditCardExpiration(request.getExpiryDate());
+
+                //תתקן את זה
+                if(!request.getRole().isEmpty()){
+                    if(request.getRole().equals("Network Account")){
+                        customer.setCustomerType(2);
+                    }
+                }
                 // credit card fields and others if needed
                 session.update(customer);
 
@@ -821,12 +928,12 @@ public class DataBaseManagement {
             }
 
             session.getTransaction().commit();
-            return new UpdateUserResponse(true, "User updated successfully.");
+            return new UpdateUserResponse(true, request,"User updated successfully.");
 
         } catch (Exception e) {
             if (session.getTransaction().isActive()) session.getTransaction().rollback();
             e.printStackTrace();
-            return new UpdateUserResponse(false, "Error updating user: " + e.getMessage());
+            return new UpdateUserResponse(false, request,"Error updating user: " + e.getMessage());
         }
     }
 
@@ -863,24 +970,6 @@ public class DataBaseManagement {
             return new BlockUserResponse(false, "Error: " + e.getMessage());
         }
     }
-    public static void insertDummyBranches() {
-        System.out.println("bb");
-        try (Session session = getSessionFactory().openSession()) {
-            Transaction tx = session.beginTransaction();
-
-            Branch b1 = new Branch("סניף חיפה");
-            Branch b2 = new Branch("סניף תל אביב");
-
-            session.save(b1);
-            session.save(b2);
-
-            tx.commit();
-            System.out.println("הוזנו סניפים לדוגמה");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static List<?> getReportData(LocalDate from, LocalDate to, int branchId, String reportType) {
         List<?> result = new ArrayList<>();
 
@@ -903,7 +992,7 @@ public class DataBaseManagement {
 
             if (reportType.equals("orders")) {
                 String hql = "FROM Order o WHERE o.dateReceive BETWEEN :from AND :to";
-                ;
+
                 if (branchId != -1) {
                     hql += " AND o.branch.id = :branchId";
                 }
@@ -927,96 +1016,6 @@ public class DataBaseManagement {
             e.printStackTrace();
         }
 
-        return result;
-    }
-    public static void insertDummyComplaints() {
-        System.out.println("cc");
-        try (Session session = getSessionFactory().openSession()) {
-            Transaction tx = session.beginTransaction();
-
-            // קבל את שני הסניפים הראשונים (שנה לפי IDs קיימים במסד הנתונים שלך)
-            Branch branch1 = session.get(Branch.class, 1);
-            Branch branch2 = session.get(Branch.class, 2);
-
-            if (branch1 == null || branch2 == null) {
-                System.out.println("סניפים לדוגמה לא נמצאו במסד הנתונים.");
-                return;
-            }
-
-            for (int i = 1; i <= 6; i++) {
-                Complain c = new Complain();
-                c.setComplain_text("תלונה מספר " + i);
-                c.setAnswer_text("");
-                c.setStatus(false);
-                c.setRefund(0.0);
-                c.setDate(LocalDate.now().minusDays(i));
-                c.setBranch(i % 2 == 0 ? branch1 : branch2);
-
-                session.save(c);
-            }
-
-            tx.commit();
-            System.out.println("הוזנו תלונות לדוגמה למסד הנתונים");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public static void insertBranchesWithComplaints() {
-        System.out.println("insertBranchesWithComplaints");
-        try (Session session = getSessionFactory().openSession()) {
-            Transaction tx = session.beginTransaction();
-
-            Branch b1 = new Branch("סניף חיפה");
-            Branch b2 = new Branch("סניף תל אביב");
-
-            session.save(b1);
-            session.save(b2);
-
-            for (int i = 1; i <= 6; i++) {
-                Complain c = new Complain();
-                c.setComplain_text("תלונה לדוגמה מספר " + i);
-                c.setAnswer_text("");
-                c.setStatus(false);
-                c.setRefund(0.0);
-
-                // תאריכים בטווח של 30 עד 60 ימים אחורה
-                LocalDate complaintDate = LocalDate.now().minusDays(30 + i);
-                c.setDate(complaintDate);
-                c.setBranch(i % 2 == 0 ? b1 : b2);
-
-                System.out.println("📅 תלונה " + i + ": " + complaintDate + " לסניף " + c.getBranch().getAddress());
-                session.save(c);
-            }
-
-            tx.commit();
-            System.out.println("✅ הוזנו תלונות בטווח תאריכים תקין");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Map<String, Long> getComplaintsCountPerBranch(LocalDate fromDate, LocalDate toDate) {
-        System.out.println("eereeeeeeeeeeeeeeeeeegwrgerhtrtf");
-        Map<String, Long> result = new HashMap<>();
-        try {
-            Session session = getSessionFactory().openSession();
-            String hql = "SELECT c.branch.id, COUNT(c) FROM Complain c WHERE c.Date BETWEEN :fromDate AND :toDate GROUP BY c.branch.id"
-                    ;
-            Query<Object[]> query = session.createQuery(hql, Object[].class);
-            query.setParameter("fromDate", fromDate);
-            query.setParameter("toDate", toDate);
-            List<Object[]> list = query.list();
-
-            for (Object[] row : list) {
-                String branchName = (String) row[0];
-                Long count = (Long) row[1];
-                result.put(branchName, count);
-            }
-
-            session.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return result;
     }
 }
