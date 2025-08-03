@@ -39,6 +39,9 @@ public class Item {
     @FXML // fx:id="image"
     private ImageView image; // Value injected by FXMLLoader
 
+    @FXML // fx:id="Delete"
+    private Text Delete1; // Value injected by FXMLLoader
+
     @FXML // fx:id="Avalible"
     private Text Avalible; // Value injected by FXMLLoader
 
@@ -122,6 +125,7 @@ public class Item {
         byte[] ImageByte = flower.getImage();
         Image imageObj = new Image(new ByteArrayInputStream(ImageByte));
         image.setImage(imageObj);
+
         if((CurrentCustomer.getCurrentEmployee()!=null) || CurrentCustomer.getCurrentCustomer().equals("Customer")) {
             boolean Permission = false;
             if(CurrentCustomer.getCurrentEmployee()!=null) {
@@ -179,7 +183,7 @@ public class Item {
                 SoldOut.setVisible(true);
             }
         }
-        if (CurrentCustomer.getCurrentCustomer().equals("Worker")){
+        if (CurrentCustomer.getCurrentCustomer().equals("Employee")){
             AddCart.setVisible(false);
             SoldOut.setVisible(false);
         }
@@ -217,7 +221,7 @@ public class Item {
             }
 
         }
-        if(CurrentCustomer.getCurrentUser() instanceof Customer){
+        if(CurrentCustomer.getCurrentUser()!=null) {
             Customer customer = (Customer) CurrentCustomer.getCurrentUser();
             if(customer.getCustomerType() == 1){
                 if(customer.getListBranch().get(0).equals("TelAviv") && !(flower.getBranch().contains("TelAviv"))){
@@ -230,10 +234,71 @@ public class Item {
                 }
             }
         }
+        if(CurrentCustomer.getCurrentCustomer().equals("Guest")){
+            Delete.setVisible(false);
+            ChangeImageBU.setVisible(false);
+            SoldOut.setVisible(false);
+            Edit1.setVisible(false);
+            Edit2.setVisible(false);
+            Edit3.setVisible(false);
+            Edit4.setVisible(false);
+            PutNewName.setVisible(false);
+            PutNewPrice.setVisible(false);
+            PutNewType.setVisible(false);
+            AddHaifa.setVisible(false);
+            AddTelAviv.setVisible(false);
+            Sale.setVisible(false);
+            SaleText.setVisible(false);
+            RemoveSaleBU.setVisible(false);
+            Done4.setVisible(false);
+            ChangesBU.setVisible(false);
+            AddCart.setDisable(false);
+        }
         ID.setVisible(false);
-
+        Delete1.setVisible(false);
+    }
+    public void PutSale(Flower flower){
+        setData(flower);
+        if(flower.getSale()!=0){
+                double price = flower.getPrice();
+                double discount = flower.getSale() / 100.0;
+                double finalPrice = price - (price * discount);
+                double discountDiscount = flower.getSaleBranch() / 100.0;
+                double discountPrice = finalPrice ;
+                double finalDiscount = discountPrice - (discountPrice * discountDiscount);
+                Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalDiscount + "₪");
+        }
+        else{
+                double price = flower.getPrice();
+                double discountDiscount = flower.getSaleBranch() /100.0;
+                double finalDiscount = price - (price * discountDiscount);
+                Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalDiscount + "₪");
+        }
     }
 
+    public void deleteData(Flower flower) {
+        Delete.setVisible(false);
+        ChangeImageBU.setVisible(false);
+        SoldOut.setVisible(false);
+        Edit1.setVisible(false);
+        Edit2.setVisible(false);
+        Edit3.setVisible(false);
+        Edit4.setVisible(false);
+        PutNewName.setVisible(false);
+        PutNewPrice.setVisible(false);
+        PutNewType.setVisible(false);
+        AddHaifa.setVisible(false);
+        AddTelAviv.setVisible(false);
+        Sale.setVisible(false);
+        SaleText.setVisible(false);
+        RemoveSaleBU.setVisible(false);
+        Done4.setVisible(false);
+        ChangesBU.setVisible(false);
+        AddCart.setDisable(false);
+        HaifaText.setVisible(false);
+        TelAviv.setVisible(false);
+        Delete1.setVisible(true);
+    }
     public void setName(String name){
         Name.setText(name);
     }

@@ -14,6 +14,7 @@ public class SimpleClient extends AbstractClient {
     private static List<Flower> flowers;
     private static List<Flower> flowersSingles;
     private static List<Branch> AllBranches;
+    private static List<Order> AllOrders;
 
     protected SimpleClient(String host, int port) {
         super(host, port);
@@ -22,11 +23,13 @@ public class SimpleClient extends AbstractClient {
     @Override
     protected void handleMessageFromServer(Object msg) {
 
+        //1
         if (msg instanceof GetReportEvent){
-            System.out.println("✅ We got GetReportEvent class");
             EventBus.getDefault().post((GetReportEvent) msg);
             return;
         }
+
+        //2
         if (msg instanceof List<?>) {
             List<?> msgList = (List<?>) msg;
             boolean allAreorders = msgList.stream().allMatch(o -> o instanceof Order);
@@ -43,6 +46,7 @@ public class SimpleClient extends AbstractClient {
             }
         }
 
+        //3
         else if (msg instanceof Flower) {
             Flower flower = (Flower) msg;
             int id = flower.getId();
@@ -60,12 +64,16 @@ public class SimpleClient extends AbstractClient {
             }
             EventBus.getDefault().post(flower);
         }
+
+        //4
         else if (msg instanceof AddFlower){
 
             AddFlower newFlower = (AddFlower) msg;
             Flower flower = newFlower.getFlower();
             SimpleClient.flowers.add(flower);
         }
+
+        //5
         else if(msg instanceof AddClient){
             AddClient addClient = (AddClient) msg;
             List<Flower> flowerList = addClient.getFlowerList();
@@ -75,32 +83,34 @@ public class SimpleClient extends AbstractClient {
 //            EventBus.getDefault().post(flowers);
         }
 
+        //6
         //gets answer if username already in use
         else if (msg instanceof UsernameCheckRequest ) {
             UsernameCheckRequest response = (UsernameCheckRequest) msg;
             EventBus.getDefault().post(response);
         }
+
+        //7
         //get response if adding customer was success
         else if (msg instanceof SignUpResponse) {
             SignUpResponse response = (SignUpResponse) msg;
             EventBus.getDefault().post(response);
         }
 
-        else if (msg instanceof GetReportEvent){
-            System.out.println("We got GetReportEvent class");
-        }
 
-
-      else if (msg instanceof LoginResponse) {
+        //8
+        else if (msg instanceof LoginResponse) {
             // ANDLOS ADD THIS: handle login response from server
             LoginResponse response = (LoginResponse) msg;
             if (response.getCustomer()!=null) {
                 CurrentCustomer.setCurrentUser(response.getCustomer());
                 CurrentCustomer.setCurrentCustomer("Customer");
+                AllOrders = response.getListOrders();
             }
             if (response.getEmployee()!=null) {
                 CurrentCustomer.setCurrentEmployee(response.getEmployee());
                 CurrentCustomer.setCurrentCustomer("Employee");
+                AllOrders = response.getListOrders();
             }
             EventBus.getDefault().post(response);
         }
@@ -115,6 +125,7 @@ public class SimpleClient extends AbstractClient {
        //     EventBus.getDefault().post(changePrice);
        // }
 
+        //9
         if(msgString.startsWith("Change Sale")) {
             String[] parts = msgString.split(",");
             int id = Integer.parseInt(parts[2]);
@@ -129,6 +140,8 @@ public class SimpleClient extends AbstractClient {
             }
             EventBus.getDefault().post(flower);
         }
+
+        //10
         if(msgString.startsWith("Remove Sale")) {
             String[] parts = msgString.split(",");
             int id = Integer.parseInt(parts[1]);
@@ -144,22 +157,59 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(flower);
         }
 
+        //11
         //added by arkan
         if(msgString.startsWith("Delete")){
             String[] parts = msgString.split(",");
             int Id = Integer.parseInt(parts[1]);
-            SimpleClient.getFlowers().remove(Id);
+            Flower flowerdelete = null;
+            for (Flower flower : SimpleClient.flowers) {
+                if (flower.getId() == Id) {
+                    flowerdelete = flower;
+                    SimpleClient.flowers.remove(flower);
+                }
+            }
+            for (Flower flower : SimpleClient.flowersSingles){
+                if (flower.getId() == Id) {
+                    flowerdelete = flower;
+                    SimpleClient.flowersSingles.remove(flower);
+                }
+            }
+            DeletFlower deletflower = new DeletFlower(flowerdelete);
+            EventBus.getDefault().post(deletflower);
         }
+
+        //12
         else if (msg instanceof GetEntitiesResponse) {
             EventBus.getDefault().post(msg); // post directly to EventBus
         }
+
+        //13
         else if (msg instanceof UpdateUserResponse) {
-            EventBus.getDefault().post(msg);
+            UpdateUserResponse response = (UpdateUserResponse) msg;
+            UpdateUserRequest request = response.getRequest();
+            EventBus.getDefault().post(response);
+            if(response.isSuccess()){
+                Customer customer = CurrentCustomer.getCurrentUser();
+                customer.setFirstName(request.getFirstName());
+                customer.setLastName(request.getLastName());
+                customer.setEmail(request.getEmail());
+                customer.setPhone(request.getPhone());
+                customer.setPassword(request.getPassword());
+                customer.setUsername(request.getNewUsername());
+                customer.setCreditCardCVV(request.getCvv());
+                customer.setCreditCardExpiration(request.getExpiryDate());
+                customer.setCreditCardNumber(request.getCardNumber());
+            }
         }
+
+        //14
         else if (msg instanceof BlockUserResponse) {
             EventBus.getDefault().post(msg);
 
         }
+
+        //15
         if(msg instanceof ChangeFlower){
             ChangeFlower changeFlower = (ChangeFlower) msg;
             int id = changeFlower.getId();
@@ -188,6 +238,69 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(flower);
         }
 
+        //16
+        if(msg instanceof AddOrder){
+            AddOrder orderClass = (AddOrder) msg;
+            Order order = orderClass.getOrder();
+            SimpleClient.getAllOrders().add(order);
+        }
+
+        //17
+        if(msg instanceof Order){
+            Order order = (Order) msg;
+            for (Order order1: SimpleClient.getAllOrders()){
+                if(order1.getId() == order.getId()){
+                    SimpleClient.getAllOrders().remove(order1);
+                }
+            }
+            EventBus.getDefault().post(SimpleClient.getAllOrders());
+        }
+
+        //17
+        if(msg instanceof DeleteOrder){
+            DeleteOrder orderClass = (DeleteOrder) msg;
+            Order order = orderClass.getOrder();
+            for (Order order1: SimpleClient.getAllOrders()){
+                if(order1.getId() == order.getId()){
+                    SimpleClient.getAllOrders().remove(order1);
+                    break;
+                }
+            }
+            if(orderClass.getUser() != null){
+              CurrentCustomer.setCurrentUser(orderClass.getUser());
+            }
+            EventBus.getDefault().post(SimpleClient.getAllOrders());
+        }
+
+        //18
+        if (msg instanceof AddSale) {
+            AddSale addSale = (AddSale) msg;
+            for (Flower flower : flowers) {
+                if (flower.getBranch().size() == 2) {
+                    flower.setSaleBranch(addSale.getNumSale());
+                    flower.setSaleBranchNUM(addSale.getNumBranch());
+                }
+                else {
+                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3) || flower.getBranch().get(0).getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) || flower.getSaleBranchNUM() == 3) {
+                        flower.setSaleBranch(addSale.getNumSale());
+                        flower.setSaleBranchNUM(addSale.getNumBranch());
+                    }
+                }
+            }
+            for (Flower flower1 : flowersSingles){
+                if (flower1.getBranch().size() == 2) {
+                    flower1.setSaleBranch(addSale.getNumSale());
+                    flower1.setSaleBranchNUM(addSale.getNumBranch());
+                }
+                else {
+                    if (flower1.getBranch().get(0).getAddress().equals("Haifa") && (flower1.getSaleBranchNUM() == 1 || flower1.getSaleBranchNUM() == 3) || flower1.getBranch().get(0).getAddress().equals("TelAviv") && (flower1.getSaleBranchNUM() == 2 || flower1.getSaleBranchNUM() == 3) || flower1.getSaleBranchNUM() == 3) {
+                        flower1.setSaleBranch(addSale.getNumSale());
+                        flower1.setSaleBranchNUM(addSale.getNumBranch());
+                    }
+                }
+            }
+            EventBus.getDefault().post(addSale);
+        }
         if (msg.getClass().equals(Warning.class)) {
             EventBus.getDefault().post(new WarningEvent((Warning) msg));
         } else {
@@ -200,6 +313,7 @@ public class SimpleClient extends AbstractClient {
     public static SimpleClient getClient() {
         return client;
     }
+    public static List<Order> getAllOrders(){return AllOrders;}
     public static List<Branch> getAllBranches() {return AllBranches;}
     public static List<Flower> getFlowers() {return flowers;}
     public static List<Flower> getFlowersSingles(){return flowersSingles;}

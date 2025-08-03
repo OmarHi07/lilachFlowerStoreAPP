@@ -268,12 +268,16 @@ public class InsertFlower {
 
         else{
             Flower flower = new Flower(name, type, priceValue, selectedImageBytes, selectedColor, 1);
+            flower.setSaleBranchNUM(-1);
+            flower.setSaleBranch(0);
             if(!(sale.isEmpty())){
                 flower.setSale(Integer.parseInt(sale));
             }
+            else {
+                flower.setSale(0);
+            }
             if(!branchesAvaliable.isEmpty()){
                 flower.setBranch(branchesAvaliable);
-
             }
             try {
                     SimpleClient.getClient().sendToServer(flower);
@@ -289,6 +293,7 @@ public class InsertFlower {
     void LogOut(ActionEvent event) {
         Object Current = CurrentCustomer.getCurrentUser();
         String NameClass;
+        FlowerCardCache.clear();
         int id;
         if(Current instanceof Customer){
             NameClass = "Customer";

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -11,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="731.0" prefWidth="996.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="731.0" prefWidth="1110.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
    <children>
       <ScrollPane layoutX="211.0" layoutY="41.0" prefHeight="686.0" prefWidth="783.0">
          <content>
@@ -113,7 +114,7 @@
             <Font name="Georgia" size="11.0" />
          </font>
       </Button>
-      <Button fx:id="UpdateCatalogBU" layoutX="599.0" layoutY="12.0" mnemonicParsing="false" onAction="#UpdateCatalog" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #c4b3a3;" text="Insert Flower" textFill="#634730">
+      <Button fx:id="UpdateCatalogBU" layoutX="598.0" layoutY="12.0" mnemonicParsing="false" onAction="#UpdateCatalog" prefHeight="26.0" prefWidth="90.0" style="-fx-background-color: #c4b3a3;" text="Insert Flower " textFill="#634730">
          <font>
             <Font name="Serif Regular" size="12.0" />
          </font>
@@ -138,7 +139,7 @@
             <Font name="Serif Regular" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="ReportBU" layoutX="498.0" layoutY="10.0" mnemonicParsing="false" onAction="#ViewingReports" prefHeight="26.0" prefWidth="99.0" style="-fx-background-color: #c4b3a3;" text="Viewing Reports" textFill="#634730">
+      <Button fx:id="ReportBU" layoutX="498.0" layoutY="12.0" mnemonicParsing="false" onAction="#ViewingReports" prefHeight="26.0" prefWidth="99.0" style="-fx-background-color: #c4b3a3;" text="Viewing Reports" textFill="#634730">
          <font>
             <Font name="Serif Regular" size="12.0" />
          </font>
@@ -153,10 +154,52 @@
             <Font name="Gabriola" size="15.0" />
          </font>
       </Text>
-      <Button fx:id="ReturnBU" layoutX="68.0" layoutY="14.0" mnemonicParsing="false" onAction="#ReturnToCA" style="-fx-background-color: #a18674;" text="Return" textFill="#613b23">
+      <Button fx:id="ReturnBU" layoutX="115.0" layoutY="14.0" mnemonicParsing="false" onAction="#ReturnToCA" style="-fx-background-color: #a18674;" text="Return" textFill="#613b23">
          <font>
             <Font name="Georgia" size="11.0" />
          </font>
       </Button>
+      <Button fx:id="ComplaintBU" layoutX="379.0" layoutY="12.0" mnemonicParsing="false" onAction="#HandleComplaint" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: #c4b3a3;" text="Handle Complaints" textFill="#634730">
+         <font>
+            <Font name="Serif Regular" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="ProfileBU" layoutX="68.0" layoutY="14.0" mnemonicParsing="false" onAction="#GoToMyprofile" style="-fx-background-color: #a18674;" text="Profile" textFill="#613b23">
+         <font>
+            <Font name="Georgia" size="11.0" />
+         </font>
+      </Button>
+      <Button fx:id="AddSaleBU" layoutX="1011.0" layoutY="512.0" mnemonicParsing="false" onAction="#AddSale" prefHeight="26.0" prefWidth="83.0" style="-fx-background-color: #c4b3a3;" text="Add Sale" textFill="#634730">
+         <font>
+            <Font name="Serif Regular" size="12.0" />
+         </font>
+      </Button>
+      <ChoiceBox fx:id="BranchBoxEm" layoutX="1007.0" layoutY="379.0" prefHeight="26.0" prefWidth="90.0" style="-fx-background-color: #c4b3a3;" />
+      <Text fx:id="SelectBranchEm" fill="#231204" layoutX="1010.0" layoutY="361.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="83.19999999999999">
+         <font>
+            <Font name="Gabriola" size="19.0" />
+         </font>
+      </Text>
+      <Text fx:id="DiscountEm" fill="#231204" layoutX="998.0" layoutY="449.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discount amount:" wrappingWidth="110.39997100830078">
+         <font>
+            <Font name="Gabriola" size="19.0" />
+         </font>
+      </Text>
+      <TextField fx:id="PutDiscountEm" layoutX="1023.0" layoutY="465.0" prefHeight="26.0" prefWidth="61.0" />
+      <Text fx:id="DiscountSS" fill="#4e3620" layoutX="1086.0" layoutY="481.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%" textAlignment="CENTER" wrappingWidth="15.199966430664062">
+         <font>
+            <Font name="Gabriola" size="20.0" />
+         </font>
+      </Text>
+      <Text fx:id="AddSaleEm" fill="#614b39ca" layoutX="980.0" layoutY="319.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Sale" textAlignment="CENTER" wrappingWidth="143.99995584487914">
+         <font>
+            <Font name="Serif Regular" size="23.0" />
+         </font>
+      </Text>
+      <Text fx:id="SaleSentence" fill="#614b39ca" layoutX="996.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="110.39997100830078">
+         <font>
+            <Font name="Serif Regular" size="23.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

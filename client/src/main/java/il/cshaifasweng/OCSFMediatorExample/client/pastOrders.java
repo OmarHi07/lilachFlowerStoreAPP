@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.DeleteOrder;
 import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -88,9 +89,16 @@ public class pastOrders {
     }
 
      public void gotodelete(Order order){
+//         try {
+//             SimpleClient.getClient().sendToServer("delete Order,"+ CurrentCustomer.getCurrentUser().getId()+","+order.getId());
+//         } catch (IOException e) {
+//             e.printStackTrace();
+//         }
          try {
-             SimpleClient.getClient().sendToServer("delete Order,"+ CurrentCustomer.getCurrentUser().getId()+","+order.getId());
-         } catch (IOException e) {
+             DeleteOrder deleteOrder = new DeleteOrder(order);
+             SimpleClient.getClient().sendToServer(deleteOrder);
+         }
+         catch (IOException e){
              e.printStackTrace();
          }
 
@@ -159,7 +167,8 @@ public class pastOrders {
                 GridPane.setHalignment(complainButton, HPos.CENTER);
 
                 // --- תאריך הזמנה ---
-                String dateText = (order.getDateOrder() != null) ? order.getDateOrder() : "unknown";
+                LocalDate date = (order.getDateOrder() != null ? order.getDateOrder() : null);
+                String dateText = date == null ? "unknown" : date.toString();
                 Label dateLabel = new Label("Ordered on: " + dateText);
                 dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #6b4c3b;");
                 GridPane.setHalignment(dateLabel, HPos.CENTER);
@@ -184,7 +193,7 @@ public class pastOrders {
                 try {
                     if (order.getDateOrder() != null ) {
                         LocalDate today = LocalDate.now();
-                        LocalDate receiveDate = LocalDate.parse(order.getDateOrder());
+                        LocalDate receiveDate = order.getDateOrder();
                         long daysLeft = ChronoUnit.DAYS.between(today, receiveDate);
                         daysLeft = Math.max(daysLeft, 0); // לא יהיה שלילי
                         System.out.println("Order " + order.getId() + " daysLeft = " + daysLeft);
@@ -217,12 +226,13 @@ public class pastOrders {
         assert Exit != null : "fx:id=\"Exit\" was not injected: check your FXML file 'pastOrders.fxml'.";
         assert previes != null : "fx:id=\"cart\" was not injected: check your FXML file 'pastOrders.fxml'.";
         assert ordersbefore != null : "fx:id=\"ordersbefore\" was not injected: check your FXML file 'pastOrders.fxml'.";
-        try{
-            SimpleClient.getClient().sendToServer("Give Orders ," + CurrentCustomer.getCurrentUser().getId());
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+//        try{
+//            SimpleClient.getClient().sendToServer("Give Orders ," + CurrentCustomer.getCurrentUser().getId());
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+        renderPastOrders(SimpleClient.getAllOrders());
     }
 
 }

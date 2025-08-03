@@ -109,13 +109,7 @@ public class SignInController {
                 password.setText(newText);
             }
         });
-        try {
-            SimpleClient client = SimpleClient.getClient( "localhost", 3001);
-            client.openConnection();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @FXML

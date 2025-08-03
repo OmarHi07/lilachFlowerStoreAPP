@@ -1,7 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import com.mysql.cj.xdevapi.Client;
-import il.cshaifasweng.OCSFMediatorExample.client.GetReportEvent;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
@@ -11,15 +9,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.AddClient;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
-import org.hibernate.Hibernate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
 import static il.cshaifasweng.OCSFMediatorExample.server.App.instance;
 
@@ -33,6 +26,7 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		String msgString = msg.toString();
+		//1
 		if (msg instanceof HistogramReportRequest) {
 			HistogramReportRequest request = (HistogramReportRequest) msg;
 			LocalDate fromDate = request.getFromDate();
@@ -42,24 +36,22 @@ public class SimpleServer extends AbstractServer {
 			if (reportType.equals("complain")) {
 				System.out.println("Fetching complaints from database...");
 				List<Complain> complaintsList = (List<Complain>) instance.getReportData(
-						fromDate, toDate,branchId , "complain"
+						fromDate, toDate, branchId, "complain"
 				);
 				System.out.println("Complaints retrieved: " + complaintsList.size());
 				try {
 					client.sendToClient(new GetReportEvent("complain", complaintsList));
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 			if (reportType.equals("orders")) {
 				System.out.println("Fetching orders histogram from database...");
-				List<Order> ordersCount = (List<Order>)instance.getReportData(fromDate, toDate, branchId, "orders");
+				List<Order> ordersCount = (List<Order>) instance.getReportData(fromDate, toDate, branchId, "orders");
 				System.out.println("Orders count retrieved: " + ordersCount.size());
 				try {
 					client.sendToClient(new GetReportEvent("orders", ordersCount));
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
@@ -67,6 +59,7 @@ public class SimpleServer extends AbstractServer {
 
 		}
 
+		//2
 		if (msgString.startsWith("add client")) {
 			SubscribedClient connection = new SubscribedClient(client);
 			SubscribersList.add(connection);
@@ -98,6 +91,8 @@ public class SimpleServer extends AbstractServer {
 			}
 		}
 
+
+		//3
 		else if (msg instanceof String && msg.equals("get complaints")) {
 			// Fetch *all* complaints from the database
 			List<Complain> all = instance.getAllComplaints();
@@ -115,6 +110,8 @@ public class SimpleServer extends AbstractServer {
 				// Optionally log an error or notify admin
 			}
 		}
+
+		//4
 		else if (msg instanceof Complain) {
 			Complain complaint = (Complain) msg;
 
@@ -136,10 +133,10 @@ public class SimpleServer extends AbstractServer {
 						dummy.setFirstName("Test User");
 						complaint.setCustomer(dummy);  // set it just for the test
 					}//end of tester customer
-					String email   = complaint.getCustomer().getEmail();
-					String name    = complaint.getCustomer().getFirstName();
+					String email = complaint.getCustomer().getEmail();
+					String name = complaint.getCustomer().getFirstName();
 					String subject = "Response to Your Complaint";
-					String body    = "Dear " + name + ",\n\n"
+					String body = "Dear " + name + ",\n\n"
 							+ "We have responded to your complaint:\n\n"
 							+ answer + "\n\n"
 							+ "Thank you for your patience,\n"
@@ -152,16 +149,19 @@ public class SimpleServer extends AbstractServer {
 			}
 		}
 
-		if (msgString.startsWith("add client1")) {
-			try {
-				System.out.println("Hello from Java!");
-				List<Flower> flowerList = instance.getAllFlowers();
-				client.sendToClient(flowerList);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		} else if (msgString.startsWith("remove client")) {
+//		//5
+//		if (msgString.startsWith("add client1")) {
+//			try {
+//				System.out.println("Hello from Java!");
+//				List<Flower> flowerList = instance.getAllFlowers();
+//				client.sendToClient(flowerList);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				throw new RuntimeException(e);
+//			}
+//		}
+		//6
+		else if (msgString.startsWith("remove client")) {
 			if (!SubscribersList.isEmpty()) {
 				for (SubscribedClient subscribedClient : SubscribersList) {
 					if (subscribedClient.getClient().equals(client)) {
@@ -170,23 +170,27 @@ public class SimpleServer extends AbstractServer {
 					}
 				}
 			}
-		} else if (msgString.startsWith("dbpassword:")) {
+		}
+
+		//6
+		else if (msgString.startsWith("dbpassword:")) {
 			String[] parts = msgString.split(":");
 			String dbPassword = parts[1];
 		}
-		else if(msgString.startsWith("log out")) {
+
+		//7
+		else if (msgString.startsWith("log out")) {
 			String[] parts = msgString.split(",");
 			int id = Integer.parseInt(parts[2]);
 			String Class = parts[1];
-			if(Class.equals("Employee")) {
+			if (Class.equals("Employee")) {
 				instance.LogOutEmployee(id);
-			}
-			else if (Class.equals("Customer")) {
+			} else if (Class.equals("Customer")) {
 				instance.LogOutCustomer(id);
 			}
 		}
 
-		//Added by arkan
+		//8
 		else if (msgString.startsWith("Delete")) {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[1]);
@@ -194,6 +198,7 @@ public class SimpleServer extends AbstractServer {
 			sendToAllClients(msgString);
 		}
 
+		//9
 		else if (msg instanceof LoginRequest) {
 			LoginRequest request = (LoginRequest) msg;
 			LoginResponse response;
@@ -209,29 +214,40 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+
+		//10
 		else if (msgString.startsWith("Change Sale")) {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[2]);
 			int Sale = Integer.parseInt(parts[1]);
 			instance.PutSale(flowerId, Sale);
 			sendToAllClients(msgString);
-		} else if (msgString.startsWith("Remove Sale")) {
+		}
+
+		//11
+		else if (msgString.startsWith("Remove Sale")) {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[1]);
 			instance.PutSale(flowerId, 0);
 			sendToAllClients(msgString);
 		}
+
+		//12
 		else if (msg instanceof ChangeFlower) {
 			ChangeFlower newFlower = (ChangeFlower) msg;
 			Flower flower = instance.ChangeDetails(newFlower);
 			sendToAllClients(flower);
 		}
+
+		//13
 		else if (msg instanceof Flower) {
 			Flower flower = (Flower) msg;
 			Flower flower1 = instance.addFlower(flower);
 			AddFlower newFlower = new AddFlower(flower1);
 			sendToAllClients(newFlower);
 		}
+
+		//14
 		//check if username already in use
 		else if (msg instanceof UsernameCheckRequest) {
 			UsernameCheckRequest request = (UsernameCheckRequest) msg;
@@ -245,21 +261,23 @@ public class SimpleServer extends AbstractServer {
 			}
 
 		}
-		else if (msgString.startsWith("Give Orders")){
+
+		//15
+		else if (msgString.startsWith("Give Orders")) {
 			String[] parts = msgString.split(",");
 			int id = Integer.parseInt(parts[1]);
-			List<Order> Orders1= instance.getUser(id);
-			if (Orders1.isEmpty()||Orders1==null) {
+			List<Order> Orders1 = instance.getUser(id);
+			if (Orders1.isEmpty() || Orders1 == null) {
 				System.out.println("Orders1 is empty");
 			}
-			try{
+			try {
 				client.sendToClient(Orders1);
-			}
-			catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
+		//16
 		else if (msgString.startsWith("delete Order")) {
 			String[] parts = msgString.split(",");
 			int id = Integer.parseInt(parts[1]);
@@ -276,22 +294,20 @@ public class SimpleServer extends AbstractServer {
 					}
 				}
 			}
-
 			if (orderToDelete != null) {
 				// מחיקה מהמסד נתונים
-				instance.deleteorder(orderToDelete);
+				instance.deleter(orderToDelete);
 			}
 
 			try {
-				List<Order> ordersList1 = instance.getUser(id);
-				client.sendToClient(ordersList1); // שלח חזרה את הרשימה לאחר עדכון
+				client.sendToClient(orderToDelete); // שלח חזרה את הרשימה לאחר עדכון
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
 
-
+		//17
 		//Add customer to the table
 		//Add customer to the table
 		else if (msg instanceof SignUpRequest) {
@@ -300,14 +316,16 @@ public class SimpleServer extends AbstractServer {
 			try {
 				if (response.isSuccess()) {
 					// Send confirmation email
-					EmailSender.sendEmail(request.getEmail(), "Welcome to Lelac Stores!","Dear " + request.getFirstName() + ",\n\nThank you for signing up at Lelac Stores! We're happy to have you on board.\n\nHappy shopping! 💐");
+					EmailSender.sendEmail(request.getEmail(), "Welcome to Lelac Stores!", "Dear " + request.getFirstName() + ",\n\nThank you for signing up at Lelac Stores! We're happy to have you on board.\n\nHappy shopping! 💐");
 				}
 				client.sendToClient(response);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
-	    else if (msg instanceof GetEntitiesRequest) {
+
+		//18
+		else if (msg instanceof GetEntitiesRequest) {
 			GetEntitiesRequest request = (GetEntitiesRequest) msg;
 			String type = request.getEntityType();
 			try {
@@ -319,6 +337,8 @@ public class SimpleServer extends AbstractServer {
 			}
 
 		}
+
+		//19
 		else if (msg instanceof SendEmailRequest) {
 			SendEmailRequest request = (SendEmailRequest) msg;
 
@@ -338,6 +358,8 @@ public class SimpleServer extends AbstractServer {
 				// Optionally send an error response back
 			}
 		}
+
+		//20
 		else if (msg instanceof UpdateUserRequest) {
 			UpdateUserRequest request = (UpdateUserRequest) msg;
 			UpdateUserResponse response = instance.updateUser(request);
@@ -348,6 +370,20 @@ public class SimpleServer extends AbstractServer {
 			}
 
 		}
+
+		//21
+		else if(msg instanceof AddSale){
+			AddSale addSale = (AddSale) msg;
+			try {
+				instance.PutSaleBranch(addSale);
+				client.sendToClient(addSale);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		//23
 		else if (msg instanceof BlockUserRequest) {
 			BlockUserRequest request = (BlockUserRequest) msg;
 			BlockUserResponse response = instance.handleBlockUser(request);
@@ -358,12 +394,55 @@ public class SimpleServer extends AbstractServer {
 			}
 		}
 
-		else if(msg instanceof Order){
+
+		//22
+		else if (msg instanceof Order) {
 			Order order = (Order) msg;
-			instance.saveorder(order);
+			Order order1 = instance.saveorder(order);
+			AddOrder addOrder = new AddOrder();
+			addOrder.setOrder(order1);
+			try {
+				client.sendToClient(addOrder);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 
 		}
 
+		//23
+		else if (msg instanceof DeleteOrder){
+			DeleteOrder deleteOrder = (DeleteOrder) msg;
+			Order order = deleteOrder.getOrder();
+			Customer user = instance.deleter(order);
+			deleteOrder.setUser(user);
+			try {
+				client.sendToClient(deleteOrder);
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+
+		}
+		//24
+		else if (msg instanceof GetSingleUserRequest) {
+			GetSingleUserRequest request = (GetSingleUserRequest) msg;
+			String username = request.getUsername();
+
+			// Since you're dealing with logged-in users, we assume customers for now
+			Object user = DataBaseManagement.findUserByUsername("customer", username);
+
+			if (user != null) {
+				try {
+					client.sendToClient(new UserDataEvent(user));  // already handled in your controller
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("User not found: " + username);
+				// You can optionally send back a failure object if needed
+			}
+		}
 	}
 
 	public void sendToAllClients(String message) {

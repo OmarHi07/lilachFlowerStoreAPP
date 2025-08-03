@@ -25,6 +25,7 @@ public class Customer implements Serializable {
     private String firstName;
     private String lastName;
 
+    private double credit;
     @Column(unique = true)
     private String email;
     @Column(unique = true)
@@ -212,9 +213,14 @@ public class Customer implements Serializable {
         listOrders.removeIf(order -> order.getId() == orderID);
 
     }
+    public void setCredit(double newCredit) {
+        this.credit = newCredit;
+    }
+    public double getCredit() {
+        return credit;
+    }
     public List<Branch> getListBranch() {
         return this.listBranch;
     }
-
 
 }

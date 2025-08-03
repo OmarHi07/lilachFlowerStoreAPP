@@ -1,9 +1,4 @@
-
-
 package il.cshaifasweng.OCSFMediatorExample.entities;
-import javax.annotation.processing.Generated;
-
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,12 +26,13 @@ public class Flower implements Serializable {
 
     private int Sale;
 
+    private int SaleBranch;
     private int TypeOfFlower; // =1 Bouquet , =2 Single
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "flower_branch", joinColumns = @JoinColumn(name = "flower_id"), inverseJoinColumns = @JoinColumn(name = "branch_id"))
     private List<Branch>  BranchesAvailable;
-
+    private int SaleBranchNUM; // 1-Haifa || 2-TelAviv || 3-All
 
     public Flower() {}
 
@@ -51,7 +47,6 @@ public class Flower implements Serializable {
         this.color = color;
         BranchesAvailable = new ArrayList<Branch>();
     }
-
     public List<Branch> getBranch() {return BranchesAvailable; }
     public void setBranch(List<Branch> branch) {
         BranchesAvailable = branch;
@@ -59,12 +54,22 @@ public class Flower implements Serializable {
     public void AddBranch(Branch branch) {
         BranchesAvailable.add(branch);
         branch.AddFlower(this);
-
+    }
+    public int getSaleBranch(){
+        return SaleBranch;
+    }
+    public int getSaleBranchNUM(){
+        return SaleBranchNUM;
+    }
+    public void setSaleBranch(int SaleBranch) {
+        this.SaleBranch = SaleBranch;
+    }
+    public void setSaleBranchNUM(int SaleBranchNUM) {
+        this.SaleBranchNUM = SaleBranchNUM;
     }
     public void setTypeOfFlower(int TypeOfFlower) {this.TypeOfFlower = TypeOfFlower;}
     public int getTypeOfFlower() {return TypeOfFlower;}
     public void RemoveBranch(Branch branch) {BranchesAvailable.remove(branch);}
-
     public int getSale() {return Sale;}
     public void setSale(int Sale) {this.Sale = Sale;}
     public int getId() {return id;}

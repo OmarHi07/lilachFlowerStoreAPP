@@ -186,6 +186,7 @@ public class Ordercart {
 
         @FXML
         void goback(ActionEvent event) {
+                EventBus.getDefault().unregister(this);
                 try {
                         App.setRoot("primary", 1040, 780);
                 }
@@ -205,7 +206,6 @@ public class Ordercart {
 
         @FXML
         void initialize() {
-
 
                 assert cart != null : "fx:id=\"cart\" was not injected.";
                 assert conttinue != null : "fx:id=\"conttinue\" was not injected.";

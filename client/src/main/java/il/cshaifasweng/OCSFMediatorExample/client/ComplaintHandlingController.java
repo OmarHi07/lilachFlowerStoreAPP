@@ -1,8 +1,8 @@
+
 package il.cshaifasweng.OCSFMediatorExample.client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,9 +17,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
 import java.util.stream.Collectors;
 
 
@@ -56,6 +53,9 @@ public class ComplaintHandlingController
     @FXML
     private Button backButton;
 
+    @FXML
+    private Label confirmationLabel;
+
     //intalizing the table
     @FXML
     public void initialize() {
@@ -70,6 +70,11 @@ public class ComplaintHandlingController
 
         // initialize with empty list for now
         complaintsTable.setItems(FXCollections.observableArrayList());
+
+        //to clear the message
+        answerArea.textProperty().addListener((obs, oldText, newText) -> {
+            confirmationLabel.setText("");
+        });
 
         //here we telling the server  please send me the list of all complaints
         try {
@@ -92,26 +97,36 @@ public class ComplaintHandlingController
         System.out.println("Received unhandled complaints: " + complaintsTable.getItems().size());
     }
 
-        //handeler for the sendanswer button
-        //it work when you click on the complaint and write the answer in the textarea
-        @FXML
-        void sendAnswerToServer() {
-            Complain selected = complaintsTable.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                System.out.println("No complaint selected.");
-                return;
-            }
+    //handeler for the sendanswer button
+    //it work when you click on the complaint and write the answer in the textarea
+    @FXML
+    void sendAnswerToServer() {
+        boolean Yes = true;
+        Complain selected = complaintsTable.getSelectionModel().getSelectedItem();
+        String answer = answerArea.getText();
+        String refundText = refundField.getText();
+        if (selected == null) {
+            confirmationLabel.setText("no complaint selected");
+            confirmationLabel.setStyle("-fx-text-fill: #FF0000;");
+            Yes = false;
+        }
+        if (answer.isEmpty()) {
+            confirmationLabel.setText("no answer typed");
+            confirmationLabel.setStyle("-fx-text-fill: #FF0000;");
+            Yes = false;
 
-            String answer = answerArea.getText();
-            String refundText = refundField.getText();
-
+        }
+        if (refundText.isEmpty()) {
+            confirmationLabel.setText("no refund selected");
+            confirmationLabel.setStyle("-fx-text-fill: #FF0000;");
+            Yes = false;
+        }
+        if(Yes) {
             try {
                 double refund = Double.parseDouble(refundText);
                 selected.setAnswer_text(answer);
                 selected.setRefund(refund);
                 selected.setStatus(true);
-
-
 
                 // send the update to the server
                 SimpleClient.getClient().sendToServer(selected);
@@ -121,20 +136,23 @@ public class ComplaintHandlingController
 
                 // **remove it from the UI** so it disappears immediately:
                 complaintsTable.getItems().remove(selected);
+                confirmationLabel.setText("✅ Answer submitted successfully!");//show successfull message if the worker send mwssage
+                confirmationLabel.setStyle("-fx-text-fill: #6b8e23;");
 
 
-
-            } catch (NumberFormatException e) {
-                System.out.println("Refund must be a valid number.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
+
+    }
+
+
     @FXML
     void backTo(ActionEvent event) {//to return to the previous screen
         try {
-            App.setRoot("connect", 400, 600);
+            App.setRoot("primary", 400, 600);
         }
         catch(Exception e){
             e.printStackTrace();
