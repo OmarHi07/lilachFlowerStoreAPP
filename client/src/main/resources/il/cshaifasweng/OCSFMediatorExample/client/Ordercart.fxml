@@ -49,7 +49,7 @@
                 <GridPane fx:id="myorder" prefHeight="503.0" prefWidth="996.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100% 28.0303%, #c7bca6 0%, #eaeaea 100%);">
 
 
-                <columnConstraints>
+                    <columnConstraints>
                         <ColumnConstraints prefWidth="180.0" />
                         <ColumnConstraints prefWidth="220.0" />
                         <ColumnConstraints prefWidth="250.0" />
@@ -73,12 +73,11 @@
                 </GridPane>
             </content>
         </ScrollPane>
-      <Text fx:id="shipmember" layoutX="239.0" layoutY="691.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="419.73663330078125" />
-      <Button fx:id="pastorders" layoutX="55.0" layoutY="667.0" mnemonicParsing="false" onAction="#pastOrders" prefHeight="38.0" prefWidth="134.0" style="-fx-background-color: #a18674;" text="My Orders!" textFill="#613b23">
-         <font>
-            <Font name="Georgia" size="13.0" />
-         </font>
-      </Button>
+        <Button fx:id="pastorders" layoutX="55.0" layoutY="667.0" mnemonicParsing="false" onAction="#pastOrders" prefHeight="38.0" prefWidth="134.0" style="-fx-background-color: #a18674;" text="My Orders!" textFill="#613b23">
+            <font>
+                <Font name="Georgia" size="13.0" />
+            </font>
+        </Button>
 
     </children>
 </AnchorPane>

@@ -47,9 +47,6 @@ public class Ordercart {
         private URL location;
 
         @FXML
-        private Label pastOrders;
-
-        @FXML
         private AnchorPane cart;
 
         @FXML
@@ -63,9 +60,6 @@ public class Ordercart {
 
         @FXML
         private Label total;
-
-        @FXML
-        private Text shipmember;
 
         public static ObservableList<CartProduct> cartItems = FXCollections.observableArrayList();
         public static double totalprice;
@@ -157,7 +151,7 @@ public class Ordercart {
         }
 
 
-                public void addItem(CartProduct item) {
+        public void addItem(CartProduct item) {
                 cartItems.add(item);
                 renderItems();
         }
@@ -175,7 +169,7 @@ public class Ordercart {
                         return;
                 }
                 try {
-                        App.setRoot("payfororder", 640, 640);
+                        App.setRoot("payfororder", 640, 700);
 
                 } catch (IOException e) {
                         e.printStackTrace();
@@ -186,7 +180,6 @@ public class Ordercart {
 
         @FXML
         void goback(ActionEvent event) {
-                EventBus.getDefault().unregister(this);
                 try {
                         App.setRoot("primary", 1040, 780);
                 }
@@ -207,6 +200,7 @@ public class Ordercart {
         @FXML
         void initialize() {
 
+
                 assert cart != null : "fx:id=\"cart\" was not injected.";
                 assert conttinue != null : "fx:id=\"conttinue\" was not injected.";
                 assert goback != null : "fx:id=\"goback\" was not injected.";
@@ -221,19 +215,6 @@ public class Ordercart {
                         renderItems();
                 });
                 renderItems();
-
-                Object user = CurrentCustomer.getCurrentUser();
-                if (user instanceof Customer) {
-                        Customer customer = (Customer) user;
-                        if (customer.getCustomerType() == 3) {
-                                shipmember.setText("As a valued Membership customer, you automatically receive 10% off every order!");
-                                shipmember.setVisible(true);
-                        } else {
-                                shipmember.setVisible(false);
-                        }
-                }
-
-
         }
 
 
@@ -251,14 +232,6 @@ public class Ordercart {
                 double discount = 0.0;
                 Object user = CurrentCustomer.getCurrentUser();
 
-                if (user instanceof Customer) {
-                        Customer customer = (Customer) user;
-                        if (customer.getCustomerType() == 3) {
-                                discount = totalSum * 0.10;
-                                totalSum -= discount;
-                        }
-                }
-
                 totalprice = totalSum;
                 total.setText(String.format("Total: %.2f ₪", totalSum));
 
@@ -268,11 +241,9 @@ public class Ordercart {
         @FXML
         void pastOrders(ActionEvent actionEvent) {
                 try {
-                App.setRoot("pastorders", 1006, 750);
+                        App.setRoot("pastorders", 1006, 750);
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
         }
 }
-
-

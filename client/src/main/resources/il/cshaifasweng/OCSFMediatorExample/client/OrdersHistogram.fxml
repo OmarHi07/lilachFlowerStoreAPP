@@ -1,81 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<?import javafx.collections.FXCollections?>
 <?import java.lang.Integer?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
 <?import java.lang.String?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
+<AnchorPane prefHeight="689.0" prefWidth="1138.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
 
-    <VBox alignment="TOP_CENTER" spacing="10.0"
-          AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
-          AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"
-          prefHeight="500.0" prefWidth="880.0">
+     <TableView fx:id="ordersTable" layoutX="280.0" layoutY="73.0" prefHeight="183.0" prefWidth="860.0">
+         <columns>
+             <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
+             <TableColumn fx:id="addressColumn" prefWidth="120" text="Address" />
+             <TableColumn fx:id="dateOrderColumn" prefWidth="100" text="Order Date" />
+             <TableColumn fx:id="dateReceiveColumn" prefWidth="100" text="Receive Date" />
+             <TableColumn fx:id="greetingColumn" prefWidth="100" text="Greeting" />
+             <TableColumn fx:id="nameReceivesColumn" prefWidth="120" text="Receiver Name" />
+             <TableColumn fx:id="phoneReceivesColumn" prefWidth="120" text="Receiver Phone" />
+             <TableColumn fx:id="statusColumn" prefWidth="70" text="Status" />
+             <TableColumn fx:id="sumColumn" prefWidth="80" text="Sum" />
+             <TableColumn fx:id="typeColumn" prefWidth="100" text="Type" />
+             <TableColumn fx:id="branchIdColumn" prefWidth="80" text="Branch ID" />
+             <TableColumn fx:id="customerIdColumn" prefWidth="80" text="Customer ID" />
+             <TableColumn fx:id="timeOrderColumn" prefWidth="90" text="Order Time" />
+             <TableColumn fx:id="timeReceiveColumn" prefWidth="90" text="Receive Time" />
+         </columns>
+     </TableView>
+      <DatePicker fx:id="fromDatePicker" layoutX="21.0" layoutY="212.0" prefHeight="26.0" prefWidth="157.0" promptText="From Date">
+          <effect>
+              <DropShadow />
+          </effect>
+   </DatePicker>
+      <DatePicker fx:id="toDatePicker" layoutX="21.0" layoutY="256.0" prefHeight="26.0" prefWidth="158.0" promptText="To Date">
+          <effect>
+              <DropShadow />
+          </effect>
+   </DatePicker>
 
-        <padding>
-            <Insets top="10" right="10" bottom="10" left="10"/>
-        </padding>
+        <BarChart fx:id="ordersBarChart" layoutX="245.0" layoutY="318.0" prefHeight="360.0" prefWidth="895.0">
+         <xAxis>
+             <CategoryAxis label="Date" />
+         </xAxis>
+         <yAxis>
+             <NumberAxis label="Total Income" />
+         </yAxis>
+     </BarChart>
 
-        <Label text="Orders Report - Detailed Data"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label fx:id="totalIncomeLabel" layoutX="28.0" layoutY="498.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Total Income: ₪0.00" />
+     <ComboBox fx:id="branchComboBox" blendMode="MULTIPLY" layoutX="25.0" layoutY="367.0" prefWidth="150" promptText="Choose Branch">
+         <items>
+             <FXCollections fx:factory="observableArrayList">
+                 <String fx:value="1" />
+                 <String fx:value="2" />
+                 <String fx:value="All"/>
+             </FXCollections>
+         </items>
+     </ComboBox>
 
-        <Label text="Histogram - Orders by Date"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-
-        <BarChart fx:id="ordersBarChart" prefWidth="860" prefHeight="180">
-            <xAxis>
-                <CategoryAxis label="Date"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis label="Number of Orders"/>
-            </yAxis>
-        </BarChart>
-
-        <Label text="Histogram Report - Orders by Branch"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;"
-               visible="false" managed="false" />
-
-        <TableView fx:id="ordersTable" prefWidth="860" prefHeight="160">
-            <columns>
-                <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
-                <TableColumn fx:id="addressColumn" text="Address" prefWidth="100" />
-                <TableColumn fx:id="dateOrderColumn" text="Order Date" prefWidth="100" />
-                <TableColumn fx:id="dateReceiveColumn" text="Receive Date" prefWidth="100" />
-                <TableColumn fx:id="greetingColumn" text="Greeting" prefWidth="100" />
-                <TableColumn fx:id="nameReceivesColumn" text="Recipient" prefWidth="120" />
-                <TableColumn fx:id="phoneReceivesColumn" text="Phone" prefWidth="100" />
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="60" />
-                <TableColumn fx:id="sumColumn" text="Sum" prefWidth="60" />
-                <TableColumn fx:id="timeOrderColumn" text="Order Time" prefWidth="80" />
-                <TableColumn fx:id="timeReceiveColumn" text="Receive Time" prefWidth="80" />
-                <TableColumn fx:id="typeColumn" text="Type" prefWidth="80" />
-                <TableColumn fx:id="branchIdColumn" text="Branch ID" prefWidth="80" />
-                <TableColumn fx:id="customerIdColumn" text="Customer ID" prefWidth="80" />
-            </columns>
-        </TableView>
-
-        <!-- טווח תאריכים -->
-        <Label text="Select Date Range:"
-               style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-        <HBox alignment="CENTER" spacing="10">
-            <DatePicker fx:id="fromDatePicker" promptText="From Date" />
-            <DatePicker fx:id="toDatePicker" promptText="To Date" />
-        </HBox>
-        <!-- בחירת סניף -->
-        <Label text="Select Branch:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-        <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="1"/>
-                    <String fx:value="2"/>
-                    <String fx:value="All"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
-        <Button text="Load Orders Report" onAction="#loadOrdersHistogram" />
-    </VBox>
+        <Button blendMode="COLOR_BURN" layoutX="31.0" layoutY="432.0" onAction="#loadOrdersHistogram" text="Load Income Report">
+         <effect>
+             <DropShadow />
+         </effect>
+   </Button>
+   <Text fill="#231204" layoutX="525.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="💰 Income Report - Orders Summary 💰" wrappingWidth="442.4000015258789">
+      <font>
+         <Font name="Gabriola" size="31.0" />
+      </font>
+   </Text>
+   <Text fill="#231204" layoutX="554.0" layoutY="302.0" strokeType="OUTSIDE" strokeWidth="0.0" text="📊 Histogram - Income by Date 📅 🔍" wrappingWidth="359.19998931884766">
+      <font>
+         <Font name="Gabriola" size="29.0" />
+      </font>
+   </Text>
+   <Text layoutX="21.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Date Range:" wrappingWidth="171.1999740600586">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Text>
+   <Text layoutX="38.0" layoutY="351.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="123.20000000000005">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Text>
 </AnchorPane>

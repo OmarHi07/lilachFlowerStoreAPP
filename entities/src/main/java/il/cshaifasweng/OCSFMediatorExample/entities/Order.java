@@ -28,7 +28,6 @@ public class Order implements Serializable {
             orphanRemoval = true
     )
     private List<CartProduct> products;
-
     @OneToOne(mappedBy = "order",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Complain complain;
 
@@ -45,7 +44,9 @@ public class Order implements Serializable {
     private String type;
     private boolean isCanceled;
 
-    public Order(Customer user, Branch store, LocalDate dateReceive, LocalTime timeReceive, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
+    public Order(Customer user, Branch store, LocalDate dateOrder, LocalTime timeOrder ,LocalDate dateReceive, LocalTime timeReceive, double sum, String greeting, String nameReceives, String phoneReceives, String address, boolean isCanceled) {
+        this.dateOrder = dateOrder;
+        this.timeOrder = timeOrder;
         this.customer = user;
         this.branch = store;
         this.dateReceive = dateReceive;

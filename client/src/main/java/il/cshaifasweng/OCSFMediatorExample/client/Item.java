@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
 import javafx.stage.FileChooser;
+import org.greenrobot.eventbus.EventBus;
 
 
 public class Item {
@@ -32,6 +33,10 @@ public class Item {
 
     @FXML // fx:id="Price"
     private Text Price; // Value injected by FXMLLoader
+
+
+    @FXML // fx:id="EditInformationBU"
+    private Button EditInformationBU; // Value injected by FXMLLoader
 
     @FXML // fx:id="Type"
     private Text Type; // Value injected by FXMLLoader
@@ -180,7 +185,7 @@ public class Item {
                 Edit3.setVisible(true);
                 Delete.setVisible(true);
                 Edit4.setVisible(true);
-                SoldOut.setVisible(true);
+                SoldOut.setVisible(false);
             }
         }
         if (CurrentCustomer.getCurrentCustomer().equals("Employee")){
@@ -224,16 +229,13 @@ public class Item {
         if(CurrentCustomer.getCurrentUser()!=null) {
             Customer customer = (Customer) CurrentCustomer.getCurrentUser();
             if(customer.getCustomerType() == 1){
-                if(customer.getListBranch().get(0).equals("TelAviv") && !(flower.getBranch().contains("TelAviv"))){
-                    AddCart.setDisable(false);
-                    SoldOut.setVisible(true);
-                }
-                if (customer.getListBranch().get(0).equals("Haifa") && !(flower.getBranch().contains("Haifa"))){
+                if(!(flower.getBranch().contains(SimpleClient.getBranchCustomer().get(0)))){
                     AddCart.setDisable(false);
                     SoldOut.setVisible(true);
                 }
             }
         }
+
         if(CurrentCustomer.getCurrentCustomer().equals("Guest")){
             Delete.setVisible(false);
             ChangeImageBU.setVisible(false);
@@ -360,6 +362,8 @@ public class Item {
             try {
                 SimpleClient.getClient().sendToServer("Change Sale," + newSale + "," + idValue);
                 SaleText.setText("");
+                Done4.setSelected(false);
+
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -442,6 +446,7 @@ public class Item {
         selectedTelAviv = !selectedTelAviv;
         AddTelAviv.setSelected(selectedTelAviv);
     }
+
     @FXML
     void ChangeImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -455,6 +460,19 @@ public class Item {
             catch (IOException e){
                 e.printStackTrace();
             }
+        }
+
+    }
+
+
+    @FXML
+    void EditInformationDone(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
+        try {
+            App.setRoot("SystemManager", 485, 410);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

@@ -15,6 +15,7 @@ public class SimpleClient extends AbstractClient {
     private static List<Flower> flowersSingles;
     private static List<Branch> AllBranches;
     private static List<Order> AllOrders;
+    private static List<Branch> BranchCustomer;
 
     protected SimpleClient(String host, int port) {
         super(host, port);
@@ -51,20 +52,24 @@ public class SimpleClient extends AbstractClient {
             Flower flower = (Flower) msg;
             int id = flower.getId();
             if (flower.getTypeOfFlower() == 1) {
-                if(flowers.contains(flower)) {
-                    flowers.remove(id);
-                    flowers.add(flower);
+                for (Flower f : flowers) {
+                    if (f.getId() == id) {
+                        flowers.remove(f);
+                        flowers.add(flower);
+                    }
                 }
             }
             else if (flower.getTypeOfFlower() == 2) {
-                if(flowers.contains(flower)) {
-                    flowersSingles.remove(id);
-                    flowersSingles.add(flower);
-                }
+                    for (Flower flower1 : flowersSingles){
+                        if(flower1.getId() == id) {
+                            flowersSingles.remove(flower1);
+                            flowersSingles.add(flower);
+                        }
+
+                    }
             }
             EventBus.getDefault().post(flower);
         }
-
         //4
         else if (msg instanceof AddFlower){
 
@@ -105,6 +110,7 @@ public class SimpleClient extends AbstractClient {
             if (response.getCustomer()!=null) {
                 CurrentCustomer.setCurrentUser(response.getCustomer());
                 CurrentCustomer.setCurrentCustomer("Customer");
+                BranchCustomer = response.getListBranches();
                 AllOrders = response.getListOrders();
             }
             if (response.getEmployee()!=null) {
@@ -313,6 +319,7 @@ public class SimpleClient extends AbstractClient {
     public static SimpleClient getClient() {
         return client;
     }
+    public static List<Branch> getBranchCustomer(){return BranchCustomer;}
     public static List<Order> getAllOrders(){return AllOrders;}
     public static List<Branch> getAllBranches() {return AllBranches;}
     public static List<Flower> getFlowers() {return flowers;}

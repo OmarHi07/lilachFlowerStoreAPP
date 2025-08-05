@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainReportsMenuController">
+<AnchorPane prefHeight="597.0" prefWidth="700.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainReportsMenuController">
+   <Text fill="#4d3420" layoutX="193.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Report Menu" textAlignment="CENTER" wrappingWidth="313.5999099731446">
+      <font>
+         <Font name="Serif Regular" size="52.0" />
+      </font>
+   </Text>
 
-    <VBox alignment="CENTER" spacing="20.0"
-          AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="30"
-          AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30">
-        <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
-        </padding>
-
-        <Label text="Reports Menu" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-
-        <Button text="Income Report" prefWidth="120" onAction="#openIncomeReport"/>
-        <Button text="Complaints Report" prefWidth="120" onAction="#openDetailedReports"/>
-        <Button text="Orders Report" prefWidth="120" onAction="#openOrdersHistogram"/>
-
-    </VBox>
+     <Button layoutX="237.0" layoutY="185.0" onAction="#openIncomeReport" prefHeight="50.0" prefWidth="226.0" style="-fx-background-color: #c4b3a3;" text="Income Report" textFill="#634730">
+      <font>
+         <Font size="25.0" />
+      </font>
+   </Button>
+     <Button layoutX="236.0" layoutY="312.0" onAction="#openDetailedReports" prefHeight="50.0" prefWidth="226.0" style="-fx-background-color: #c4b3a3;" text="Complaints Report" textFill="#634730">
+      <font>
+         <Font name="Serif Regular" size="25.0" />
+      </font>
+   </Button>
+     <Button layoutX="236.0" layoutY="445.0" onAction="#openOrdersHistogram" prefHeight="50.0" prefWidth="226.0" style="-fx-background-color: #c4b3a3;" text="Orders Report" textFill="#634730">
+      <font>
+         <Font name="Serif Regular" size="27.0" />
+      </font>
+   </Button>
+   <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" prefHeight="43.0" prefWidth="110.0" style="-fx-background-color: C7BCA6FF;" text="🔙 Back" textFill="#4d3420">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Button>
 </AnchorPane>

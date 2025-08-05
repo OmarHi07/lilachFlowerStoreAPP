@@ -90,7 +90,7 @@ public class SignInController {
 
         // Add account types to ComboBox
         accountType.getItems().addAll("Regular", "Network Account", "Membership");
-        branch.getItems().addAll("Makr", "Nazareth", "Kafr Manda", "Rame", "Sakhnin");
+        branch.getItems().addAll("Haifa", "TelAviv");
 
         // Descriptions for each type
         accountDescriptions.put("Regular", "Regular: you can only shop in one of our branches , if you are sure please choose a branch");

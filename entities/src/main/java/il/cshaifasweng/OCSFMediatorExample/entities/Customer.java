@@ -73,6 +73,7 @@ public class Customer implements Serializable {
         this.listOrders = new ArrayList<Order>();
         this.listComplains = new ArrayList<Complain>();
         this.listBranch = new ArrayList<Branch>();
+        this.credit = 0.0;
 
     }
 
@@ -219,7 +220,9 @@ public class Customer implements Serializable {
     public double getCredit() {
         return credit;
     }
+
     public List<Branch> getListBranch() {
+
         return this.listBranch;
     }
 

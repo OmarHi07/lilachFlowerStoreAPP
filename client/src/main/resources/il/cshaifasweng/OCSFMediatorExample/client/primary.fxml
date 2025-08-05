@@ -169,29 +169,29 @@
             <Font name="Georgia" size="11.0" />
          </font>
       </Button>
-      <Button fx:id="AddSaleBU" layoutX="1011.0" layoutY="512.0" mnemonicParsing="false" onAction="#AddSale" prefHeight="26.0" prefWidth="83.0" style="-fx-background-color: #c4b3a3;" text="Add Sale" textFill="#634730">
+      <Button fx:id="AddSaleBU" layoutX="1011.0" layoutY="465.0" mnemonicParsing="false" onAction="#AddSale" prefHeight="26.0" prefWidth="83.0" style="-fx-background-color: #c4b3a3;" text="Add Sale" textFill="#634730">
          <font>
             <Font name="Serif Regular" size="12.0" />
          </font>
       </Button>
-      <ChoiceBox fx:id="BranchBoxEm" layoutX="1007.0" layoutY="379.0" prefHeight="26.0" prefWidth="90.0" style="-fx-background-color: #c4b3a3;" />
-      <Text fx:id="SelectBranchEm" fill="#231204" layoutX="1010.0" layoutY="361.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="83.19999999999999">
+      <ChoiceBox fx:id="BranchBoxEm" layoutX="1006.0" layoutY="319.0" prefHeight="26.0" prefWidth="90.0" style="-fx-background-color: #c4b3a3;" />
+      <Text fx:id="SelectBranchEm" fill="#231204" layoutX="1010.0" layoutY="301.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="83.19999999999999">
          <font>
             <Font name="Gabriola" size="19.0" />
          </font>
       </Text>
-      <Text fx:id="DiscountEm" fill="#231204" layoutX="998.0" layoutY="449.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discount amount:" wrappingWidth="110.39997100830078">
+      <Text fx:id="DiscountEm" fill="#231204" layoutX="999.0" layoutY="395.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discount amount:" wrappingWidth="110.39997100830078">
          <font>
             <Font name="Gabriola" size="19.0" />
          </font>
       </Text>
-      <TextField fx:id="PutDiscountEm" layoutX="1023.0" layoutY="465.0" prefHeight="26.0" prefWidth="61.0" />
-      <Text fx:id="DiscountSS" fill="#4e3620" layoutX="1086.0" layoutY="481.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%" textAlignment="CENTER" wrappingWidth="15.199966430664062">
+      <TextField fx:id="PutDiscountEm" layoutX="1022.0" layoutY="412.0" prefHeight="26.0" prefWidth="61.0" />
+      <Text fx:id="DiscountSS" fill="#4e3620" layoutX="1085.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%" textAlignment="CENTER" wrappingWidth="15.199966430664062">
          <font>
             <Font name="Gabriola" size="20.0" />
          </font>
       </Text>
-      <Text fx:id="AddSaleEm" fill="#614b39ca" layoutX="980.0" layoutY="319.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Sale" textAlignment="CENTER" wrappingWidth="143.99995584487914">
+      <Text fx:id="AddSaleEm" fill="#614b39ca" layoutX="982.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Sale" textAlignment="CENTER" wrappingWidth="143.99995584487914">
          <font>
             <Font name="Serif Regular" size="23.0" />
          </font>
@@ -201,5 +201,10 @@
             <Font name="Serif Regular" size="23.0" />
          </font>
       </Text>
+      <Button fx:id="EditInformationBU" layoutX="260.0" layoutY="12.0" mnemonicParsing="false" onAction="#EditInformationDone" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: #c4b3a3;" text="Edit Information" textFill="#634730">
+         <font>
+            <Font name="Serif Regular" size="12.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
