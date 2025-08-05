@@ -153,7 +153,8 @@ public class PrimaryController{
 		NumCol = 0;
 		Grid.setHgap(20);     // רווח אופקי בין טורים
 		Grid.setVgap(20);     // רווח אנכי בין שורות
-		Grid.setPadding(new Insets(20)); // רווח מהשוליים
+		Grid.setPadding(new Insets(20));
+		System.out.println("#3");// רווח מהשוליים
         init(SimpleClient.getFlowers());
 	}
 
@@ -199,6 +200,7 @@ public class PrimaryController{
 			   Grid.getChildren().clear();
                NumCol = 0;
 			   NumRow = 1;
+				System.out.println("#4");
 			   for (Flower flower : flowers) {
 				   try {
 					  AnchorPane FlowerNode;
@@ -434,6 +436,7 @@ public class PrimaryController{
 	@FXML
 	void HaifaBranch(ActionEvent event) {
         selectedBranch = "Haifa";
+		Ordercart.cartItems.clear();
 		List<Branch> branchList = SimpleClient.getAllBranches();
 		Branch branch = branchList.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
 		CurrentCustomer.setSelectedBranch(branch);
@@ -473,6 +476,7 @@ public class PrimaryController{
 	@FXML
 	void TelAvivBranch(ActionEvent event) {
 		selectedBranch = "TelAviv";
+		Ordercart.cartItems.clear();
 		List<Branch> branchList = SimpleClient.getAllBranches();
 		Branch branch = branchList.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
 		CurrentCustomer.setSelectedBranch(branch);
@@ -607,6 +611,16 @@ public class PrimaryController{
 		EventBus.getDefault().unregister(this);
 		try {
 			App.setRoot("MainReportsMenu", 1016, 760);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	void EditInformationDone(ActionEvent event) {
+		try {
+			App.setRoot("SystemManager", 1011, 700);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

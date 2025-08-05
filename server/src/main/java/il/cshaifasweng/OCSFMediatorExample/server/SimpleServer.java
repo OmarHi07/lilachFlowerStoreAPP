@@ -220,8 +220,8 @@ public class SimpleServer extends AbstractServer {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[2]);
 			int Sale = Integer.parseInt(parts[1]);
-			instance.PutSale(flowerId, Sale);
-			sendToAllClients(msgString);
+			Flower flower = instance.PutSale(flowerId, Sale);
+			sendToAllClients(flower);
 		}
 
 		//11
@@ -425,6 +425,21 @@ public class SimpleServer extends AbstractServer {
 
 		}
 		//24
+		else if(msg instanceof DeleteUserRequest){
+			DeleteUserRequest request = (DeleteUserRequest) msg;
+			instance.DeleteUser(request);
+
+		}
+
+		//25
+		else if(msgString.startsWith("credit")){
+			String[] parts = msgString.split(",");
+			int id = Integer.parseInt(parts[1]);
+			double credit = Double.parseDouble(parts[2]);
+			instance.setcredit(id,credit);
+		}
+
+		//26
 		else if (msg instanceof GetSingleUserRequest) {
 			GetSingleUserRequest request = (GetSingleUserRequest) msg;
 			String username = request.getUsername();

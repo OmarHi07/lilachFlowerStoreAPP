@@ -189,13 +189,27 @@ public class AccountInformationController {
         confirm.setContentText("This action cannot be undone.");
 
         confirm.showAndWait().ifPresent(response -> {
-//            if (response == ButtonType.OK) {
-//                try {
-//                    SimpleClient.getClient().sendToServer(new DeleteUserRequest(originalusername));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            if (response == ButtonType.OK) {
+                try {
+                    SimpleClient.getClient().sendToServer(new DeleteUserRequest(currentCustomer.getId(), "Customer"));
+                    Alert info = new Alert(Alert.AlertType.INFORMATION);
+                    info.setTitle("Account Deleted");
+                    info.setHeaderText(null);
+                    info.setContentText("Your account has been successfully deleted.");
+                    info.showAndWait().ifPresent(infoResponse -> {
+                        try {
+                            CurrentCustomer.setCurrentUser(null);
+                            CurrentCustomer.setCurrentCustomer(null);
+                            App.setRoot("Home", 230, 500);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

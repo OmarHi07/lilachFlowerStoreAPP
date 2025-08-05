@@ -9,6 +9,7 @@ public class LoginResponse implements Serializable {
     private Customer customer;
     private Employee employee;
     private List<Order> listOrders;
+    private List<Branch> listBranches;
 
     public LoginResponse(boolean success,List<Order> listOrders ,String message) {
         this.success = success;
@@ -16,6 +17,12 @@ public class LoginResponse implements Serializable {
         this.listOrders = listOrders;
     }
 
+    public List<Branch> getListBranches() {
+        return listBranches;
+    }
+    public void setListBranches(List<Branch> listBranches) {
+        this.listBranches = listBranches;
+    }
     public Customer getCustomer() {
         return customer;
     }

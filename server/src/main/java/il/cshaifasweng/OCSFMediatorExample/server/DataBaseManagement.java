@@ -428,7 +428,7 @@ public class DataBaseManagement {
         }
 
     }
-    public void PutSale(int id, int newSale){
+    public Flower PutSale(int id, int newSale){
         try{
             session.beginTransaction();
             Flower flower = session.get(Flower.class, id);
@@ -437,12 +437,14 @@ public class DataBaseManagement {
                 session.update(flower);
             }
             session.getTransaction().commit();
+            return flower;
         }
         catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+            return null;
         }
     }
     public static boolean isUsernameTaken(String username) {
@@ -478,8 +480,10 @@ public class DataBaseManagement {
 
             if (customer != null) {
                 List<Order> copyOrders = new ArrayList<>(customer.getListOrders());
+                List<Branch> copyBranch = new ArrayList<>(customer.getListBranch());
                 LoginResponse newLogIn = new LoginResponse(true,copyOrders ,"Login successful!");
                 newLogIn.setCustomer(customer);
+                newLogIn.setListBranches(copyBranch);
                 return newLogIn;
             } else {
                 return new LoginResponse(false, null,"Incorrect username or password.");
@@ -670,7 +674,7 @@ public class DataBaseManagement {
             }
             Customer user = order2.getCustomer();
             if (user != null) {
-                user.setCredit(order.getSum());
+                user.setCredit(user.getCredit()+order.getSum());
                 user.removeOrder(order);
             }
 
@@ -718,6 +722,23 @@ public class DataBaseManagement {
 
 
 
+    public void DeleteUser(DeleteUserRequest request) {
+        try{
+            session.beginTransaction();
+            int id = request.getId();
+            if(request.getNameTable().equals("Customer")) {
+                Customer customer = session.get(Customer.class, id);
+                session.delete(customer);
+                session.getTransaction().commit();
+            }
+        }
+        catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            exception.printStackTrace();
+        }
+    }
 
     public void LogOutEmployee(int id) {
         try{
@@ -970,6 +991,31 @@ public class DataBaseManagement {
             return new BlockUserResponse(false, "Error: " + e.getMessage());
         }
     }
+
+    public void setcredit(int id,double credit) {
+        try {
+            if (!session.getTransaction().isActive()) {
+                session.beginTransaction();
+            }
+            Customer user = session.get(Customer.class, id);
+            if (user != null) {
+                user.setCredit(credit);
+                session.update(user);
+
+            }
+            session.getTransaction().commit();
+        } catch (Exception exception) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            } else {
+                System.err.println("An error occurred while setting credit.");
+            }
+        }
+
+    }
+
+
+
     public static List<?> getReportData(LocalDate from, LocalDate to, int branchId, String reportType) {
         List<?> result = new ArrayList<>();
 

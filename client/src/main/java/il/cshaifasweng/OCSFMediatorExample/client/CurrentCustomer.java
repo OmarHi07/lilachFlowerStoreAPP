@@ -4,16 +4,25 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Customer;
 import il.cshaifasweng.OCSFMediatorExample.entities.Employee;
 
+import java.util.List;
+
 public class CurrentCustomer {
     private static String currentCustomer;
     private static Customer currentuser;
     private static Employee currentEmployee;
     private static Branch selectedBranch;
+    private static List<Branch> branchList;
 
     public CurrentCustomer() {}
 
     public static Customer getCurrentUser() {
         return currentuser;
+    }
+    public static List<Branch> getBranchList() {
+        return branchList;
+    }
+    public static void setBranchList(List<Branch> branchList) {
+        CurrentCustomer.branchList = branchList;
     }
     public static void setCurrentUser(Customer Customer) {
         currentuser = Customer;

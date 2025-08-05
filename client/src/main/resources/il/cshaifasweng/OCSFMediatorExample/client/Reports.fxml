@@ -1,80 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
+<AnchorPane prefHeight="689.0" prefWidth="1138.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ReportsController">
 
-<?import java.lang.Integer?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ReportsController">
+     <TableView fx:id="complainTable" layoutX="280.0" layoutY="55.0" prefHeight="190.0" prefWidth="847.0">
+         <columns>
+             <TableColumn fx:id="idColumn" prefWidth="100" text="ID" />
+             <TableColumn fx:id="complainTextColumn" prefWidth="500" text="Complaint Text" />
+             <TableColumn fx:id="complainDateColumn" prefWidth="260" text="Complaint Date" />
+         </columns>
+     </TableView>
 
-    <VBox alignment="TOP_CENTER" spacing="10.0"
-          AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
-          AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"
-          prefHeight="500.0" prefWidth="880.0">
+     <BarChart fx:id="dailyComplaintsChart" layoutX="218.0" layoutY="286.0" prefHeight="406.0" prefWidth="920.0">
+         <xAxis>
+             <CategoryAxis label="Date" />
+         </xAxis>
+         <yAxis>
+             <NumberAxis label="Number of Complaints" prefHeight="146.0" prefWidth="49.0" />
+         </yAxis>
+     </BarChart>
 
-        <padding>
-            <Insets top="10" right="10" bottom="10" left="10"/>
-        </padding>
+     <Label managed="false" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Histogram Report - Complaints by Branch" visible="false" />
 
-        <Label text='Complaints Report - Detailed Data'
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+     <TableView fx:id="histogramTable" managed="false" prefHeight="160" prefWidth="860" visible="false">
+         <columns>
+             <TableColumn fx:id="branchColumn" prefWidth="430" text="Branch Name" />
+             <TableColumn fx:id="countColumn" prefWidth="430" text="Complaint Count" />
+         </columns>
+     </TableView>
+     <ComboBox fx:id="branchComboBox" blendMode="MULTIPLY" layoutX="44.0" layoutY="318.0" prefHeight="26.0" prefWidth="123.0" promptText="Choose Branch">
+         <items>
+             <FXCollections fx:factory="observableArrayList">
+                 <String fx:value="All" />
+                 <String fx:value="1" />
+                 <String fx:value="2" />
+             </FXCollections>
+         </items>
+     </ComboBox>
 
-        <TableView fx:id="complainTable" prefWidth="860" prefHeight="160">
-            <columns>
-                <TableColumn fx:id="idColumn" text="ID" prefWidth="100" />
-                <TableColumn fx:id="complainTextColumn" text="Complaint Text" prefWidth="500" />
-                <TableColumn fx:id="complainDateColumn" text="Complaint Date" prefWidth="260" />
-            </columns>
-        </TableView>
-
-        <Label text='Histogram - Complaints by Date'
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-
-        <BarChart fx:id="dailyComplaintsChart" prefWidth="860" prefHeight="180">
-            <xAxis>
-                <CategoryAxis label="Date" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis label="Number of Complaints" />
-            </yAxis>
-        </BarChart>
-
-        <Label text='Histogram Report - Complaints by Branch'
-               style="-fx-font-size: 18px; -fx-font-weight: bold;"
-               visible="false" managed="false" />
-
-        <TableView fx:id="histogramTable" prefWidth="860" prefHeight="160"
-                   visible="false" managed="false">
-            <columns>
-                <TableColumn fx:id="branchColumn" text="Branch Name" prefWidth="430" />
-                <TableColumn fx:id="countColumn" text="Complaint Count" prefWidth="430" />
-            </columns>
-        </TableView>
-
-        <!-- טווח תאריכים -->
-        <Label text="Select Date Range:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-        <HBox alignment="CENTER" spacing="10">
-            <DatePicker fx:id="fromDatePicker" promptText="From Date" />
-            <DatePicker fx:id="toDatePicker" promptText="To Date" />
-        </HBox>
-
-        <!-- בחירת סניף -->
-        <Label text="Select Branch:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-        <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="All"/>
-                        <String fx:value="1"/>
-                        <String fx:value="2"/>
-                    </FXCollections>
-                </items>
-        </ComboBox>
-
-        <Button text="Load Complaints Report" onAction="#loadOrdersHistogram" />
-    </VBox>
+     <Button blendMode="COLOR_BURN" layoutX="34.0" layoutY="387.0" onAction="#loadOrdersHistogram" text="Load Complaints Report">
+         <effect>
+             <DropShadow />
+         </effect>
+   </Button>
+      <DatePicker fx:id="fromDatePicker" layoutX="31.0" layoutY="166.0" prefHeight="26.0" prefWidth="150.0" promptText="From Date">
+          <effect>
+              <DropShadow />
+          </effect>
+   </DatePicker>
+      <DatePicker fx:id="toDatePicker" layoutX="31.0" layoutY="212.0" prefHeight="26.0" prefWidth="150.0" promptText="To Date">
+          <effect>
+              <DropShadow />
+          </effect>
+          <cursor>
+              <Cursor fx:constant="DEFAULT" />
+          </cursor>
+   </DatePicker>
+   <Text fill="#231204" layoutX="514.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="📩 Complaints Report - Detailed Data 📩" wrappingWidth="442.4000015258789">
+      <font>
+         <Font name="Gabriola" size="31.0" />
+      </font>
+   </Text>
+   <Text fill="#231204" layoutX="559.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" text="📊 Histogram - Complaints by Date 📅" wrappingWidth="351.9999771118164">
+      <font>
+         <Font name="Gabriola" size="27.0" />
+      </font>
+   </Text>
+   <Text layoutX="31.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Date Range:" wrappingWidth="171.1999740600586">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Text>
+   <Text layoutX="44.0" layoutY="303.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="123.20000000000005">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Text>
 </AnchorPane>

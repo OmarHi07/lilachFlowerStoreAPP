@@ -5,7 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -60,8 +63,6 @@ public class pastOrders {
     @FXML
     private GridPane ordersbefore;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
-    private List<Order> orderList = CurrentCustomer.getCurrentUser().getListOrders();
 
     @FXML
     void exit(ActionEvent event) {
@@ -73,15 +74,48 @@ public class pastOrders {
         }
     }
 
-    private boolean confirmCancel() {
+    private String getCancelMessage(LocalDateTime deliveryTime) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration diff = Duration.between(now, deliveryTime);
+        long minutesLeft = diff.toMinutes();
+
+        if (minutesLeft < 0) {
+            return "Delivery time has already passed – cancellation is not allowed.";
+        } else if (minutesLeft < 60) {
+            return "The order will be canceled without a refund. Do you want to proceed?";
+        } else if (minutesLeft < 180) {
+            return "The order will be canceled with a 50% refund. Do you want to proceed?";
+        } else {
+            return "The order will be canceled with a full refund. Do you want to proceed?";
+        }
+    }
+
+    private boolean confirmCancel(Order order) {
+        LocalDate date = order.getDateReceive();
+        LocalTime time = order.getTimeReceive();
+        LocalDateTime deliveryTime = LocalDateTime.of(date, time);
+
+        String refundMessage = getCancelMessage(deliveryTime);
+
+        if (Duration.between(LocalDateTime.now(), deliveryTime).toMinutes() < 0) {
+            // הזמן כבר עבר – תצוגת הודעה בלבד
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Cancellation Not Allowed");
+            alert.setHeaderText("Too Late to Cancel");
+            alert.setContentText(refundMessage);
+            alert.getButtonTypes().setAll(ButtonType.OK);
+            alert.showAndWait();
+            return false; // אין ביטול
+        }
+
+        // מותר לבטל – הצג אישור
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Cancel Confirmation");
         alert.setHeaderText("Are you sure you want to cancel this order?");
-        alert.setContentText("This action cannot be undone.");
+        alert.setContentText(refundMessage);
 
         ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
         ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-
         alert.getButtonTypes().setAll(yesButton, noButton);
 
         Optional<ButtonType> result = alert.showAndWait();
@@ -89,11 +123,23 @@ public class pastOrders {
     }
 
      public void gotodelete(Order order){
-//         try {
+//       try {
 //             SimpleClient.getClient().sendToServer("delete Order,"+ CurrentCustomer.getCurrentUser().getId()+","+order.getId());
-//         } catch (IOException e) {
+//       } catch (IOException e) {
 //             e.printStackTrace();
-//         }
+//       }
+         LocalDate date = order.getDateReceive();
+         LocalTime time = order.getTimeReceive();
+         LocalDateTime deliveryTime = LocalDateTime.of(date, time);
+         long minutesLeft = Duration.between(LocalDateTime.now(), deliveryTime).toMinutes();
+         double refund = 0;
+         if (minutesLeft >= 180) {
+                 refund = order.getSum(); // החזר מלא
+         } else if (minutesLeft >= 60) {
+                 refund = order.getSum() * 0.5; // החזר 50%
+         } else {
+                 refund = 0; // אין החזר
+         }
          try {
              DeleteOrder deleteOrder = new DeleteOrder(order);
              SimpleClient.getClient().sendToServer(deleteOrder);
@@ -180,7 +226,7 @@ public class pastOrders {
                     System.out.println("Canceled order ID: " + order.getId());
                 });
                 cancelButton.setOnAction(e -> {
-                    if (confirmCancel()) {
+                    if (confirmCancel(order)) {
                         System.out.println("Canceled order ID: " + order.getId());
                         gotodelete(order);
                     }

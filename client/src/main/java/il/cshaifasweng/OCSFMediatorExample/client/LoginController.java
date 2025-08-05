@@ -105,7 +105,6 @@ public class LoginController {
     public void handleEmployeeLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
-
         try {
             LoginRequest request = new LoginRequest(username, password, "employee");
             SimpleClient.getClient().sendToServer(request);
@@ -124,7 +123,9 @@ public class LoginController {
             if (response.isSuccess()) {
                 errorLabel.setText("✅ " + response.getMessage());
                 try {
+                    System.out.println("#2");
                     App.setRoot("Primary", 1006, 750);
+                    System.out.println("#3");
                 }
                 catch (IOException e) {
                     errorLabel.setText("Failed to load main screen.");
