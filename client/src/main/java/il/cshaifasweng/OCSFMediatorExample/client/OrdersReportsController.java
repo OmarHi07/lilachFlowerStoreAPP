@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -147,6 +148,17 @@ public class OrdersReportsController {
             });
         } catch (ClassCastException e) {
             System.out.println("❌ Failed to cast to List<Order>");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void goBack(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
+        try{
+            App.setRoot("MainReportsMenu", 710, 300);
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }

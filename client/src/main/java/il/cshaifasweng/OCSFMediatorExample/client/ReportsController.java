@@ -1,5 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 import javafx.scene.chart.XYChart;
+
+import java.awt.event.ActionEvent;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import il.cshaifasweng.OCSFMediatorExample.entities.GetReportEvent;
@@ -138,5 +140,17 @@ public class ReportsController {
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void goBack(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
+        try{
+            App.setRoot("MainReportsMenu", 710, 300);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

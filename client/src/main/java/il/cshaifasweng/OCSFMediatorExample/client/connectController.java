@@ -50,7 +50,7 @@ public class connectController {
             client.openConnection();
 
             // Navigate to the next screen
-            App.setRoot("SystemManager",700,600);
+            App.setRoot("Home",700,600);
 
         } catch (Exception e) {
             e.printStackTrace();

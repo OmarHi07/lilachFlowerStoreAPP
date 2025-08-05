@@ -116,14 +116,28 @@ public class Item {
         selectedHaifa = false;
         selectedTelAviv = false;
         Name.setText("Name: " + flower.getFlowerName());
-        if(flower.getSale() == 0) {
+        if(flower.getSale() == 0 && flower.getSaleBranchHaifaTelAviv()==0) {
             Price.setText("Price: " + flower.getPrice() + "₪");
         }
-        else {
+        else if(flower.getSale()!=0 && flower.getSaleBranchHaifaTelAviv()==0){
             double price = flower.getPrice();
             double discount = flower.getSale() / 100.0;
             double finalPrice = price - (price * discount);
             Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
+        }
+        else if (flower.getSale()!=0 && flower.getSaleBranchHaifaTelAviv()!=0){
+            double price = flower.getPrice();
+            double discount = flower.getSale() / 100.0;
+            double finalPrice = price - (price * discount);
+            double discount2 = flower.getSaleBranchHaifaTelAviv() / 100.0;
+            finalPrice = finalPrice - (finalPrice * discount2);
+            Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
+        }
+        else{
+            double price = flower.getPrice();
+            double discount = flower.getSale() / 100.0;
+            double finalPrice = price - (price * discount);
+            Price.setText("Original Price:" + price +"₪" +" Sale Price:" + finalPrice + "₪");
         }
         Type.setText("Type: " + flower.getType());
         ID.setText(String.valueOf(flower.getId()));
@@ -261,22 +275,25 @@ public class Item {
     }
     public void PutSale(Flower flower){
         setData(flower);
+        double price = flower.getPrice();
+        double finalPrice = flower.getPrice();
         if(flower.getSale()!=0){
-                double price = flower.getPrice();
                 double discount = flower.getSale() / 100.0;
-                double finalPrice = price - (price * discount);
-                double discountDiscount = flower.getSaleBranch() / 100.0;
-                double discountPrice = finalPrice ;
-                double finalDiscount = discountPrice - (discountPrice * discountDiscount);
-                Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalDiscount + "₪");
+                finalPrice = price - (price * discount);
         }
-        else{
-                double price = flower.getPrice();
-                double discountDiscount = flower.getSaleBranch() /100.0;
-                double finalDiscount = price - (price * discountDiscount);
-                Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalDiscount + "₪");
+        if(flower.getSaleBranchHaifaTelAviv()!=0){
+                    double discount1 = flower.getSaleBranchHaifaTelAviv() / 100.0;
+                    finalPrice = finalPrice - (finalPrice * discount1);
+        } else if (flower.getSaleBranchTelAviv()!=0 && CurrentCustomer.getSelectedBranch().equals("TelAviv")) {
+                    double discount2 = flower.getSaleBranchTelAviv() / 100.0;
+                    finalPrice = finalPrice - (finalPrice * discount2);
         }
-    }
+        else if(flower.getSaleBranchHaifa()!=0 && CurrentCustomer.getSelectedBranch().equals("Haifa")) {
+                    double discount3 = flower.getSaleBranchHaifa() / 100.0;
+                    finalPrice = finalPrice - (finalPrice * discount3);
+        }
+        Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
+        }
 
     public void deleteData(Flower flower) {
         Delete.setVisible(false);

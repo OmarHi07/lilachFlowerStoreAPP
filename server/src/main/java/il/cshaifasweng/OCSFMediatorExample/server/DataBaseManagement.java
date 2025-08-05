@@ -67,40 +67,45 @@ public class DataBaseManagement {
             assert is != null;
             byte[] imageBytes = is.readAllBytes();
             Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red", 1);
-            flower1.setSaleBranchNUM(-1);
-            flower1.setSaleBranch(0);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
             flower1.setSale(0);
             session.save(flower1);
             is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow", 1);
-            flower2.setSaleBranchNUM(-1);
-            flower2.setSaleBranch(0);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
             flower2.setSale(0);
             session.save(flower2);
             is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow", 1);
-            flower3.setSaleBranchNUM(-1);
-            flower3.setSaleBranch(0);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
             flower3.setSale(0);
             session.save(flower3);
             is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue", 1);
-            flower4.setSaleBranchNUM(-1);
-            flower4.setSaleBranch(0);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
             flower4.setSale(0);
             session.save(flower4);
             is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
             assert is != null;
             imageBytes = is.readAllBytes();
             Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White", 2);
-            flower5.setSaleBranchNUM(-1);
-            flower5.setSaleBranch(0);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
             flower5.setSale(0);
             session.save(flower5);
             /*
@@ -407,14 +412,26 @@ public class DataBaseManagement {
             List<Flower> result = session.createQuery(criteria).getResultList();
             for (Flower flower : result) {
                 if(flower.getBranch().size()==2){
-                    flower.setSaleBranch(addSale.getNumSale());
-                    flower.setSaleBranchNUM(addSale.getNumBranch());
+                    if(addSale.getNumBranch()==1){
+                        flower.setSaleBranchHaifa(addSale.getNumSale());
+                    }
+                    else if (addSale.getNumBranch()==2){
+                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+                    }
+                    else {
+                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+                    }
                 }
                 else {
-                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3) || flower.getBranch().get(0).getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) || flower.getSaleBranchNUM() == 3) {
-                        flower.setSaleBranch(addSale.getNumSale());
-                        flower.setSaleBranchNUM(addSale.getNumBranch());
-                    }
+                   if(flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale()==1){
+                       flower.setSaleBranchHaifa(addSale.getNumSale());
+                   }
+                   else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale()==2){
+                       flower.setSaleBranchTelAviv(addSale.getNumSale());
+                   }
+                   else {
+                       flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+                   }
                 }
                 session.update(flower);
             }

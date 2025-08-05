@@ -33,13 +33,6 @@ public class HomeController  {
     @FXML
     void initialize() {
         try {
-            SimpleClient client = SimpleClient.getClient( "localhost", 3001);
-            client.openConnection();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             SimpleClient.getClient().sendToServer("add client");
         }
         catch (IOException e) {

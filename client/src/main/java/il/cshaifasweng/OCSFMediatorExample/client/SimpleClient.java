@@ -283,25 +283,39 @@ public class SimpleClient extends AbstractClient {
             AddSale addSale = (AddSale) msg;
             for (Flower flower : flowers) {
                 if (flower.getBranch().size() == 2) {
-                    flower.setSaleBranch(addSale.getNumSale());
-                    flower.setSaleBranchNUM(addSale.getNumBranch());
-                }
-                else {
-                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3) || flower.getBranch().get(0).getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) || flower.getSaleBranchNUM() == 3) {
-                        flower.setSaleBranch(addSale.getNumSale());
-                        flower.setSaleBranchNUM(addSale.getNumBranch());
+                    if (addSale.getNumBranch() == 1) {
+                        flower.setSaleBranchHaifa(addSale.getNumSale());
+                    } else if (addSale.getNumBranch() == 2) {
+                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+                    } else {
+                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+                    }
+                } else {
+                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale() == 1) {
+                        flower.setSaleBranchHaifa(addSale.getNumSale());
+                    } else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale() == 2) {
+                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+                    } else {
+                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
                     }
                 }
             }
-            for (Flower flower1 : flowersSingles){
-                if (flower1.getBranch().size() == 2) {
-                    flower1.setSaleBranch(addSale.getNumSale());
-                    flower1.setSaleBranchNUM(addSale.getNumBranch());
-                }
-                else {
-                    if (flower1.getBranch().get(0).getAddress().equals("Haifa") && (flower1.getSaleBranchNUM() == 1 || flower1.getSaleBranchNUM() == 3) || flower1.getBranch().get(0).getAddress().equals("TelAviv") && (flower1.getSaleBranchNUM() == 2 || flower1.getSaleBranchNUM() == 3) || flower1.getSaleBranchNUM() == 3) {
-                        flower1.setSaleBranch(addSale.getNumSale());
-                        flower1.setSaleBranchNUM(addSale.getNumBranch());
+            for (Flower flower : flowersSingles) {
+                if (flower.getBranch().size() == 2) {
+                    if (addSale.getNumBranch() == 1) {
+                        flower.setSaleBranchHaifa(addSale.getNumSale());
+                    } else if (addSale.getNumBranch() == 2) {
+                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+                    } else {
+                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+                    }
+                } else {
+                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale() == 1) {
+                        flower.setSaleBranchHaifa(addSale.getNumSale());
+                    } else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale() == 2) {
+                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+                    } else {
+                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
                     }
                 }
             }

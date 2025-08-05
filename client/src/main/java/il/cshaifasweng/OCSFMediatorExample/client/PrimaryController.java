@@ -67,6 +67,9 @@ public class PrimaryController{
 	@FXML // fx:id="White"
 	private RadioButton White; // Value injected by FXMLLoader
 
+	@FXML // fx:id="EditInformationBU"
+	private Button EditInformationBU; // Value injected by FXMLLoader
+
 	@FXML // fx:id="Yellow"
 	private RadioButton Yellow; // Value injected by FXMLLoader
 
@@ -170,8 +173,22 @@ public class PrimaryController{
 					ComplaintBU.setVisible(false);
 					ReportBU.setVisible(false);
 					UpdateCatalogBU.setVisible(false);
+					ProfileBU.setVisible(false);
 				}
 				else if (CurrentCustomer.getCurrentEmployee() != null) {
+//					ProfileBU.setVisible(false);
+//					CartBU.setVisible(false);
+//					ReturnBU.setVisible(false);
+//					ComplaintBU.setVisible(false);
+//					ReportBU.setVisible(false);
+//					UpdateCatalogBU.setVisible(false);
+//					AddSaleBU.setVisible(false);
+//					SelectBranchEm.setVisible(false);
+//					BranchBoxEm.setVisible(false);
+//					DiscountEm.setVisible(false);
+//					DiscountSS.setVisible(false);
+//					PutDiscountEm.setVisible(false);
+//					AddSaleEm.setVisible(false);
 					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
 					System.out.println(employee.getUsername());
 					if(employee.getPermission() == 5) {
@@ -194,13 +211,13 @@ public class PrimaryController{
 						}
 					}
 					UpdateCatalogBU.setVisible(false);
-					ReportBU.setDisable(false);
-
+					ReportBU.setVisible(false);
+					ComplaintBU.setVisible(false);
+					EditInformationBU.setVisible(false);
 				}
 			   Grid.getChildren().clear();
                NumCol = 0;
 			   NumRow = 1;
-				System.out.println("#4");
 			   for (Flower flower : flowers) {
 				   try {
 					  AnchorPane FlowerNode;
@@ -208,7 +225,7 @@ public class PrimaryController{
 						  Item controller = FlowerCardCache.getController(flower.getId());
 						  FlowerNode = FlowerCardCache.getPane(flower.getId());
 						  if(CurrentCustomer.getSelectedBranch()!=null) {
-							  if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) )) {
+							  if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv()!= 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchHaifaTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0) )) {
 								  controller.PutSale(flower);
 							  }
 							  else{
@@ -216,7 +233,7 @@ public class PrimaryController{
 							  }
 						  }
 						  else{
-							  if(flower.getSaleBranchNUM() == 3){
+							  if(flower.getSaleBranchHaifaTelAviv() != 0){
 								  controller.PutSale(flower);
 							  }
 							  else {
@@ -229,7 +246,7 @@ public class PrimaryController{
 						FlowerNode = loader.load();
 						Item controller = loader.getController();
 						if(CurrentCustomer.getSelectedBranch()!=null) {
-							if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchNUM() == 1 || flower.getSaleBranchNUM() == 3)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchNUM() == 2 || flower.getSaleBranchNUM() == 3) )) {
+							if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0) )) {
 								controller.PutSale(flower);
 							}
 							else {
@@ -237,7 +254,7 @@ public class PrimaryController{
 							}
 						}
 						else {
-							if(flower.getSaleBranchNUM() == 3){
+							if(flower.getSaleBranchHaifaTelAviv() != 0){
 								controller.PutSale(flower);
 							}
 							else{
@@ -355,7 +372,7 @@ public class PrimaryController{
 					flowersList.add(flower);
 				}
 			}
-			EventBus.getDefault().post(flowersList);
+			init(flowersList);
 		});
 	}
 

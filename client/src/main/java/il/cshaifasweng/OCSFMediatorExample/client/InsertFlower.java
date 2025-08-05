@@ -267,9 +267,10 @@ public class InsertFlower {
         }
 
         else{
-            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, selectedColor, 1);
-            flower.setSaleBranchNUM(-1);
-            flower.setSaleBranch(0);
+            Flower flower = new Flower(name, type, priceValue, selectedImageBytes, selectedColor, TypeOfFlowerSelected);
+            flower.setSaleBranchHaifaTelAviv(0);
+            flower.setSaleBranchHaifa(0);
+            flower.setSaleBranchTelAviv(0);
             if(!(sale.isEmpty())){
                 flower.setSale(Integer.parseInt(sale));
             }
