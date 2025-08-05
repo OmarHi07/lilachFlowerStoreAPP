@@ -26,13 +26,16 @@ public class Flower implements Serializable {
 
     private int Sale;
 
-    private int SaleBranch;
+    private int SaleBranchHaifa;
+    private int SaleBranchTelAviv;
+    private int SaleBranchHaifaTelAviv;
+
     private int TypeOfFlower; // =1 Bouquet , =2 Single
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "flower_branch", joinColumns = @JoinColumn(name = "flower_id"), inverseJoinColumns = @JoinColumn(name = "branch_id"))
     private List<Branch>  BranchesAvailable;
-    private int SaleBranchNUM; // 1-Haifa || 2-TelAviv || 3-All
+//    private int SaleBranchNUM; // 1-Haifa || 2-TelAviv || 3-All
 
     public Flower() {}
 
@@ -55,18 +58,25 @@ public class Flower implements Serializable {
         BranchesAvailable.add(branch);
         branch.AddFlower(this);
     }
-    public int getSaleBranch(){
-        return SaleBranch;
+    public int getSaleBranchHaifa(){
+        return SaleBranchHaifa;
     }
-    public int getSaleBranchNUM(){
-        return SaleBranchNUM;
+    public void setSaleBranchHaifa(int SaleBranchHaifa){
+        this.SaleBranchHaifa = SaleBranchHaifa;
     }
-    public void setSaleBranch(int SaleBranch) {
-        this.SaleBranch = SaleBranch;
+    public void setSaleBranchTelAviv(int SaleBranch) {
+        this.SaleBranchTelAviv = SaleBranch;
     }
-    public void setSaleBranchNUM(int SaleBranchNUM) {
-        this.SaleBranchNUM = SaleBranchNUM;
+    public void setSaleBranchHaifaTelAviv(int SaleBranch) {
+        this.SaleBranchHaifaTelAviv = SaleBranch;
     }
+    public int getSaleBranchTelAviv(){
+        return SaleBranchTelAviv;
+    }
+    public int getSaleBranchHaifaTelAviv(){
+        return SaleBranchHaifaTelAviv;
+    }
+
     public void setTypeOfFlower(int TypeOfFlower) {this.TypeOfFlower = TypeOfFlower;}
     public int getTypeOfFlower() {return TypeOfFlower;}
     public void RemoveBranch(Branch branch) {BranchesAvailable.remove(branch);}

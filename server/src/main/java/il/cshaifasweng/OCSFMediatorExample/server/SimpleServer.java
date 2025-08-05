@@ -376,7 +376,7 @@ public class SimpleServer extends AbstractServer {
 			AddSale addSale = (AddSale) msg;
 			try {
 				instance.PutSaleBranch(addSale);
-				client.sendToClient(addSale);
+				sendToAllClients(addSale);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

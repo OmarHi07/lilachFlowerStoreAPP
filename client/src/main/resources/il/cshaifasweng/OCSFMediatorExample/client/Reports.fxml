@@ -92,4 +92,9 @@
          <Font name="Serif Regular" size="20.0" />
       </font>
    </Text>
+   <Button layoutX="14.0" layoutY="7.0" mnemonicParsing="false" onAction="#goBack" prefHeight="43.0" prefWidth="110.0" style="-fx-background-color: C7BCA6FF;" text="🔙 Back" textFill="#4d3420">
+      <font>
+         <Font name="Serif Regular" size="20.0" />
+      </font>
+   </Button>
 </AnchorPane>
