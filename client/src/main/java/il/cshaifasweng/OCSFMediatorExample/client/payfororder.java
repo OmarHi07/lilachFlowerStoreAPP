@@ -90,6 +90,11 @@ public class payfororder {
 
         @FXML
         private DatePicker dateapply;
+        @FXML
+        private Text deliverycost;
+
+        @FXML
+        private Text fourtyy;
 
         @FXML
         private Button delivery;
@@ -149,7 +154,7 @@ public class payfororder {
 
         private double creditUsed = 0;
         private boolean creditApplied = false;
-
+        private boolean deliveryApplied = false;
 
         @FXML
         void datecard(ActionEvent event) {
@@ -214,6 +219,9 @@ public class payfororder {
 
         @FXML
         void delivery(ActionEvent event) {
+
+                fourtyy.setVisible(true);
+                deliverycost.setVisible(true);
                 locationn.setVisible(true);
 
                 String selectedBranch = CurrentCustomer.getSelectedBranch().getAddress();
@@ -227,6 +235,11 @@ public class payfororder {
                 // כיבוי delivery
                 pickup.setStyle("-fx-background-color:#a18674; -fx-text-fill: white");
 
+                if(!deliveryApplied){
+                    totalprice=totalprice+40;
+                    deliveryApplied=true;
+                    totaal.setText(totalprice + " ₪");
+                }
         }
 
 
@@ -419,8 +432,8 @@ public class payfororder {
                 }
 
                 List<Branch> branches = SimpleClient.getAllBranches();
-                //Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals(selectedBranch)).findFirst().orElse(null);
-                Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals("Haifa")).findFirst().orElse(null);
+                Branch branch = branches.stream().filter(branch1 -> branch1.getAddress().equals(CurrentCustomer.getSelectedBranch().getAddress())).findFirst().orElse(null);
+
 
                 String phoneReceiver = "";
                 String emailReceiver = "";
@@ -591,6 +604,9 @@ public class payfororder {
                 phone.setVisible(false);
                 use.setVisible(false);
                 usecredit.setVisible(false);
+                fourtyy.setVisible(false);
+                deliverycost.setVisible(false);
+
 
                 cardpaychoice.setItems(FXCollections.observableArrayList("Pay with new card", "Use saved card"));
                 cardpaychoice.setValue("Pay with new card"); // ברירת מחדל
@@ -723,6 +739,10 @@ public class payfororder {
 
 
         public void pickup (ActionEvent event) {
+
+                fourtyy.setVisible(false);
+                deliverycost.setVisible(false);
+
                 locationn.setVisible(false);
                 payattention.setVisible(false);
                 // הדלקת pickup
@@ -730,6 +750,13 @@ public class payfororder {
 
                 // כיבוי delivery
                 delivery.setStyle("-fx-background-color:#a18674; -fx-text-fill: white");
+
+                if(deliveryApplied){
+                        totalprice=totalprice-40;
+                        deliveryApplied=false;
+                        totaal.setText(totalprice + " ₪");
+                }
+
         }
 
         public void gobackk(MouseEvent mouseEvent) {

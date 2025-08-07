@@ -25,6 +25,9 @@ public class PrimaryController{
 	private int NumCol;
 	private int NumRow;
 
+	@FXML
+	private Button customize;
+
 	@FXML // fx:id="ProfileBU"
 	private Button ProfileBU; // Value injected by FXMLLoader
 
@@ -136,7 +139,7 @@ public class PrimaryController{
 		BranchBoxEm.setValue(("All"));
 		isCustomize = false;
 		ReturnBU.setVisible(false);
-        BranchGroup = new ToggleGroup();
+		BranchGroup = new ToggleGroup();
 		//colorGroup = new ToggleGroup();
 		Haifa.setToggleGroup(BranchGroup);
 		TelAviv.setToggleGroup(BranchGroup);
@@ -158,8 +161,13 @@ public class PrimaryController{
 		Grid.setVgap(20);     // רווח אנכי בין שורות
 		Grid.setPadding(new Insets(20));
 		System.out.println("#3");// רווח מהשוליים
-        init(SimpleClient.getFlowers());
-	}
+		init(SimpleClient.getFlowers());
+
+
+
+		}
+
+
 
 	@Subscribe
 	public void init(List<Flower> flowers) {
@@ -191,12 +199,18 @@ public class PrimaryController{
 //					AddSaleEm.setVisible(false);
 					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
 					System.out.println(employee.getUsername());
-					if(employee.getPermission() == 5) {
+					if (employee.getPermission() == 5) {
+
 						UpdateCatalogBU.setVisible(true);
 					}
-				}
-				else {
-					if (CurrentCustomer.getCurrentUser() != null) {
+					if (employee.getPermission() == 2) {
+						customize.setVisible(false);
+						ProfileBU.setVisible(false);
+						ComplaintBU.setVisible(true);
+						EditInformationBU.setVisible(false);
+						ReportBU.setVisible(true);
+						UpdateCatalogBU.setVisible(false);
+						CartBU.setVisible(false);
 						AddSaleBU.setVisible(false);
 						SelectBranchEm.setVisible(false);
 						BranchBoxEm.setVisible(false);
@@ -204,81 +218,148 @@ public class PrimaryController{
 						DiscountSS.setVisible(false);
 						PutDiscountEm.setVisible(false);
 						AddSaleEm.setVisible(false);
-						Customer customer = (Customer) CurrentCustomer.getCurrentUser();
-						if(customer.getCustomerType() == 1){
-							Haifa.setDisable(false);
-							TelAviv.setDisable(false);
-						}
+					} else if (employee.getPermission() == 3) {
+						customize.setVisible(false);
+						ProfileBU.setVisible(false);
+						ComplaintBU.setVisible(false);
+						EditInformationBU.setVisible(false);
+						ReportBU.setVisible(true);
+						UpdateCatalogBU.setVisible(false);
+						CartBU.setVisible(false);
+
+						AddSaleBU.setVisible(false);
+						SelectBranchEm.setVisible(false);
+						BranchBoxEm.setVisible(false);
+						DiscountEm.setVisible(false);
+						DiscountSS.setVisible(false);
+						PutDiscountEm.setVisible(false);
+						AddSaleEm.setVisible(false);
 					}
-					UpdateCatalogBU.setVisible(false);
-					ReportBU.setVisible(false);
-					ComplaintBU.setVisible(false);
-					EditInformationBU.setVisible(false);
-				}
-			   Grid.getChildren().clear();
-               NumCol = 0;
-			   NumRow = 1;
-			   for (Flower flower : flowers) {
-				   try {
-					  AnchorPane FlowerNode;
-					  if (FlowerCardCache.contains(flower.getId())) {
-						  Item controller = FlowerCardCache.getController(flower.getId());
-						  FlowerNode = FlowerCardCache.getPane(flower.getId());
-						  if(CurrentCustomer.getSelectedBranch()!=null) {
-							  if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv()!= 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchHaifaTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0) )) {
-								  controller.PutSale(flower);
-							  }
-							  else{
-								  controller.setData(flower);
-							  }
-						  }
-						  else{
-							  if(flower.getSaleBranchHaifaTelAviv() != 0){
-								  controller.PutSale(flower);
-							  }
-							  else {
-								  controller.setData(flower);
-							  }
-						  }
-					  }
-					  else {
-						FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
-						FlowerNode = loader.load();
-						Item controller = loader.getController();
-						if(CurrentCustomer.getSelectedBranch()!=null) {
-							if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0) )) {
-								controller.PutSale(flower);
-							}
-							else {
-								controller.setData(flower);
+
+						else if (employee.getPermission() == 4) {
+						customize.setVisible(false);
+							ProfileBU.setVisible(false);
+							ComplaintBU.setVisible(false);
+							EditInformationBU.setVisible(false);
+							ReportBU.setVisible(true);
+							UpdateCatalogBU.setVisible(false);
+							CartBU.setVisible(false);
+							AddSaleBU.setVisible(true);
+							SelectBranchEm.setVisible(true);
+							BranchBoxEm.setVisible(true);
+							DiscountEm.setVisible(true);
+							DiscountSS.setVisible(true);
+							PutDiscountEm.setVisible(true);
+							AddSaleEm.setVisible(true);
+						} else if (employee.getPermission() == 5) {
+						customize.setVisible(false);
+							ProfileBU.setVisible(false);
+							ComplaintBU.setVisible(false);
+							EditInformationBU.setVisible(false);
+							ReportBU.setVisible(false);
+							UpdateCatalogBU.setVisible(false);
+							CartBU.setVisible(false);
+							AddSaleBU.setVisible(false);
+							SelectBranchEm.setVisible(false);
+							BranchBoxEm.setVisible(false);
+							DiscountEm.setVisible(false);
+							DiscountSS.setVisible(false);
+							PutDiscountEm.setVisible(false);
+							AddSaleEm.setVisible(false);
+						} else if (employee.getPermission() == 6) {
+						customize.setVisible(false);
+							ProfileBU.setVisible(false);
+							ComplaintBU.setVisible(false);
+							EditInformationBU.setVisible(true);
+							ReportBU.setVisible(false);
+							UpdateCatalogBU.setVisible(false);
+							CartBU.setVisible(false);
+							AddSaleBU.setVisible(false);
+							SelectBranchEm.setVisible(false);
+							BranchBoxEm.setVisible(false);
+							DiscountEm.setVisible(false);
+							DiscountSS.setVisible(false);
+							PutDiscountEm.setVisible(false);
+							AddSaleEm.setVisible(false);
+						}
+					} else {
+						if (CurrentCustomer.getCurrentUser() != null) {
+							AddSaleBU.setVisible(false);
+							SelectBranchEm.setVisible(false);
+							BranchBoxEm.setVisible(false);
+							DiscountEm.setVisible(false);
+							DiscountSS.setVisible(false);
+							PutDiscountEm.setVisible(false);
+							AddSaleEm.setVisible(false);
+							Customer customer = (Customer) CurrentCustomer.getCurrentUser();
+							if (customer.getCustomerType() == 1) {
+								Haifa.setDisable(false);
+								TelAviv.setDisable(false);
 							}
 						}
-						else {
-							if(flower.getSaleBranchHaifaTelAviv() != 0){
-								controller.PutSale(flower);
+						UpdateCatalogBU.setVisible(false);
+						ReportBU.setVisible(false);
+						ComplaintBU.setVisible(false);
+						EditInformationBU.setVisible(false);
+					}
+					Grid.getChildren().clear();
+					NumCol = 0;
+					NumRow = 1;
+					for (Flower flower : flowers) {
+						try {
+							AnchorPane FlowerNode;
+							if (FlowerCardCache.contains(flower.getId())) {
+								Item controller = FlowerCardCache.getController(flower.getId());
+								FlowerNode = FlowerCardCache.getPane(flower.getId());
+								if (CurrentCustomer.getSelectedBranch() != null) {
+									if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchHaifaTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0))) {
+										controller.PutSale(flower);
+									} else {
+										controller.setData(flower);
+									}
+								} else {
+									if (flower.getSaleBranchHaifaTelAviv() != 0) {
+										controller.PutSale(flower);
+									} else {
+										controller.setData(flower);
+									}
+								}
+							} else {
+								FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
+								FlowerNode = loader.load();
+								Item controller = loader.getController();
+								if (CurrentCustomer.getSelectedBranch() != null) {
+									if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0))) {
+										controller.PutSale(flower);
+									} else {
+										controller.setData(flower);
+									}
+								} else {
+									if (flower.getSaleBranchHaifaTelAviv() != 0) {
+										controller.PutSale(flower);
+									} else {
+										controller.setData(flower);
+									}
+								}
+								FlowerCardCache.put(flower.getId(), FlowerNode, controller);
 							}
-							else{
-								controller.setData(flower);
+							FlowerNode.setPrefHeight(520);
+							Grid.add(FlowerNode, NumCol, NumRow);
+							NumCol++;
+							if (NumCol == 2) {
+								NumCol = 0;
+								NumRow++;
 							}
+
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
-						FlowerCardCache.put(flower.getId(), FlowerNode, controller);
-					  }
-					  FlowerNode.setPrefHeight(520);
-					  Grid.add(FlowerNode, NumCol, NumRow);
-					  NumCol++;
-					  if (NumCol == 2) {
-					    	NumCol = 0;
-						    NumRow++;
-					  }
 
-				   }
-				   catch (IOException e) {
-					e.printStackTrace();
-				}
+					}
 
-			}
-		});
+			});
 	}
+
 	private void filterFlowers(){
 		NumCol = 0;
 		NumRow = 0;

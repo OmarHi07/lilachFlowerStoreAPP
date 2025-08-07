@@ -112,6 +112,9 @@ public class SimpleClient extends AbstractClient {
                 CurrentCustomer.setCurrentCustomer("Customer");
                 BranchCustomer = response.getListBranches();
                 AllOrders = response.getListOrders();
+                if(CurrentCustomer.getCurrentUser().getCustomerType()==1){
+                    CurrentCustomer.setSelectedBranch(BranchCustomer.get(0));
+                }
             }
             if (response.getEmployee()!=null) {
                 CurrentCustomer.setCurrentEmployee(response.getEmployee());

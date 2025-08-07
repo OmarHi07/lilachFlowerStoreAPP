@@ -124,7 +124,7 @@
             <Font name="Serif Regular" size="12.0" />
          </font>
       </Button>
-      <Button layoutX="760.0" layoutY="12.0" mnemonicParsing="false" onAction="#Customizethebouquet" prefHeight="26.0" prefWidth="131.0" style="-fx-background-color: #c4b3a3;" text="Customize the bouquet" textFill="#634730">
+      <Button fx:id="customize" layoutX="760.0" layoutY="12.0" mnemonicParsing="false" onAction="#Customizethebouquet" prefHeight="26.0" prefWidth="131.0" style="-fx-background-color: #c4b3a3;" text="Customize the bouquet" textFill="#634730">
          <font>
             <Font name="Serif Regular" size="12.0" />
          </font>

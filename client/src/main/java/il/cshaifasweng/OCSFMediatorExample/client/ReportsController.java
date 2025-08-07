@@ -1,14 +1,12 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.scene.chart.XYChart;
 
 import java.awt.event.ActionEvent;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import il.cshaifasweng.OCSFMediatorExample.entities.GetReportEvent;
+
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
-import il.cshaifasweng.OCSFMediatorExample.entities.Complain;
-import il.cshaifasweng.OCSFMediatorExample.entities.HistogramReportRequest;
-import il.cshaifasweng.OCSFMediatorExample.entities.ReportRequest;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -60,7 +58,8 @@ public class ReportsController {
     private Collectors Collectors;
     @FXML
     public void initialize() {
-        branchComboBox.getItems().addAll("All", "1", "2");
+        branchComboBox.getItems().clear();
+        branchComboBox.getItems().addAll("All", "Haifa", "TelAviv");
         branchComboBox.setValue(("All")); // ברירת מחדל
         EventBus.getDefault().register(this);
         countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
@@ -69,17 +68,36 @@ public class ReportsController {
         countColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         complainTextColumn.setCellValueFactory(new PropertyValueFactory<>("complain_text"));
-        complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // תואם ל-getDate()
+        complainDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        if(CurrentCustomer.getCurrentEmployee().getPermission()==3){
+            BranchManager man= (BranchManager) CurrentCustomer.getCurrentEmployee();
+            if(man.getBranch().getAddress().equals("Haifa")) {
+                branchComboBox.getItems().clear();
+                branchComboBox.setValue("Haifa");
+            }
+            else{
+                branchComboBox.getItems().clear();
+                branchComboBox.setValue("TelAviv");
+            }
+        }
+        // תואם ל-getDate()
     }
 
     private int parseBranchId() {
         String v = branchComboBox.getValue();
         if (v == null || v.equalsIgnoreCase("All")) return -1;   // ← תואם לשרת
-        try { return Integer.parseInt(v.trim()); } catch (NumberFormatException e) { return -1; }
+        if (v.equals("Haifa")) {
+            return 1;
+        } else {
+            return 2;
+        }
     }
 
     @FXML
     private void loadOrdersHistogram(){
+
+
         LocalDate from = fromDatePicker.getValue();
         LocalDate to = toDatePicker.getValue();
 

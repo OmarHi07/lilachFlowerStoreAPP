@@ -115,10 +115,26 @@ public class SimpleServer extends AbstractServer {
 		else if (msg instanceof Complain) {
 			Complain complaint = (Complain) msg;
 
+			complaint.getCustomer().getEmail();
+
 			if (!complaint.getStatus()) {
 				// New complaint (not saved yet, no ID)
 				System.out.println("Server received new complaint: " + complaint.getComplain_text());
 				instance.saveComplaint(complaint);
+				String email = complaint.getCustomer().getEmail();
+				String name = complaint.getCustomer().getFirstName();
+				String subject = "We've Received Your Complaint";
+				String body = "Dear " + name + ",\n\n"
+						+ "Thank you for reaching out to us. We have received your complaint:\n\n"
+						+ "\"" + complaint.getComplain_text() + "\"\n\n"
+						+ "Our team is reviewing the issue and will respond within the next 2 business days.\n"
+						+ "If you have any further questions, feel free to reply to this email.\n\n"
+						+ "Best regards,\n"
+						+ "— The Lilach Team";
+
+				EmailSender.sendEmail(email, subject, body);
+				System.out.println("Complaint confirmation sent to: " + email);
+
 			} else {
 				// Existing complaint (has ID, update it)
 				System.out.println("Server received update for complaint ID: " + complaint.getId());
@@ -127,21 +143,14 @@ public class SimpleServer extends AbstractServer {
 				// sending email after setting the response
 				String answer = complaint.getAnswer_text();
 				if (answer != null && !answer.isEmpty()) {
-					if (complaint.getCustomer() == null) {// atester customer to test if the email sending is working
-						Customer dummy = new Customer();
-						dummy.setEmail("adanemran150@gmail.com");
-						dummy.setFirstName("Test User");
-						complaint.setCustomer(dummy);  // set it just for the test
-					}//end of tester customer
-					String email = complaint.getCustomer().getEmail();
-					String name = complaint.getCustomer().getFirstName();
+					String email   = complaint.getCustomer().getEmail();
+					String name    = complaint.getCustomer().getFirstName();
 					String subject = "Response to Your Complaint";
-					String body = "Dear " + name + ",\n\n"
+					String body    = "Dear " + name + ",\n\n"
 							+ "We have responded to your complaint:\n\n"
 							+ answer + "\n\n"
 							+ "Thank you for your patience,\n"
 							+ "— The Lilach Team";
-
 
 					EmailSender.sendEmail(email, subject, body); //here we send an email after the response of the complaint is completed
 					System.out.println("Email sent to: " + email);
@@ -316,13 +325,14 @@ public class SimpleServer extends AbstractServer {
 			try {
 				if (response.isSuccess()) {
 					// Send confirmation email
-					EmailSender.sendEmail(request.getEmail(), "Welcome to Lelac Stores!", "Dear " + request.getFirstName() + ",\n\nThank you for signing up at Lelac Stores! We're happy to have you on board.\n\nHappy shopping! 💐");
+					EmailSender.sendEmail(request.getEmail(), "Welcome to Lelac Stores!","Dear " + request.getFirstName() + ",\n\nThank you for signing up at Lelac Stores! We're happy to have you on board.\n\nHappy shopping! 💐");
 				}
 				client.sendToClient(response);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
+
 
 		//18
 		else if (msg instanceof GetEntitiesRequest) {
@@ -343,16 +353,20 @@ public class SimpleServer extends AbstractServer {
 			SendEmailRequest request = (SendEmailRequest) msg;
 
 			String username = request.getUsername();
+			int massagetype = request.getMassageType();
 			String message = request.getMessage();
 
 			// Example: search in customer table
 			Object customerObj = instance.findUserByUsername("customer", request.getUsername()); // You implement this method
+
 			Customer customer = (Customer) customerObj;
 			if (customer != null) {
-				String email = customer.getEmail();
-				String subject = "Message from Lelac System Manager";
-				EmailSender.sendEmail(email, subject, message);
-				System.out.println("Email sent to " + email);
+				if (massagetype == 1) {
+					String email = customer.getEmail();
+					String subject = "Message from Lelac System Manager";
+					EmailSender.sendEmail(email, subject, message);
+					System.out.println("Email sent to " + email);
+				}
 			} else {
 				System.out.println("Username not found: " + username);
 				// Optionally send an error response back
@@ -396,16 +410,41 @@ public class SimpleServer extends AbstractServer {
 
 
 		//22
-		else if (msg instanceof Order) {
+		else if(msg instanceof Order){
 			Order order = (Order) msg;
-			Order order1 = instance.saveorder(order);
-			AddOrder addOrder = new AddOrder();
-			addOrder.setOrder(order1);
-			try {
-				client.sendToClient(addOrder);
+			Order Order1=instance.saveorder(order);
+			AddOrder newOrder = new AddOrder();
+			newOrder.setOrder(Order1);
+			try{
+				client.sendToClient(newOrder);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+			}
+
+			/* 2️⃣  Send confirmation e‑mail */
+			Customer customer = order.getCustomer();
+			if (customer != null) {
+				String email = customer.getEmail();
+				String name  = customer.getFirstName();
+
+				if (email != null && !email.isBlank()) {
+
+					String subject = "Your Lilach Order #" + order.getId() + " is Confirmed!";
+					String body    = "Dear " + name + ",\n\n"
+							+ "Thank you for shopping with Lilach.\n"
+							+ "We’ve received your order and started preparing it.\n\n"
+							+ "With gratitude,\n"
+							+ "— The Lilach Team";
+
+					try {
+						EmailSender.sendEmail(email, subject, body);
+						System.out.println("Order confirmation e‑mail sent to: " + email);
+					} catch (Exception e) {
+						System.err.println("Failed to send order confirmation to " + email);
+						e.printStackTrace();
+					}
+				}
 			}
 
 		}

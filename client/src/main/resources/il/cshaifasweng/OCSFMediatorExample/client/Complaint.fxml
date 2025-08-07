@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.CategoryAxis?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ComplaintController"
-            prefWidth="920" prefHeight="500">
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-    <TableView fx:id="complaintTable" layoutX="10" layoutY="10" prefWidth="500" prefHeight="480" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+<AnchorPane prefHeight="500" prefWidth="920" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ComplaintController">
+
+    <TableView fx:id="complaintTable" layoutX="10" layoutY="10" prefHeight="480" prefWidth="500" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columns>
-            <TableColumn fx:id="customerColumn" text="Customer" prefWidth="50"/>
-            <TableColumn fx:id="branchColumn" text="Branch" prefWidth="50"/>
-            <TableColumn fx:id="dateColumn" text="Date" prefWidth="50"/>
-            <TableColumn fx:id="timeColumn" text="Time" prefWidth="50"/>
-            <TableColumn fx:id="textColumn" text="Complaint" prefWidth="50"/>
-            <TableColumn fx:id="answerColumn" text="Answer" prefWidth="50"/>
-            <TableColumn fx:id="statusColumn" text="Status" prefWidth="50"/>
-            <TableColumn fx:id="refundColumn" text="Refund" prefWidth="50"/>
+            <TableColumn fx:id="customerColumn" prefWidth="50" text="Customer" />
+            <TableColumn fx:id="branchColumn" prefWidth="50" text="Branch" />
+            <TableColumn fx:id="dateColumn" prefWidth="50" text="Date" />
+            <TableColumn fx:id="timeColumn" prefWidth="50" text="Time" />
+            <TableColumn fx:id="textColumn" prefWidth="50" text="Complaint" />
+            <TableColumn fx:id="answerColumn" prefWidth="50" text="Answer" />
+            <TableColumn fx:id="statusColumn" prefWidth="50" text="Status" />
+            <TableColumn fx:id="refundColumn" prefWidth="50" text="Refund" />
 
         </columns>
 
 
     </TableView>
-    <BarChart fx:id="complaintBarChart" layoutX="920" layoutY="10" prefWidth="400" prefHeight="480"
-              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"
-              title="Complaint Status Summary">
+    <BarChart fx:id="complaintBarChart" layoutX="520.0" layoutY="10.0" prefHeight="480" prefWidth="400" title="Complaint Status Summary" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
         <xAxis>
-            <CategoryAxis label="Status"/>
+            <CategoryAxis label="Status" />
         </xAxis>
         <yAxis>
-            <NumberAxis label="Count"/>
+            <NumberAxis label="Count" />
         </yAxis>
     </BarChart>
 </AnchorPane>

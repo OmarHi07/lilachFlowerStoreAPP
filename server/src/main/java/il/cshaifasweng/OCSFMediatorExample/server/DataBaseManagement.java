@@ -63,51 +63,107 @@ public class DataBaseManagement {
 
         Long count = (Long) session.createQuery("select count(f) from Flower f").uniqueResult();
         if (count == 0 ) {
-            InputStream is = DataBaseManagement.class.getResourceAsStream("/images/0.png");
+            InputStream is = DataBaseManagement.class.getResourceAsStream("/images/1.jpeg");
             assert is != null;
             byte[] imageBytes = is.readAllBytes();
-            Flower flower1 = new Flower("Whisper of love", "Dozens of red roses", 250, imageBytes, "Red", 1);
+            Flower flower1 = new Flower("Dahila", "Dozens of white dahila", 250, imageBytes, "White", 1);
             flower1.setSaleBranchHaifa(0);
             flower1.setSaleBranchHaifaTelAviv(0);
             flower1.setSaleBranchTelAviv(0);
             flower1.setSale(0);
             session.save(flower1);
-            is = DataBaseManagement.class.getResourceAsStream("/images/1.png");
+            is = DataBaseManagement.class.getResourceAsStream("/images/2.jpeg");
             assert is != null;
             imageBytes = is.readAllBytes();
-            Flower flower2 = new Flower("SunShine Meadow", "bouquet full of sunflowers", 160,imageBytes, "Yellow", 1);
+            Flower flower2 = new Flower("Rose", "Bold Red base softened with pink touches  ", 160,imageBytes, "Red", 1);
             flower1.setSaleBranchHaifa(0);
             flower1.setSaleBranchHaifaTelAviv(0);
             flower1.setSaleBranchTelAviv(0);
             flower2.setSale(0);
             session.save(flower2);
-            is = DataBaseManagement.class.getResourceAsStream("/images/2.png");
+            is = DataBaseManagement.class.getResourceAsStream("/images/3.jpeg");
             assert is != null;
             imageBytes = is.readAllBytes();
-            Flower flower3 = new Flower("Tropical Sunrise", "A colorful mix", 150, imageBytes, "Yellow", 1);
+            Flower flower3 = new Flower("Ranunculus", "A playful cascade of Pink Ranunculus  ", 150, imageBytes, "Pink", 1);
             flower1.setSaleBranchHaifa(0);
             flower1.setSaleBranchHaifaTelAviv(0);
             flower1.setSaleBranchTelAviv(0);
             flower3.setSale(0);
             session.save(flower3);
-            is = DataBaseManagement.class.getResourceAsStream("/images/3.png");
+            is = DataBaseManagement.class.getResourceAsStream("/images/4.jpeg");
             assert is != null;
             imageBytes = is.readAllBytes();
-            Flower flower4 = new Flower("Velvet touch", "A single red rose", 20, imageBytes, "Blue", 1);
+            Flower flower4 = new Flower("Dahila", "A single Red Dahila", 20, imageBytes, "Red", 1);
             flower1.setSaleBranchHaifa(0);
             flower1.setSaleBranchHaifaTelAviv(0);
             flower1.setSaleBranchTelAviv(0);
             flower4.setSale(0);
             session.save(flower4);
-            is = DataBaseManagement.class.getResourceAsStream("/images/4.png");
+
+             is = DataBaseManagement.class.getResourceAsStream("/images/5.jpeg");
             assert is != null;
             imageBytes = is.readAllBytes();
-            Flower flower5 = new Flower("Eternal Grace", "Classic combination", 200, imageBytes, "White", 2);
+            Flower flower9 = new Flower(" Anemone", "if you Like Yellow Anemone", 290, imageBytes, "Yellow", 1);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
+            flower9.setSale(0);
+            session.save(flower9);
+
+            is = DataBaseManagement.class.getResourceAsStream("/images/c1.jpeg");
+            assert is != null;
+            imageBytes = is.readAllBytes();
+            Flower flower5 = new Flower("Petunia", "Classic Blue Petunia", 70, imageBytes, "Blue", 2);
             flower1.setSaleBranchHaifa(0);
             flower1.setSaleBranchHaifaTelAviv(0);
             flower1.setSaleBranchTelAviv(0);
             flower5.setSale(0);
             session.save(flower5);
+
+            is = DataBaseManagement.class.getResourceAsStream("/images/c2.jpeg");
+            assert is != null;
+            imageBytes = is.readAllBytes();
+            Flower flower6 = new Flower("Lily", "Classic Pink Lily", 80, imageBytes, "Pink", 2);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
+            flower6.setSale(0);
+            session.save(flower6);
+
+
+            is = DataBaseManagement.class.getResourceAsStream("/images/c3.jpeg");
+            assert is != null;
+            imageBytes = is.readAllBytes();
+            Flower flower7 = new Flower("Hibiscus", "Classic Red Hibiscus", 60, imageBytes, "Red", 2);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
+            flower7.setSale(0);
+            session.save(flower7);
+
+
+            is = DataBaseManagement.class.getResourceAsStream("/images/c4.jpeg");
+            assert is != null;
+            imageBytes = is.readAllBytes();
+            Flower flower8 = new Flower("Gerbera Daisy", "Classic White Gerbera Daisy", 60, imageBytes, "White", 2);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
+            flower8.setSale(0);
+            session.save(flower8);
+
+
+            is = DataBaseManagement.class.getResourceAsStream("/images/c5.jpeg");
+            assert is != null;
+            imageBytes = is.readAllBytes();
+            Flower flower10 = new Flower("Chrysanthemum", "Classic Yellow Chrysanthemum", 70, imageBytes, "Yellow", 2);
+            flower1.setSaleBranchHaifa(0);
+            flower1.setSaleBranchHaifaTelAviv(0);
+            flower1.setSaleBranchTelAviv(0);
+            flower10.setSale(0);
+            session.save(flower10);
+
+
             /*
              * The call to session.flush() updates the DB immediately without ending the transaction.
              * Recommended to do after an arbitrary unit of work.
@@ -133,10 +189,23 @@ public class DataBaseManagement {
     private static void generateUsers() throws Exception {
         Long count = (Long) session.createQuery("select count(b) from Customer b").uniqueResult();
         if (count == 0) {
+            Branch telavivBranch = session.createQuery("from Branch where address = 'TelAviv'", Branch.class).getSingleResult();
+            Branch HaifaBranch = session.createQuery("from Branch where address = 'Haifa'", Branch.class).getSingleResult();
             Customer Cu1 = new Customer("Arkan", "Issa", "Arkanissa7@gmail.com", "0500118796", "Arkan7", "123456", "1457125896543267", "0727", "148", "872136", 2);
             NetworkWorker nw = new NetworkWorker("ACS", "AERT", "ghty");
+            BranchManager tela= new BranchManager("tela","telaviv","12345",telavivBranch);
+            BranchManager haifosh= new BranchManager("haifosh","haifosh","12345",HaifaBranch);
+            StoreChainManager storeman = new StoreChainManager("man","man","11111" );
+            SystemAdmin admin = new SystemAdmin("admin","admin","admin");
+            CostumerServiceEmployee service = new CostumerServiceEmployee("service" ,"service","service");
             session.save(nw);
             session.save(Cu1);
+            session.save(tela);
+            session.save(haifosh);
+            session.save(storeman);
+            session.save(admin);
+            session.save(service);
+
             session.flush(); // Commit to DB before customer registration
         }
     }
@@ -926,10 +995,8 @@ public class DataBaseManagement {
                 if (!request.getEmail().isEmpty()) customer.setEmail(request.getEmail());
                 if (!request.getPhone().isEmpty()) customer.setPhone(request.getPhone());
                 if (!request.getPassword().isEmpty()) customer.setPassword(request.getPassword());
-                if(!request.getCvv().isEmpty()) customer.setCreditCardCVV(request.getCvv());
-                if(!request.getCardNumber().isEmpty()) customer.setCreditCardNumber(request.getCardNumber());
-                if(!request.getExpiryDate().isEmpty()) customer.setCreditCardExpiration(request.getExpiryDate());
 
+                System.out.println("1");
                 //תתקן את זה
                 if(!request.getRole().isEmpty()){
                     if(request.getRole().equals("Network Account")){

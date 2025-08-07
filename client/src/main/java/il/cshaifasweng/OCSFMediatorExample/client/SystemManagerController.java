@@ -318,7 +318,11 @@ public class SystemManagerController {
 
     @FXML
     void logOut(ActionEvent event) {
-
+        try{
+            App.setRoot("primary", 1110.0,731.0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
