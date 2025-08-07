@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<?import javafx.collections.FXCollections?>
 <?import java.lang.Integer?>
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-    <VBox alignment="TOP_CENTER" spacing="10.0"
-          AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
-          AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"
-          prefHeight="500.0" prefWidth="880.0">
+<AnchorPane style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
+
+    <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="880.0" spacing="10.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <padding>
-            <Insets top="10" right="10" bottom="10" left="10"/>
+            <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
 
-        <Label text="Income Report - Orders Summary"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Income Report - Orders Summary" />
 
-        <TableView fx:id="ordersTable" prefWidth="860" prefHeight="160">
+        <TableView fx:id="ordersTable" prefHeight="160" prefWidth="860">
             <columns>
                 <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
                 <TableColumn fx:id="addressColumn" prefWidth="120" text="Address" />
@@ -40,39 +44,42 @@
             </columns>
         </TableView>
 
-        <Label text="Histogram - Income by Date"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Histogram - Income by Date" />
 
-        <BarChart fx:id="ordersBarChart" prefWidth="860" prefHeight="180">
+        <BarChart fx:id="ordersBarChart" prefHeight="180" prefWidth="860">
             <xAxis>
-                <CategoryAxis label="Date"/>
+                <CategoryAxis label="Date" />
             </xAxis>
             <yAxis>
-                <NumberAxis label="Total Income"/>
+                <NumberAxis label="Total Income" />
             </yAxis>
         </BarChart>
 
-        <Label fx:id="totalIncomeLabel"
-               style="-fx-font-size: 14px; -fx-font-weight: bold;"
-               text="Total Income: ₪0.00" />
+        <Label fx:id="totalIncomeLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Total Income: ₪0.00" />
 
-        <Label text="Select Date Range:"
-               style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Select Date Range:" />
         <HBox alignment="CENTER" spacing="10">
+         <ComboBox fx:id="quarter" onAction="#quarter" prefHeight="26.0" prefWidth="87.0" promptText="Quarter">
+            <items>
+               <FXCollections fx:factory="observableArrayList">
+                  <Integer fx:value="1" />
+                  <Integer fx:value="2" />
+               </FXCollections>
+            </items>
+         </ComboBox>
             <DatePicker fx:id="fromDatePicker" promptText="From Date" />
             <DatePicker fx:id="toDatePicker" promptText="To Date" />
         </HBox>
         <!-- בחירת סניף -->
-        <Label text="Select Branch:" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-        <ComboBox fx:id="branchComboBox" promptText="Choose Branch" prefWidth="150">
+        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Select Branch:" />
+        <ComboBox fx:id="branchComboBox" prefWidth="150" promptText="Choose Branch">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <Integer fx:value="1"/>
-                    <Integer fx:value="2"/>
+                    <Integer fx:value="1" />
+                    <Integer fx:value="2" />
                 </FXCollections>
             </items>
         </ComboBox>
-
-        <Button text="Load Income Report" onAction="#loadOrdersHistogram" />
+      <Button layoutX="388.0" layoutY="475.0" onAction="#loadOrdersHistogram" text="Load Income Report" />
     </VBox>
 </AnchorPane>
