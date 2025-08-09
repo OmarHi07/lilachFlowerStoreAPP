@@ -114,6 +114,9 @@ public class PrimaryController{
 	@FXML
 	private TableView<Complain> complainTable;
 
+	@FXML // fx:id="logoutBU"
+	private Button logoutBU; // Value injected by FXMLLoader
+
 
 	@FXML private TableColumn<Complain, Integer> idColumn;
 	@FXML private TableColumn<Complain, String> complainTextColumn;
@@ -160,12 +163,138 @@ public class PrimaryController{
 		Grid.setHgap(20);     // רווח אופקי בין טורים
 		Grid.setVgap(20);     // רווח אנכי בין שורות
 		Grid.setPadding(new Insets(20));
-		System.out.println("#3");// רווח מהשוליים
-		init(SimpleClient.getFlowers());
-
-
-
+		if(CurrentCustomer.getSelectedBranch()!=null){
+			if(CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa")){
+				Haifa.setSelected(true);
+			}
+			else if(CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv")){
+				TelAviv.setSelected(true);
+			}
 		}
+		if(CurrentCustomer.getCurrentCustomer().equals("Guest")) {
+			logoutBU.setText("Sign up");
+			CartBU.setVisible(false);
+			EditInformationBU.setVisible(false);
+			AddSaleBU.setVisible(false);
+			SelectBranchEm.setVisible(false);
+			BranchBoxEm.setVisible(false);
+			DiscountEm.setVisible(false);
+			DiscountSS.setVisible(false);
+			PutDiscountEm.setVisible(false);
+			ProfileBU.setVisible(false);
+			AddSaleEm.setVisible(false);
+			CartBU.setDisable(false);
+			ReturnBU.setDisable(false);
+			ComplaintBU.setVisible(false);
+			ReportBU.setVisible(false);
+			UpdateCatalogBU.setVisible(false);
+			ProfileBU.setVisible(false);
+		}
+		else if (CurrentCustomer.getCurrentEmployee() != null) {
+			Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
+			System.out.println(employee.getUsername());
+			if (employee.getPermission() == 2) {
+				customize.setVisible(true);
+				ProfileBU.setVisible(false);
+				ComplaintBU.setVisible(true);
+				EditInformationBU.setVisible(false);
+				ReportBU.setVisible(false);
+				UpdateCatalogBU.setVisible(false);
+				CartBU.setVisible(false);
+				AddSaleBU.setVisible(false);
+				SelectBranchEm.setVisible(false);
+				BranchBoxEm.setVisible(false);
+				DiscountEm.setVisible(false);
+				DiscountSS.setVisible(false);
+				PutDiscountEm.setVisible(false);
+				AddSaleEm.setVisible(false);
+			} else if (employee.getPermission() == 3) {
+				customize.setVisible(true);
+				ProfileBU.setVisible(false);
+				ComplaintBU.setVisible(false);
+				EditInformationBU.setVisible(false);
+				ReportBU.setVisible(true);
+				UpdateCatalogBU.setVisible(false);
+				CartBU.setVisible(false);
+				AddSaleBU.setVisible(false);
+				SelectBranchEm.setVisible(false);
+				BranchBoxEm.setVisible(false);
+				DiscountEm.setVisible(false);
+				DiscountSS.setVisible(false);
+				PutDiscountEm.setVisible(false);
+				AddSaleEm.setVisible(false);
+			}
+			else if (employee.getPermission() == 4) {
+				customize.setVisible(true);
+				ProfileBU.setVisible(false);
+				ComplaintBU.setVisible(false);
+				EditInformationBU.setVisible(false);
+				ReportBU.setVisible(true);
+				UpdateCatalogBU.setVisible(false);
+				CartBU.setVisible(false);
+				AddSaleBU.setVisible(true);
+				SelectBranchEm.setVisible(true);
+				BranchBoxEm.setVisible(true);
+				DiscountEm.setVisible(true);
+				DiscountSS.setVisible(true);
+				PutDiscountEm.setVisible(true);
+				AddSaleEm.setVisible(true);
+			} else if (employee.getPermission() == 5) {
+				customize.setVisible(true);
+				ProfileBU.setVisible(false);
+				ComplaintBU.setVisible(false);
+				EditInformationBU.setVisible(false);
+				ReportBU.setVisible(false);
+				UpdateCatalogBU.setVisible(true);
+				CartBU.setVisible(false);
+				AddSaleBU.setVisible(false);
+				SelectBranchEm.setVisible(false);
+				BranchBoxEm.setVisible(false);
+				DiscountEm.setVisible(false);
+				DiscountSS.setVisible(false);
+				PutDiscountEm.setVisible(false);
+				AddSaleEm.setVisible(false);
+			} else if (employee.getPermission() == 6) {
+				customize.setVisible(true);
+				ProfileBU.setVisible(false);
+				ComplaintBU.setVisible(false);
+				EditInformationBU.setVisible(true);
+				ReportBU.setVisible(false);
+				UpdateCatalogBU.setVisible(false);
+				CartBU.setVisible(false);
+				AddSaleBU.setVisible(false);
+				SelectBranchEm.setVisible(false);
+				BranchBoxEm.setVisible(false);
+				DiscountEm.setVisible(false);
+				DiscountSS.setVisible(false);
+				PutDiscountEm.setVisible(false);
+				AddSaleEm.setVisible(false);
+			}
+		}
+		else {
+			if (CurrentCustomer.getCurrentUser() != null) {
+				AddSaleBU.setVisible(false);
+				SelectBranchEm.setVisible(false);
+				BranchBoxEm.setVisible(false);
+				DiscountEm.setVisible(false);
+				DiscountSS.setVisible(false);
+				PutDiscountEm.setVisible(false);
+				AddSaleEm.setVisible(false);
+				Customer customer = (Customer) CurrentCustomer.getCurrentUser();
+				if (customer.getCustomerType() == 1) {
+					filtered = SimpleClient.getFlowers();
+					Haifa.setDisable(true);
+					TelAviv.setDisable(true);
+//					filterFlowers();
+				}
+			}
+			UpdateCatalogBU.setVisible(false);
+			ReportBU.setVisible(false);
+			ComplaintBU.setVisible(false);
+			EditInformationBU.setVisible(false);
+		}
+		init(SimpleClient.getFlowers());
+	}
 
 
 
@@ -174,172 +303,37 @@ public class PrimaryController{
 			flowers.sort(Comparator.comparingInt(Flower::getId));
 		    filtered = flowers;
 			Platform.runLater(()->{
-				System.out.println("Entered");
-				if(CurrentCustomer.getCurrentCustomer().equals("Guest")) {
-					CartBU.setDisable(false);
-					ReturnBU.setDisable(false);
-					ComplaintBU.setVisible(false);
-					ReportBU.setVisible(false);
-					UpdateCatalogBU.setVisible(false);
-					ProfileBU.setVisible(false);
-				}
-				else if (CurrentCustomer.getCurrentEmployee() != null) {
-//					ProfileBU.setVisible(false);
-//					CartBU.setVisible(false);
-//					ReturnBU.setVisible(false);
-//					ComplaintBU.setVisible(false);
-//					ReportBU.setVisible(false);
-//					UpdateCatalogBU.setVisible(false);
-//					AddSaleBU.setVisible(false);
-//					SelectBranchEm.setVisible(false);
-//					BranchBoxEm.setVisible(false);
-//					DiscountEm.setVisible(false);
-//					DiscountSS.setVisible(false);
-//					PutDiscountEm.setVisible(false);
-//					AddSaleEm.setVisible(false);
-					Employee employee = (Employee) CurrentCustomer.getCurrentEmployee();
-					System.out.println(employee.getUsername());
-					if (employee.getPermission() == 5) {
-
-						UpdateCatalogBU.setVisible(true);
-					}
-					if (employee.getPermission() == 2) {
-						customize.setVisible(false);
-						ProfileBU.setVisible(false);
-						ComplaintBU.setVisible(true);
-						EditInformationBU.setVisible(false);
-						ReportBU.setVisible(true);
-						UpdateCatalogBU.setVisible(false);
-						CartBU.setVisible(false);
-						AddSaleBU.setVisible(false);
-						SelectBranchEm.setVisible(false);
-						BranchBoxEm.setVisible(false);
-						DiscountEm.setVisible(false);
-						DiscountSS.setVisible(false);
-						PutDiscountEm.setVisible(false);
-						AddSaleEm.setVisible(false);
-					} else if (employee.getPermission() == 3) {
-						customize.setVisible(false);
-						ProfileBU.setVisible(false);
-						ComplaintBU.setVisible(false);
-						EditInformationBU.setVisible(false);
-						ReportBU.setVisible(true);
-						UpdateCatalogBU.setVisible(false);
-						CartBU.setVisible(false);
-
-						AddSaleBU.setVisible(false);
-						SelectBranchEm.setVisible(false);
-						BranchBoxEm.setVisible(false);
-						DiscountEm.setVisible(false);
-						DiscountSS.setVisible(false);
-						PutDiscountEm.setVisible(false);
-						AddSaleEm.setVisible(false);
-					}
-
-						else if (employee.getPermission() == 4) {
-						customize.setVisible(false);
-							ProfileBU.setVisible(false);
-							ComplaintBU.setVisible(false);
-							EditInformationBU.setVisible(false);
-							ReportBU.setVisible(true);
-							UpdateCatalogBU.setVisible(false);
-							CartBU.setVisible(false);
-							AddSaleBU.setVisible(true);
-							SelectBranchEm.setVisible(true);
-							BranchBoxEm.setVisible(true);
-							DiscountEm.setVisible(true);
-							DiscountSS.setVisible(true);
-							PutDiscountEm.setVisible(true);
-							AddSaleEm.setVisible(true);
-						} else if (employee.getPermission() == 5) {
-						customize.setVisible(false);
-							ProfileBU.setVisible(false);
-							ComplaintBU.setVisible(false);
-							EditInformationBU.setVisible(false);
-							ReportBU.setVisible(false);
-							UpdateCatalogBU.setVisible(false);
-							CartBU.setVisible(false);
-							AddSaleBU.setVisible(false);
-							SelectBranchEm.setVisible(false);
-							BranchBoxEm.setVisible(false);
-							DiscountEm.setVisible(false);
-							DiscountSS.setVisible(false);
-							PutDiscountEm.setVisible(false);
-							AddSaleEm.setVisible(false);
-						} else if (employee.getPermission() == 6) {
-						customize.setVisible(false);
-							ProfileBU.setVisible(false);
-							ComplaintBU.setVisible(false);
-							EditInformationBU.setVisible(true);
-							ReportBU.setVisible(false);
-							UpdateCatalogBU.setVisible(false);
-							CartBU.setVisible(false);
-							AddSaleBU.setVisible(false);
-							SelectBranchEm.setVisible(false);
-							BranchBoxEm.setVisible(false);
-							DiscountEm.setVisible(false);
-							DiscountSS.setVisible(false);
-							PutDiscountEm.setVisible(false);
-							AddSaleEm.setVisible(false);
-						}
-					} else {
-						if (CurrentCustomer.getCurrentUser() != null) {
-							AddSaleBU.setVisible(false);
-							SelectBranchEm.setVisible(false);
-							BranchBoxEm.setVisible(false);
-							DiscountEm.setVisible(false);
-							DiscountSS.setVisible(false);
-							PutDiscountEm.setVisible(false);
-							AddSaleEm.setVisible(false);
-							Customer customer = (Customer) CurrentCustomer.getCurrentUser();
-							if (customer.getCustomerType() == 1) {
-								Haifa.setDisable(false);
-								TelAviv.setDisable(false);
-							}
-						}
-						UpdateCatalogBU.setVisible(false);
-						ReportBU.setVisible(false);
-						ComplaintBU.setVisible(false);
-						EditInformationBU.setVisible(false);
-					}
 					Grid.getChildren().clear();
 					NumCol = 0;
 					NumRow = 1;
-					for (Flower flower : flowers) {
+				flowers.sort((f1, f2) -> Double.compare(f2.getSale(), f1.getSale()));
+				for (Flower flower : flowers) {
 						try {
 							AnchorPane FlowerNode;
 							if (FlowerCardCache.contains(flower.getId())) {
 								Item controller = FlowerCardCache.getController(flower.getId());
 								FlowerNode = FlowerCardCache.getPane(flower.getId());
 								if (CurrentCustomer.getSelectedBranch() != null) {
-									if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchHaifaTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0))) {
+									if (CurrentCustomer.getSelectedBranch().getSale()!=0) {
 										controller.PutSale(flower);
 									} else {
 										controller.setData(flower);
 									}
 								} else {
-									if (flower.getSaleBranchHaifaTelAviv() != 0) {
-										controller.PutSale(flower);
-									} else {
-										controller.setData(flower);
-									}
+									controller.setData(flower);
 								}
 							} else {
 								FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
 								FlowerNode = loader.load();
 								Item controller = loader.getController();
 								if (CurrentCustomer.getSelectedBranch() != null) {
-									if ((CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && (flower.getSaleBranchHaifa() != 0 || flower.getSaleBranchHaifaTelAviv() != 0)) || (CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && (flower.getSaleBranchTelAviv() != 0 || flower.getSaleBranchHaifaTelAviv() != 0))) {
+									if (CurrentCustomer.getSelectedBranch().getSale()!=0) {
 										controller.PutSale(flower);
 									} else {
 										controller.setData(flower);
 									}
 								} else {
-									if (flower.getSaleBranchHaifaTelAviv() != 0) {
-										controller.PutSale(flower);
-									} else {
-										controller.setData(flower);
-									}
+									controller.setData(flower);
 								}
 								FlowerCardCache.put(flower.getId(), FlowerNode, controller);
 							}
@@ -371,22 +365,21 @@ public class PrimaryController{
 			flowers1 = SimpleClient.getFlowers();
 		}
 		List<Flower> filteredFlowers = flowers1;
-		if(filteredFlowers==null){
-			System.out.println("Hello from Java!!!!");
-
-		}
 		if (selectedColor != null && !selectedColor.isEmpty()) {
             filteredFlowers = filteredFlowers.stream().filter(f -> f.getColor() != null && selectedColor.contains(f.getColor())).collect(Collectors.toList());
 		}
-
 		if (selectedBranch != null) {
 			List<Branch> branchList = SimpleClient.getAllBranches();
-
-			final Branch matchedBranch = branchList.stream().filter(branch -> branch.getAddress().equals(selectedBranch)).findFirst().orElse(null);  // עכשיו זה final
+			final Branch matchedBranch = branchList.stream()
+					.filter(branch -> branch.getAddress().equals(selectedBranch))
+					.findFirst()
+					.orElse(null);
 
 			if (matchedBranch != null) {
-                filteredFlowers =filteredFlowers.stream()
-						.filter(flower -> flower.getBranch().contains(matchedBranch))
+				int branchId = matchedBranch.getId();
+				filteredFlowers = filteredFlowers.stream()
+						.filter(flower -> flower.getBranch().stream()
+								.anyMatch(b -> b.getId() == branchId))
 						.collect(Collectors.toList());
 			}
 		}
@@ -396,26 +389,27 @@ public class PrimaryController{
 
 	@Subscribe
 	public void UpdateAfterSale(AddSale event) {
-		List<Flower> flowers = SimpleClient.getFlowers();
-		List<Flower> flowers1 = SimpleClient.getFlowersSingles();
-		List<Flower> filteredFlowers = new ArrayList<>();
-		for (Flower flower: filtered){
-			int index = flower.getId();
-			for (Flower flower1: flowers){
-				if(flower1.getId() == index){
-					filteredFlowers.add(flower1);
-					break;
-				}
-			}
-			for (Flower flower1: flowers1){
-				if(flower1.getId() == index){
-					filteredFlowers.add(flower1);
-					break;
-				}
-			}
-			filtered = filteredFlowers;
-			init(filteredFlowers);
-		}
+//		List<Flower> flowers = SimpleClient.getFlowers();
+//		List<Flower> flowers1 = SimpleClient.getFlowersSingles();
+//		List<Flower> filteredFlowers = new ArrayList<>();
+//		for (Flower flower: filtered){
+//			int index = flower.getId();
+//			for (Flower flower1: flowers){
+//				if(flower1.getId() == index){
+//					filteredFlowers.add(flower1);
+//					break;
+//				}
+//			}
+//			for (Flower flower1: flowers1){
+//				if(flower1.getId() == index){
+//					filteredFlowers.add(flower1);
+//					break;
+//				}
+//			}
+//			filtered = filteredFlowers;
+//			init(filteredFlowers);
+//		}
+		init(filtered);
 
 	}
 	@FXML
@@ -435,27 +429,124 @@ public class PrimaryController{
 
 	@Subscribe
 	public void onFlowerUpdated(Flower updatedFlower) {
+
 		Platform.runLater(() -> {
+			if(CurrentCustomer.getCurrentEmployee() != null){
+				if(CurrentCustomer.getCurrentEmployee() instanceof  NetworkWorker){
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Flower Update");
+					alert.setHeaderText(null);
+					alert.setContentText("The flower has been successfully changed!");
+					alert.showAndWait();
+				}
+			}
 			if (FlowerCardCache.contains(updatedFlower.getId())) {
 				Item controller = FlowerCardCache.getController(updatedFlower.getId());
 				controller.setData(updatedFlower);  // מעדכן את הפרח הקיים
 			} else {
 				System.out.println("כרטיס לא קיים ב־cache! צריך ליצור אותו קודם");
 			}
-		});
-	}
-	@Subscribe
-	public void DeleteFlower(DeletFlower deleteItem) {
-		Platform.runLater(() -> {
-			List<Flower> flowersList = new ArrayList<>();
-			for(Flower flower: filtered){
-				if(!flower.equals(deleteItem.getFlower())){
-					flowersList.add(flower);
+			List<Flower> newList = new ArrayList<>(filtered.size());
+			boolean found = false;
+			for (Flower f : filtered) {
+				if (f.getId() == updatedFlower.getId()) {
+					newList.add(updatedFlower);
+					found = true;
+				} else {
+					newList.add(f);
 				}
 			}
-			init(flowersList);
+//			if (!found) newList.add(updatedFlower);
+
+			filtered = newList;           // החלפה אטומית
+			init(new ArrayList<>(filtered));
 		});
 	}
+
+	@Subscribe
+	public void AddingFlower(AddFlower newflower){
+		if(newflower.isTrue()) {
+			Flower flower = newflower.getFlower();
+			boolean isTrue = true;
+			if (!selectedColor.isEmpty()) {
+				String color = newflower.getFlower().getColor();
+				if (selectedColor.contains(color)) {
+					isTrue = true;
+				} else {
+					isTrue = false;
+				}
+			}
+			if (selectedBranch != null) {
+				List<Branch> branchList = SimpleClient.getAllBranches();
+				final Branch matchedBranch = branchList.stream()
+						.filter(branch -> branch.getAddress().equals(selectedBranch))
+						.findFirst()
+						.orElse(null);  // עכשיו זה final
+				int id = matchedBranch.getId();
+				if (flower.getBranch().stream().anyMatch(branch -> branch.getId() == id)) {
+					isTrue = true;
+				} else {
+					isTrue = false;
+				}
+			}
+			if (isCustomize) {
+				if (flower.getTypeOfFlower() == 2) {
+					isTrue = true;
+				} else {
+					isTrue = false;
+				}
+			}
+			if(!isCustomize){
+				if(flower.getTypeOfFlower() == 1) {
+					isTrue = true;
+				}
+				else {
+					isTrue = false;
+				}
+			}
+			if (isTrue) {
+				filtered.add(flower);
+				init(filtered);
+			}
+		}
+	}
+
+
+//	@Subscribe
+//	public void DeleteFlower(DeletFlower deleteItem) {
+//		List<Flower> flowersList = new ArrayList<>();
+//		for(Flower flower: filtered){
+//			if(flower.getId()!=deleteItem.getFlower().getId()){
+//					flowersList.add(flower);
+//				}
+//		}
+//		filtered = flowersList;
+//		init(flowersList);
+//	}
+
+	@Subscribe
+	public void DeleteFlower(DeletFlower deleteItem) {
+		if (deleteItem == null || deleteItem.getFlower() == null) return; // הגנה מ-NPE
+		final int id = deleteItem.getFlower().getId();
+
+		javafx.application.Platform.runLater(() -> {
+			if(CurrentCustomer.getCurrentEmployee()!=null) {
+				if (CurrentCustomer.getCurrentEmployee() instanceof NetworkWorker) {
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Flower Deleted");
+					alert.setHeaderText(null);
+					alert.setContentText("The flower has been successfully deleted!");
+					alert.showAndWait();
+				}
+			}
+			if (filtered != null) {
+				filtered.removeIf(f -> f.getId() == id); // מחיקה בטוחה
+				init(new ArrayList<>(filtered));         // אם init מצפה לרשימה חדשה
+				// אם יש לך TableView: table.refresh();
+			}
+		});
+	}
+
 
 	@FXML
 	void ClearSelection(ActionEvent event) {
@@ -626,9 +717,11 @@ public class PrimaryController{
 	     int id;
 		 String NameClass;
 		 FlowerCardCache.clear();
+
 		 if(CurrentCustomer.getCurrentCustomer().equals("Guest")){
 			 try {
-				 App.setRoot("SignIn", 900, 760);
+				 EventBus.getDefault().unregister(this);
+				 App.setRoot("SignIn",680,560);
 			 }
 			 catch (IOException e) {
 				 e.printStackTrace();
@@ -649,7 +742,8 @@ public class PrimaryController{
 				 CurrentCustomer.setCurrentEmployee(null);
 				 CurrentCustomer.setCurrentCustomer(null);
 				 CurrentCustomer.setSelectedBranch(null);
-				 App.setRoot("SignIn", 900, 760);
+				 EventBus.getDefault().unregister(this);
+				 App.setRoot("Home",510,470);
 			 } catch (IOException e) {
 				 e.printStackTrace();
 			 }
@@ -659,7 +753,7 @@ public class PrimaryController{
 	void UpdateCatalog(ActionEvent event) {
 		EventBus.getDefault().unregister(this);
 		try {
-			App.setRoot("InsertFlower", 900, 730);
+			App.setRoot("InsertFlower", 900, 750);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -670,11 +764,9 @@ public class PrimaryController{
 		EventBus.getDefault().unregister(this);
 		try {
 			App.setRoot("Ordercart", 1016, 760);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 	@FXML
@@ -684,8 +776,8 @@ public class PrimaryController{
 		filtered = SimpleClient.getFlowers();
 		List<Flower> listFlowers = SimpleClient.getFlowers();
 		init(listFlowers);
-
 	}
+
 	@FXML
 	void Refresh(ActionEvent event) {
 		List<Flower> refreshFlowers = new ArrayList<Flower>();
@@ -708,7 +800,7 @@ public class PrimaryController{
 	void ViewingReports(ActionEvent event) {
 		EventBus.getDefault().unregister(this);
 		try {
-			App.setRoot("MainReportsMenu", 1016, 760);
+			App.setRoot("MainReportsMenu", 720, 610);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -717,6 +809,7 @@ public class PrimaryController{
 
 	@FXML
 	void EditInformationDone(ActionEvent event) {
+		EventBus.getDefault().unregister(this);
 		try {
 			App.setRoot("SystemManager", 1011, 700);
 		}

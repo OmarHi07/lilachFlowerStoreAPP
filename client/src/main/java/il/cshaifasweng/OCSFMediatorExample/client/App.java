@@ -27,7 +27,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         EventBus.getDefault().register(this);
         primaryStage = stage;
-        scene = new Scene(loadFXML("connect"), 600, 400); // Set initial scene to 'connect'
+        scene = new Scene(loadFXML("connect"), 510, 470); // Set initial scene to 'connect'
         stage.setScene(scene);
         stage.setTitle("Connect to Server");
         stage.show();
@@ -51,7 +51,12 @@ public class App extends Application {
         EventBus.getDefault().unregister(this);
         if(SimpleClient.getClient().isConnected()) {
             SimpleClient  client = SimpleClient.getClient();
-            client.sendToServer("remove client");
+            if(CurrentCustomer.getCurrentUser() != null) {
+                client.sendToServer("remove customer," + CurrentCustomer.getCurrentUser().getId());
+            }
+            if(CurrentCustomer.getCurrentEmployee() != null) {
+                client.sendToServer("remove employee," + CurrentCustomer.getCurrentEmployee().getId());
+            }
             client.closeConnection();
         }
         super.stop();

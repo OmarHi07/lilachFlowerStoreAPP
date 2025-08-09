@@ -33,7 +33,11 @@ public class Flower implements Serializable {
     private int TypeOfFlower; // =1 Bouquet , =2 Single
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "flower_branch", joinColumns = @JoinColumn(name = "flower_id"), inverseJoinColumns = @JoinColumn(name = "branch_id"))
+    @JoinTable(
+            name = "flower_branch",
+            joinColumns        = @JoinColumn(name = "flower_id",  referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "branch_id",  referencedColumnName = "id")
+    )
     private List<Branch>  BranchesAvailable;
 //    private int SaleBranchNUM; // 1-Haifa || 2-TelAviv || 3-All
 

@@ -11,211 +11,233 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OrdersReportsController {
-    @FXML
-    private DatePicker fromDatePicker;
 
-    @FXML
-    private ComboBox<String> quarter;
+    private static final boolean DEBUG = false;
+    private static boolean registered = false;
 
-    @FXML
-    private DatePicker toDatePicker;
-    @FXML
-    private ComboBox<String> branchComboBox;
+    @FXML private DatePicker fromDatePicker;
+    @FXML private DatePicker toDatePicker;
+    @FXML private ComboBox<String> branchComboBox;
 
-    @FXML private TableView<Order> ordersTable;
-    @FXML private TableColumn<Order, Integer> idColumn;
-    @FXML private TableColumn<Order, String> addressColumn;
-    @FXML private TableColumn<Order, LocalDate> dateOrderColumn;
-    @FXML private TableColumn<Order, LocalDate> dateReceiveColumn;
-    @FXML private TableColumn<Order, String> greetingColumn;
-    @FXML private TableColumn<Order, String> nameReceivesColumn;
-    @FXML private TableColumn<Order, String> phoneReceivesColumn;
-    @FXML private TableColumn<Order, Integer> statusColumn;
-    @FXML private TableColumn<Order, Double> sumColumn;
-    @FXML private TableColumn<Order, String> typeColumn;
-    @FXML private TableColumn<Order, Integer> branchIdColumn;
-    @FXML private TableColumn<Order, Integer> customerIdColumn;
-    @FXML private TableColumn<Order, LocalTime> timeOrderColumn;
-    @FXML private TableColumn<Order, LocalTime> timeReceiveColumn;
+    // טבלת סיכום (שם + סה"כ קניות/יחידות)
+    @FXML private TableView<FlowerSummary> flowerSummaryTable;
+    @FXML private TableColumn<FlowerSummary, String>  fsNameCol;
+    @FXML private TableColumn<FlowerSummary, Integer> fsQtyCol;
+
+    // היסטוגרמה
     @FXML private BarChart<String, Number> ordersBarChart;
-    @FXML private Label totalIncomeLabel;
 
     @FXML
     public void initialize() {
-        branchComboBox.getItems().clear();
-        branchComboBox.getItems().addAll("All", "Haifa", "TelAviv");
-        branchComboBox.setValue(("All")); // ברירת מחדל
-        EventBus.getDefault().register(this);
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-        dateOrderColumn.setCellValueFactory(new PropertyValueFactory<>("dateOrder"));
-        dateReceiveColumn.setCellValueFactory(new PropertyValueFactory<>("dateReceive"));
-        greetingColumn.setCellValueFactory(new PropertyValueFactory<>("greeting"));
-        nameReceivesColumn.setCellValueFactory(new PropertyValueFactory<>("nameReceives"));
-        phoneReceivesColumn.setCellValueFactory(new PropertyValueFactory<>("phoneReceives"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        sumColumn.setCellValueFactory(new PropertyValueFactory<>("sum"));
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        branchIdColumn.setCellValueFactory(new PropertyValueFactory<>("branch.id"));
-        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customer.id"));
-        timeOrderColumn.setCellValueFactory(new PropertyValueFactory<>("timeOrder"));
-        timeReceiveColumn.setCellValueFactory(new PropertyValueFactory<>("timeReceive"));
+        branchComboBox.getItems().setAll("All", "Haifa", "TelAviv");
+        branchComboBox.setValue("All");
 
-        if(CurrentCustomer.getCurrentEmployee().getPermission()==3){
-            BranchManager man= (BranchManager) CurrentCustomer.getCurrentEmployee();
-            if(man.getBranch().getAddress().equals("Haifa")) {
-                branchComboBox.getItems().clear();
-                branchComboBox.setValue("Haifa");
-            }
-            else{
-                branchComboBox.getItems().clear();
-                branchComboBox.setValue("TelAviv");
-            }
+        if (!registered) {
+            EventBus.getDefault().register(this);
+            registered = true;
         }
 
-        quarter.getItems().addAll("NO NEED","Q1 (Jan - Mar)", "Q2 (Apr - Jun)", "Q3 (Jul - Sep)", "Q4 (Oct - Dec)");
+        // אם זו מנהלת סניף – הגבל לבחירת הסניף שלה בלבד
+        if (CurrentCustomer.getCurrentEmployee() != null &&
+                CurrentCustomer.getCurrentEmployee().getPermission() == 3) {
+            BranchManager man = (BranchManager) CurrentCustomer.getCurrentEmployee();
+            String only = "Haifa".equals(man.getBranch().getAddress()) ? "Haifa" : "TelAviv";
+            branchComboBox.getItems().setAll(only);
+            branchComboBox.setValue(only);
+        }
 
+        if (flowerSummaryTable != null) {
+            fsNameCol.setCellValueFactory(new PropertyValueFactory<>("flowerName"));
+            fsQtyCol.setCellValueFactory(new PropertyValueFactory<>("totalQuantity"));
+        }
+
+        if (ordersBarChart != null) {
+            ordersBarChart.setAnimated(false);
+        }
     }
-
 
     private int parseBranchId() {
         String v = branchComboBox.getValue();
-        if (v == null || v.equalsIgnoreCase("All")) return -1;   // ← תואם לשרת
-        if (v.equals("Haifa")) {
-            return 1;
-        } else {
-            return 2;
-        }
+        if (v == null || v.equalsIgnoreCase("All")) return -1;
+        if (v.equals("Haifa")) return 1;
+        return 2; // TelAviv
     }
 
     @FXML
-    private void loadOrdersHistogram(){
-        ordersBarChart.getData().clear();
-        ordersTable.getItems().clear();  // רק אם רלוונטי
+    private void loadOrdersHistogram() {
+        if (ordersBarChart != null) ordersBarChart.getData().clear();
+        if (flowerSummaryTable != null) flowerSummaryTable.getItems().clear();
 
         LocalDate from = fromDatePicker.getValue();
-        LocalDate to = toDatePicker.getValue();
+        LocalDate to   = toDatePicker.getValue();
 
-        // טיפול במקרה שלא נבחרו תאריכים
         if (from == null || to == null)  {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Missing Date Range");
-            alert.setHeaderText("Date range not selected");
-            alert.setContentText("Please select both start and end dates before generating the report.");
-            alert.showAndWait();
+            showWarn("Missing Date Range", "Please select both start and end dates before generating the report.");
             return;
         }
         if (from.isAfter(to)) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Invalid Date Range");
-            alert.setHeaderText("Incorrect date range");
-            alert.setContentText("Start date cannot be after the end date.");
-            alert.showAndWait();
+            showWarn("Invalid Date Range", "Start date cannot be after the end date.");
             return;
         }
 
         int branchId = parseBranchId();
         try {
             SimpleClient.getClient().sendToServer(new HistogramReportRequest("orders", from, to, branchId));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            showWarn("Network Error", "Failed to send request to server.");
         }
     }
 
-
     @Subscribe
     public void onReportReceived(GetReportEvent event) {
-        if (!"orders".equals(event.getReportType())) {
-            System.out.println("Skipped event, not an orders report.");
-            return;
-        }
+        if (event == null || !"orders".equals(event.getReportType())) return;
+
         Object data = event.getReportData();
-        if (data == null || !(data instanceof List<?>)) {
-            System.out.println("⚠️ Invalid or empty report data");
+        if (!(data instanceof List<?>)) {
+            Platform.runLater(() -> showError("No Data", "The report is empty or invalid. Try a different date range."));
             return;
         }
 
-        List<?> rawList = (List<?>) data;
+        @SuppressWarnings("unchecked")
+        List<Order> rawList = (List<Order>) data;
         if (rawList.isEmpty()) {
-            System.out.println("⚠️ empty report data");
+            Platform.runLater(() -> showWarn("No Data", "The report is empty."));
             return;
         }
 
         try {
-            List<Order> orders = rawList.stream().filter(obj -> obj instanceof Order).map(obj -> (Order) obj)
-                    .filter(order ->
-                            order.getDateReceive() != null &&
-                                    order.getSum() != 0 &&
-                                    order.getCustomer() != null &&
-                                    order.getBranch() != null &&
-                                    order.getStatus() != 0
-                    )
+            // 1) סינון בסיסי
+            List<Order> orders = rawList.stream()
+                    .filter(Objects::nonNull)
+                    .filter(o -> o.getSum() != 0)
+                    .filter(o -> o.getStatus() != 0 && o.getStatus() != 1) // אל תכלול מבוטלות
+                    .filter(o -> o.getCustomer() != null && o.getBranch() != null)
                     .collect(Collectors.toList());
 
-            Map<LocalDate, Double> incomeByDate = orders.stream()
-                    .collect(Collectors.groupingBy(
-                            Order::getDateReceive,
-                            TreeMap::new,
-                            Collectors.summingDouble(Order::getSum)
-                    ));
+            // 2) דידופ הזמנות לפי id
+            Map<Integer, Order> byId = new LinkedHashMap<>();
+            for (Order o : orders) byId.putIfAbsent(o.getId(), o);
+            orders = new ArrayList<>(byId.values());
 
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            for (Map.Entry<LocalDate, Double> entry : incomeByDate.entrySet()) {
-                series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
+            // 3) מילון פרחים
+            List<Flower> flowers = Optional.ofNullable(SimpleClient.getFlowers()).orElseGet(Collections::emptyList);
+            List<Flower> singles = Optional.ofNullable(SimpleClient.getFlowersSingles()).orElseGet(Collections::emptyList);
+
+            Set<Integer> idsAll = new HashSet<>();
+            idsAll.addAll(flowers.stream().map(Flower::getId).collect(Collectors.toList()));
+            idsAll.addAll(singles.stream().map(Flower::getId).collect(Collectors.toList()));
+
+            Map<Integer, String> idToName = new HashMap<>();
+            flowers.forEach(f -> idToName.putIfAbsent(f.getId(), safeName(f)));
+            singles.forEach(f -> idToName.putIfAbsent(f.getId(), safeName(f)));
+
+            // 4) צבירה: סה"כ יחידות (quantity) לכל פרח
+            Map<Integer, Integer> qtyById = new HashMap<>();
+            Set<String> seenCpGlobal = new HashSet<>(); // דידופ CP לפי orderId#cartProductId
+
+            for (Order o : orders) {
+                if (o.getProducts() == null) continue;
+                int oid = o.getId();
+
+                for (CartProduct p : o.getProducts()) {
+                    if (p == null || p.getFlower() == null) continue;
+
+                    int fid = p.getFlower().getId();
+                    if (!idsAll.contains(fid)) continue;
+
+                    // דילוג כפילויות CP (במקרה של JOIN שחוזר פעמיים)
+                    int cpId = p.getId();
+                    String uniq = oid + "#" + cpId;
+                    if (cpId > 0 && !seenCpGlobal.add(uniq)) {
+                        if (DEBUG) System.out.println("Skip DUP CP: " + uniq);
+                        continue;
+                    }
+
+                    int qty = p.getQuantity(); // ספירת יחידות כפי שנקנה
+                    if (qty <= 0) continue;
+
+                    qtyById.merge(fid, qty, Integer::sum);
+                }
             }
 
-            double totalIncome = orders.stream().mapToDouble(Order::getSum).sum();
+            // ודא שכל הפרחים קיימים גם אם לא נמכרו
+            List<Flower> allKnownFlowers = new ArrayList<>();
+            allKnownFlowers.addAll(flowers);
+            allKnownFlowers.addAll(singles);
+            for (Flower f0 : allKnownFlowers) {
+                if (f0 == null) continue;
+                int fid0 = f0.getId();
+                qtyById.putIfAbsent(fid0, 0);
+            }
+
+            // בניית שורות טבלה: שם + Purchases (סה"כ יחידות)
+            List<Integer> idsSorted = qtyById.keySet().stream().sorted().collect(Collectors.toList());
+            List<FlowerSummary> summaryRows = new ArrayList<>();
+            for (Integer fid : idsSorted) {
+                String name = Optional.ofNullable(idToName.get(fid)).orElse("ID " + fid);
+                int totalQty = qtyById.getOrDefault(fid, 0);
+                summaryRows.add(new FlowerSummary(name, 0, totalQty, 0.0)); // ordersCount=0, income=0
+            }
+
+            final List<FlowerSummary> summaryRowsF = new ArrayList<>(summaryRows);
 
             Platform.runLater(() -> {
-                ordersTable.setItems(FXCollections.observableArrayList(orders));
-                ordersBarChart.getData().clear();
-                ordersBarChart.getData().add(series);
-                if (totalIncomeLabel != null) {
-                    totalIncomeLabel.setText(String.format("Total Income: ₪%.2f", totalIncome));
+                // טבלה: שם + Purchases
+                if (flowerSummaryTable != null) {
+                    flowerSummaryTable.setItems(FXCollections.observableArrayList(summaryRowsF));
+                }
+
+                // גרף: Y = Purchases (סה"כ יחידות), X = שם
+                if (ordersBarChart != null) {
+                    ordersBarChart.setAnimated(false);
+                    ordersBarChart.getData().clear();
+
+                    XYChart.Series<String, Number> series = new XYChart.Series<>();
+                    series.setName("Purchases by Flower");
+                    for (FlowerSummary row : summaryRowsF) {
+                        series.getData().add(new XYChart.Data<>(row.getFlowerName(), row.getTotalQuantity()));
+                    }
+                    ordersBarChart.getData().setAll(series);
+                    ordersBarChart.requestLayout();
                 }
             });
-        } catch (ClassCastException e) {
-            System.out.println("❌ Failed to cast to List<Order>");
+
+        } catch (Exception e) {
             e.printStackTrace();
+            Platform.runLater(() -> showError("Processing Error", "Failed to process the purchases report data."));
         }
     }
 
+    // שם נקי/ברירת מחדל
+    private static String safeName(Flower f) {
+        if (f == null) return "Unknown";
+        String n = f.getFlowerName();
+        if (n == null) n = "";
+        n = n.trim();
+        if (n.isEmpty()) n = "ID " + f.getId();
+        return n;
+    }
 
-    public void quarter(javafx.event.ActionEvent actionEvent) {
-        String selectedQuarter = quarter.getValue();
-        int year = LocalDate.now().getYear();
+    private void showWarn(String title, String content) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(content);
+        a.showAndWait();
+    }
 
-        switch (selectedQuarter) {
-            case "Q1 (Jan - Mar)":
-                fromDatePicker.setValue(LocalDate.of(year, 1, 1));
-                toDatePicker.setValue(LocalDate.of(year, 3, 31));
-                break;
-            case "Q2 (Apr - Jun)":
-                fromDatePicker.setValue(LocalDate.of(year, 4, 1));
-                toDatePicker.setValue(LocalDate.of(year, 6, 30));
-                break;
-            case "Q3 (Jul - Sep)":
-                fromDatePicker.setValue(LocalDate.of(year, 7, 1));
-                toDatePicker.setValue(LocalDate.of(year, 9, 30));
-                break;
-            case "Q4 (Oct - Dec)":
-                fromDatePicker.setValue(LocalDate.of(year, 10, 1));
-                toDatePicker.setValue(LocalDate.of(year, 12, 31));
-                break;
-            case "NO NEED":
-                fromDatePicker.setValue(null);     // מנקה את התאריך ההתחלתי
-                toDatePicker.setValue(null);
-        }
+    private void showError(String title, String content) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(content);
+        a.showAndWait();
     }
 }

@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
-     <Label fx:id="errorLabel" layoutX="138.0" layoutY="220.0" prefHeight="17.0" prefWidth="31.0" textFill="red" />
    <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);">
       <children>
          <Label layoutX="338.0" layoutY="25.0" text="Welcome to lilach flower shop ">
@@ -20,7 +19,7 @@
                <Font name="Gabriola" size="24.0" />
             </font>
          </Label>
-         <ImageView blendMode="MULTIPLY" fitHeight="200.0" fitWidth="240.0" layoutX="329.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
+         <ImageView fx:id="LogInImages" blendMode="MULTIPLY" fitHeight="200.0" fitWidth="240.0" layoutX="329.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
             <effect>
                <DropShadow blurType="GAUSSIAN" />
             </effect>
@@ -39,7 +38,8 @@
          <Label fx:id="goTosignUpLabel" layoutX="173.0" layoutY="319.0" onMouseClicked="#goToSignUp" text="click here to signup">
             <cursor>
                <Cursor fx:constant="HAND" />
-            </cursor></Label>
+            </cursor>
+         </Label>
            <Button fx:id="employeeLogInButton" layoutX="91.0" layoutY="241.0" onAction="#handleEmployeeLogin" prefHeight="25.0" prefWidth="131.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="Login as Employee">
             <effect>
                <DropShadow />
@@ -58,7 +58,7 @@
             </font>
          </Label>
       
-                 <TextField fx:id="usernameField" layoutX="40.0" layoutY="100.0" prefHeight="25.0" prefWidth="223.0" promptText="Username                                           👤" />
+                       <TextField fx:id="usernameField" layoutX="40.0" layoutY="100.0" prefHeight="25.0" prefWidth="223.0" promptText="Username                                           👤" />
          <Label layoutX="41.0" layoutY="69.0" text="Enter your username :">
             <font>
                <Font name="Gabriola" size="17.0" />
@@ -76,6 +76,7 @@
          </Label>
          <Button fx:id="goBackButton" layoutY="-1.0" mnemonicParsing="false" onAction="#goBack" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #c7bca6 100.0%);" text="go back" />
          <TextField fx:id="visiblePasswordField" layoutX="41.0" layoutY="171.0" prefHeight="25.0" prefWidth="223.0" />
+           <Label fx:id="errorLabel" layoutX="63.0" layoutY="210.0" prefHeight="18.0" prefWidth="185.0" textFill="red" />
       </children>
       <effect>
          <DropShadow />

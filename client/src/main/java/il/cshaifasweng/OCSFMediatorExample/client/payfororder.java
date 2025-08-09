@@ -203,8 +203,8 @@ public class payfororder {
                         try {
                                 App.setRoot("Ordercart", 1040, 780);
                                 // סגירת החלון הנוכחי
-                                Stage stage = (Stage) cancel.getScene().getWindow(); // מקבל את החלון מהכפתור
-                                stage.close();
+//                                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                                stage.close();
                                 // If "No" is clicked, do nothing
                         } catch (IOException e) {
                                 e.printStackTrace();

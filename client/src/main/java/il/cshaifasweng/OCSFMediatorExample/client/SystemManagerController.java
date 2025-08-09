@@ -137,8 +137,6 @@ public class SystemManagerController {
     @FXML // fx:id="worker3"
     private Label worker3; // Value injected by FXMLLoader
 
-    @FXML // fx:id="worker4"
-    private Label worker4; // Value injected by FXMLLoader
 
     @FXML // fx:id="workerName"
     private TextField workerName; // Value injected by FXMLLoader
@@ -148,9 +146,6 @@ public class SystemManagerController {
 
     @FXML // fx:id="workerNewusername"
     private TextField workerNewusername; // Value injected by FXMLLoader
-
-    @FXML // fx:id="workerPermission"
-    private TextField workerPermission; // Value injected by FXMLLoader
 
     @FXML
     private Button clearSelectionButton;
@@ -188,7 +183,13 @@ public class SystemManagerController {
     public void onGetEntitiesResponse(GetEntitiesResponse response) {
         Platform.runLater(() -> {
             System.out.println("Response received with " + response.getEntities().size() + " entities");
+            if (response.getEntities()==null || !(response.getEntities() instanceof List<?>)) {
+                showAlert(Alert.AlertType.ERROR, "No Entities Found", "No Entities Found");
+                return;
+            }
             List<?> entities = response.getEntities();
+
+
 
             // ✅ This was your silent failure:
             if (entities.isEmpty()) {
@@ -352,23 +353,29 @@ public class SystemManagerController {
         String email = customerEmail.getText();
         String phone = Customerphone.getText();
         String password = customerPassword.getText();
-
+        int newUserId;
+        if (!customerId.getText().isEmpty()) {
+            newUserId = Integer.parseInt(customerId.getText());
+        }
+        else{
+            newUserId = 0;
+        }
         //for workers
         String newnwokername = workerName.getText();
         String newworkernewpassword = workerNewPassword.getText();
         String newworkernewusername = workerNewusername.getText();
-        String newnewbranch = branchManager.getText();
+        String newnewbranch = newBranch.getText();
 
         int newworkerpermission = -1 ;
 
-        if (!(workerPermission.getText().isEmpty())) {
-            newworkerpermission = Integer.parseInt(workerPermission.getText().trim());
-        }
+
 
         UpdateUserRequest request = new UpdateUserRequest(
                 role, originalUsername, newUsername, firstName, lastName, email,
                 phone, password,newnwokername,newworkerpermission,newnewbranch,
-                newworkernewpassword,newworkernewusername
+                newworkernewpassword,newworkernewusername,
+                "","",
+                "",0 ,newUserId
         );
 
         try {
@@ -591,7 +598,6 @@ public class SystemManagerController {
         workerName.clear();
         workerNewPassword.clear();
         workerNewusername.clear();
-        workerPermission.clear();
         newBranch.clear();
         username.clear();
     }
@@ -742,12 +748,12 @@ public class SystemManagerController {
         worker1.setVisible(true);
         worker2.setVisible(true);
         worker3.setVisible(true);
-        worker4.setVisible(true);
+
 
         workerName.setVisible(true);
         workerNewusername.setVisible(true);
         workerNewPassword.setVisible(true);
-        workerPermission.setVisible(true);
+
 
     }
 
@@ -756,12 +762,10 @@ public class SystemManagerController {
         worker1.setVisible(false);
         worker2.setVisible(false);
         worker3.setVisible(false);
-        worker4.setVisible(false);
 
         workerName.setVisible(false);
         workerNewusername.setVisible(false);
         workerNewPassword.setVisible(false);
-        workerPermission.setVisible(false);
     }
 
 }

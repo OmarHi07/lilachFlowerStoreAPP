@@ -20,16 +20,18 @@ public class Branch implements Serializable {
        private String address;
 
        @ManyToMany(mappedBy = "BranchesAvailable", fetch = FetchType.EAGER)
-       private transient Set<Flower> flowers;
+       private  Set<Flower> flowers;
 
-       @ManyToMany(mappedBy = "ListBranch" , fetch = FetchType.EAGER)
-       private transient Set<Customer> ListUsers;
-
-       @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
-       private transient Set<Order> ListOrders;
+       @ManyToMany(mappedBy = "listBranch" , fetch = FetchType.EAGER)
+       private  Set<Customer> ListUsers;
 
        @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
-       private transient Set<Complain> ListComplains;
+       private  Set<Order> ListOrders;
+
+       @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
+       private  Set<Complain> ListComplains;
+
+       private int Sale;
 
        public Branch(){
               this.ListUsers = new HashSet<>();
@@ -88,4 +90,6 @@ public class Branch implements Serializable {
        public List<Customer> getListUsers() {return new ArrayList<>(ListUsers);}
        public void setListUsers(List<Customer> listUsers) {ListUsers = new HashSet<>(listUsers);}
 
+       public int getSale() {return Sale;}
+       public void setSale(int sale) {this.Sale = sale;}
 }

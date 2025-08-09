@@ -27,8 +27,8 @@ public class ComplaintController {
     @FXML
     private Button submitButton;
 
-    @FXML
-    private Button backButton;
+//    @FXML
+//    private Button backButton;
 
     @FXML
     private Button cancelButton;
@@ -89,13 +89,13 @@ public class ComplaintController {
         System.out.println("Complaint form cleared.");
     }
 
-    @FXML
-    void Back(ActionEvent event) {//to return to the previous screen
-        try {
-            App.setRoot("primary", 400, 600);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+//    @FXML
+//    void Back(ActionEvent event) {//to return to the previous screen
+//        try {
+//            App.setRoot("primary", 400, 600);
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 }

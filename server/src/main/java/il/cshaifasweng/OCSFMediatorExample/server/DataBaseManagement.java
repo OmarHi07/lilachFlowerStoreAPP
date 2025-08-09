@@ -192,37 +192,42 @@ public class DataBaseManagement {
             Branch telavivBranch = session.createQuery("from Branch where address = 'TelAviv'", Branch.class).getSingleResult();
             Branch HaifaBranch = session.createQuery("from Branch where address = 'Haifa'", Branch.class).getSingleResult();
             Customer Cu1 = new Customer("Arkan", "Issa", "Arkanissa7@gmail.com", "0500118796", "Arkan7", "123456", "1457125896543267", "0727", "148", "872136", 2);
-            NetworkWorker nw = new NetworkWorker("ACS", "AERT", "ghty");
-            BranchManager tela= new BranchManager("tela","telaviv","12345",telavivBranch);
-            BranchManager haifosh= new BranchManager("haifosh","haifosh","12345",HaifaBranch);
-            StoreChainManager storeman = new StoreChainManager("man","man","11111" );
+            NetworkWorker nw = new NetworkWorker("NetworkWorker1", "NetworkWorker1", "123456");
+            NetworkWorker nw1 = new NetworkWorker("NetworkWorker2", "NetworkWorker2", "123456");
+            BranchManager tela= new BranchManager("telaviv1","telaviv1","123456",telavivBranch);
+            BranchManager haifosh= new BranchManager("haifosh2","haifosh2","123456",HaifaBranch);
+            StoreChainManager storeman = new StoreChainManager("man","man","man" );
             SystemAdmin admin = new SystemAdmin("admin","admin","admin");
             CostumerServiceEmployee service = new CostumerServiceEmployee("service" ,"service","service");
+            CostumerServiceEmployee service1 = new CostumerServiceEmployee("service1" ,"service1","service1");
             session.save(nw);
+            session.save(nw1);
+            session.save(service1);
             session.save(Cu1);
             session.save(tela);
             session.save(haifosh);
             session.save(storeman);
             session.save(admin);
             session.save(service);
-
             session.flush(); // Commit to DB before customer registration
         }
     }
 
 
-    public Flower addFlower(Flower flower) {
+    public AddFlower addFlower(Flower flower) {
         try {
             session.beginTransaction();
             session.save(flower);
             session.getTransaction().commit();
+            return (new AddFlower(flower, true));
         } catch (Exception exception) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             exception.printStackTrace();
+            return (new AddFlower(flower, false));
         }
-        return flower;
+
     }
 
 
@@ -266,12 +271,32 @@ public class DataBaseManagement {
         return orders;
     }
 
+    public Complain getComplaintById(int id) {
+        Complain complain = null;
+        try {
+            session.beginTransaction();
+            complain = session.get(Complain.class, id);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+        return complain;
+    }
+
+
     public static void updateComplaint(Complain complaint) {
         try {
             session.beginTransaction();
             // merge is safer for detached objects—copies your state into a managed entity
             //update?
+            double refund = complaint.getRefund();
             session.merge(complaint);
+            Customer customer = session.get(Customer.class, complaint.getCustomer().getId());
+            customer.setCredit(customer.getCredit() + refund);
+            session.update(customer);
             session.getTransaction().commit();
             System.out.println("Complaint updated in database.");
         } catch (Exception e) {
@@ -401,17 +426,22 @@ public class DataBaseManagement {
     public void initDataBase(){
         try{
             session.beginTransaction();
+            Long flowersBefore = (Long) session.createQuery("select count(f) from Flower f", Long.class).uniqueResult();
+            Long branchesBefore = (Long) session.createQuery("select count(b) from Branch b", Long.class).uniqueResult();
+            boolean firstRun = (flowersBefore == null || flowersBefore == 0L)
+                    && (branchesBefore == null || branchesBefore == 0L);
 
             generateFlowers();
             generateBranches();
             generateUsers();
-            List<Flower> flowers = getAllFlowersNoTx();
-            List<Branch> branches = getAllBranchesNoTx();
-            for (Flower flower : flowers) {
-                flower.setBranch(new ArrayList<>(branches));
-                session.update(flower);
+            if (firstRun) {
+                List<Flower> flowers = getAllFlowersNoTx();
+                List<Branch> branches = getAllBranchesNoTx();
+                for (Flower flower : flowers) {
+                    flower.setBranch(new ArrayList<>(branches));
+                    session.update(flower);
+                }
             }
-
             session.getTransaction().commit();
         }
         catch (Exception exception) {
@@ -429,39 +459,46 @@ public class DataBaseManagement {
             int id = flowerEdit.getId();
             flower1 = session.get(Flower.class, id);
             if (flower1 != null) {
-                if(flowerEdit.getNewName() != null){
+                if (flowerEdit.getNewName() != null) {
                     flower1.setFlowerName(flowerEdit.getNewName());
                 }
-                if(flowerEdit.getNewPrice() != null){
+                if (flowerEdit.getNewPrice() != null) {
                     Double NewPrice = Double.parseDouble(flowerEdit.getNewPrice());
                     flower1.setPrice(NewPrice);
                 }
-                if(flowerEdit.getNewType() != null){
+                if (flowerEdit.getNewType() != null) {
                     flower1.setType(flowerEdit.getNewType());
                 }
-                if(!flowerEdit.getNewBranches().isEmpty()){
-                    for (int idBranch : flowerEdit.getNewBranches()){
-                        Branch branch = session.get(Branch.class, idBranch);
-                        if(!(flower1.getBranch().contains(branch))){
-                            flower1.getBranch().add(branch);
-                        }
-                    }
-                }
-                if(flowerEdit.getImage() != null){
+
+                if (flowerEdit.getImage() != null) {
                     flower1.setImage(flowerEdit.getImage());
                 }
-                if(!flowerEdit.getRemoveBranches().isEmpty()){
-                    for (int idBranch : flowerEdit.getRemoveBranches()){
-                        Branch branch = session.get(Branch.class, idBranch);
-                        if(flower1.getBranch().contains(branch)){
-                            flower1.getBranch().remove(branch);
+//                if(!flowerEdit.getRemoveBranches().isEmpty()){
+//                    flower1.getBranch().removeIf(b -> flowerEdit.getRemoveBranches().contains(b.getId()));
+//                }
+                java.util.Set<Integer> keep = new java.util.HashSet<>(
+                        flowerEdit.getNewBranches() == null ? java.util.List.of() : flowerEdit.getNewBranches()
+                );
+
+                // 2) הסר כל סניף שלא נבחר
+                flower1.getBranch().removeIf(b -> !keep.contains(b.getId()));
+
+                // 3) הוסף סניפים חסרים
+                for (Integer bid : keep) {
+                    boolean exists = flower1.getBranch().stream().anyMatch(b -> b.getId() == bid);
+                    if (!exists) {
+                        Branch b = session.get(Branch.class, bid);
+                        if (b != null) {
+                            flower1.getBranch().add(b); // owning side → Hibernate יעדכן את flower_branch
                         }
                     }
                 }
-                session.update(flower1);
+
+                // אין צורך ב-session.update(flower1) כי flower1 Persistent
+                session.flush(); // לייצר את ה-DELETE/INSERT על ה-join table עכשיו
+                session.getTransaction().commit();
+                return flower1;
             }
-            session.getTransaction().commit();
-            return flower1;
         }
         catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
@@ -476,34 +513,59 @@ public class DataBaseManagement {
         try {
             session.beginTransaction();
             CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
-            criteria.from(Flower.class);
-            List<Flower> result = session.createQuery(criteria).getResultList();
-            for (Flower flower : result) {
-                if(flower.getBranch().size()==2){
-                    if(addSale.getNumBranch()==1){
-                        flower.setSaleBranchHaifa(addSale.getNumSale());
-                    }
-                    else if (addSale.getNumBranch()==2){
-                        flower.setSaleBranchTelAviv(addSale.getNumSale());
-                    }
-                    else {
-                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+            CriteriaQuery<Branch> criteria = builder.createQuery(Branch.class);
+            criteria.from(Branch.class);
+            List<Branch> result = session.createQuery(criteria).getResultList();
+            if(addSale.getNumBranch() == 1){
+                for (Branch branch : result) {
+                    if(branch.getAddress().equals("Haifa")){
+                        branch.setSale(addSale.getNumSale());
+                        session.update(branch);
                     }
                 }
-                else {
-                   if(flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale()==1){
-                       flower.setSaleBranchHaifa(addSale.getNumSale());
-                   }
-                   else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale()==2){
-                       flower.setSaleBranchTelAviv(addSale.getNumSale());
-                   }
-                   else {
-                       flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
-                   }
-                }
-                session.update(flower);
             }
+            if(addSale.getNumBranch() == 2){
+                for (Branch branch : result) {
+                    if(branch.getAddress().equals("TelAviv")){
+                        branch.setSale(addSale.getNumSale());
+                        session.update(branch);
+                    }
+                }
+            }
+            if(addSale.getNumBranch() == 3){
+                for (Branch branch : result) {
+                    branch.setSale(addSale.getNumSale());
+                    session.update(branch);
+                }
+            }
+//            CriteriaQuery<Flower> criteria = builder.createQuery(Flower.class);
+//            criteria.from(Flower.class);
+//            List<Flower> result = session.createQuery(criteria).getResultList();
+////            for (Flower flower : result) {
+////                if(flower.getBranch().size()==2){
+////                    if(addSale.getNumBranch()==1){
+////                        flower.setSaleBranchHaifa(addSale.getNumSale());
+////                    }
+////                    else if (addSale.getNumBranch()==2){
+////                        flower.setSaleBranchTelAviv(addSale.getNumSale());
+////                    }
+////                    else {
+////                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+////                    }
+////                }
+////                else {
+////                   if(flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale()==1){
+////                       flower.setSaleBranchHaifa(addSale.getNumSale());
+////                   }
+////                   else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale()==2){
+////                       flower.setSaleBranchTelAviv(addSale.getNumSale());
+////                   }
+////                   else {
+////                       flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+////                   }
+////                }
+////                session.update(flower);
+////            }
             session.getTransaction().commit();
         }
         catch (Exception exception) {
@@ -514,6 +576,9 @@ public class DataBaseManagement {
         }
 
     }
+
+
+
     public Flower PutSale(int id, int newSale){
         try{
             session.beginTransaction();
@@ -533,6 +598,8 @@ public class DataBaseManagement {
             return null;
         }
     }
+
+
     public static boolean isUsernameTaken(String username) {
         try {
             session.beginTransaction();
@@ -562,16 +629,22 @@ public class DataBaseManagement {
                     .setParameter("password", password)
                     .uniqueResult();
 
-            session.getTransaction().commit();
-
-            if (customer != null) {
-                List<Order> copyOrders = new ArrayList<>(customer.getListOrders());
-                List<Branch> copyBranch = new ArrayList<>(customer.getListBranch());
-                LoginResponse newLogIn = new LoginResponse(true,copyOrders ,"Login successful!");
-                newLogIn.setCustomer(customer);
-                newLogIn.setListBranches(copyBranch);
-                return newLogIn;
+            if (customer != null ) {
+                if(!customer.isLoggedIn()) {
+                    List<Order> copyOrders = new ArrayList<>(customer.getListOrders());
+                    List<Branch> copyBranch = new ArrayList<>(customer.getListBranch());
+                    LoginResponse newLogIn = new LoginResponse(true, copyOrders, "Login successful!");
+                    customer.setLoggedIn(true);
+                    newLogIn.setCustomer(customer);
+                    newLogIn.setListBranches(copyBranch);
+                    session.update(customer);
+                    session.getTransaction().commit();
+                    return newLogIn;
+                }
+                session.getTransaction().commit();
+               return new  LoginResponse(false, null,"the user is log in");
             } else {
+                session.getTransaction().commit();
                 return new LoginResponse(false, null,"Incorrect username or password.");
             }
         } catch (Exception e) {
@@ -593,13 +666,19 @@ public class DataBaseManagement {
                     .setParameter("password", password)
                     .uniqueResult();
 
-            session.getTransaction().commit();
-
             if (employee != null) {
-                LoginResponse newLogin = new LoginResponse(true,null,"Employee login successful!");
-                newLogin.setEmployee(employee);
-                return newLogin;
+                if(!employee.isLogin()) {
+                    LoginResponse newLogin = new LoginResponse(true, null, "Employee login successful!");
+                    newLogin.setEmployee(employee);
+                    employee.setLogin(true);
+                    session.update(employee);
+                    session.getTransaction().commit();
+                    return newLogin;
+                }
+                session.getTransaction().commit();
+               return new LoginResponse(false, null, "Employee is already login.");
             } else {
+                session.getTransaction().commit();
                 return new LoginResponse(false,null,"Incorrect employee credentials.");
             }
         } catch (Exception e) {
@@ -665,6 +744,10 @@ public class DataBaseManagement {
                 customer.addStore2(allBranches);  // adds both ways
             }
 
+            if(type == 3) {
+                customer.setMembershipStartDate(LocalDate.now());
+            }
+
             session.save(customer);
             session.getTransaction().commit();
 
@@ -677,6 +760,8 @@ public class DataBaseManagement {
             return new SignUpResponse(false, "An error occurred while creating the account.");
         }
     }
+
+
 
     public void LogOutCustomer(int id) {
         try{
@@ -761,7 +846,7 @@ public class DataBaseManagement {
             Customer user = order2.getCustomer();
             if (user != null) {
                 user.setCredit(user.getCredit()+order.getSum());
-                user.removeOrder(order);
+                user.removeOrder(order2);
             }
 
             session.update(user);
@@ -870,14 +955,17 @@ public class DataBaseManagement {
                     case "branchManager" -> allEmployees.stream()
                             .filter(emp -> emp.getPermission() == 3)
                             .map(emp -> session.get(BranchManager.class, emp.getId()))
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList());
                     case "costumerService" -> allEmployees.stream()
                             .filter(emp -> emp.getPermission() == 2)
                             .map(emp -> session.get(CostumerServiceEmployee.class, emp.getId()))
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList());
                     case "storeChainManager" -> allEmployees.stream()
                             .filter(emp -> emp.getPermission() == 4)
                             .map(emp -> session.get(StoreChainManager.class, emp.getId()))
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList());
                     default -> throw new IllegalArgumentException("Unknown entity type: " + entityType);
                 };
@@ -895,6 +983,10 @@ public class DataBaseManagement {
             throw e;
         }
     }
+
+
+
+
     public static Object findUserByUsername(String role, String username) {
         try {
             session.beginTransaction();
@@ -995,8 +1087,18 @@ public class DataBaseManagement {
                 if (!request.getEmail().isEmpty()) customer.setEmail(request.getEmail());
                 if (!request.getPhone().isEmpty()) customer.setPhone(request.getPhone());
                 if (!request.getPassword().isEmpty()) customer.setPassword(request.getPassword());
+                if (!request.getCardNumber().isEmpty()) customer.setCreditCardNumber(request.getCardNumber());
+                if (!request.getCvv().isEmpty()) customer.setCreditCardCVV(request.getCvv());
+                if (!request.getExpiryDate().isEmpty()) customer.setCreditCardExpiration(request.getExpiryDate());
+                if ( request.getAccType()!= 0) customer.setCustomerType(request.getAccType());
+                if ( request.getUserId() != 0) customer.setIdentifyingNumber(String.valueOf(request.getUserId()));
 
-                System.out.println("1");
+                if (request.getMembershipStartDate() != null && request.getAccType() == 3) {
+                    customer.setMembershipStartDate(request.getMembershipStartDate());
+                    // persist/update
+                }
+
+
                 //תתקן את זה
                 if(!request.getRole().isEmpty()){
                     if(request.getRole().equals("Network Account")){
@@ -1051,7 +1153,7 @@ public class DataBaseManagement {
         Object user = findUserByUsername(role, username);
 
         if (user == null) {
-            return new BlockUserResponse(false, "User not found.");
+            return new BlockUserResponse(false, "User not found.",username);
         }
 
         try {
@@ -1067,12 +1169,12 @@ public class DataBaseManagement {
 
             session.getTransaction().commit();
             String msg = block ? "User blocked successfully." : "User unblocked successfully.";
-            return new BlockUserResponse(true, msg);
+            return new BlockUserResponse(true, msg,username);
 
         } catch (Exception e) {
             if (session.getTransaction().isActive()) session.getTransaction().rollback();
             e.printStackTrace();
-            return new BlockUserResponse(false, "Error: " + e.getMessage());
+            return new BlockUserResponse(false, "Error: " + e.getMessage(),username);
         }
     }
 

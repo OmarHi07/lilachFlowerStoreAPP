@@ -38,6 +38,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -203,7 +204,15 @@ public class pastOrders {
                 complainButton.setOnAction(e -> {
                     try{
                         ComplaintController.order = order;
-                        App.setRoot("ComplaintScreen", 1040, 780);
+//                        App.setRoot("ComplaintScreen", 1040, 780);
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("ComplaintScreen.fxml"));
+                        Parent root = loader.load();
+
+                        Stage stage = new Stage();
+                        stage.setTitle("Complaint Screen");
+                        stage.setScene(new Scene(root, 800, 780));
+                        stage.initModality(Modality.APPLICATION_MODAL); // חוסם את החלון שמתחת עד שסוגרים את זה
+                        stage.show();
                     }
                     catch (IOException e1){
                         e1.printStackTrace();

@@ -28,8 +28,14 @@ public class Order implements Serializable {
             orphanRemoval = true
     )
     private List<CartProduct> products;
-    @OneToOne(mappedBy = "order",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Complain complain;
+
+    // ב-Order
+    @OneToMany(
+            mappedBy = "order",
+            fetch = FetchType.LAZY,   // ← טעינה רק כשמבקשים
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )    private List<Complain> complains = new ArrayList<>();
 
     private LocalDate dateReceive;
     private LocalTime timeReceive;
@@ -59,6 +65,7 @@ public class Order implements Serializable {
         this.status=3;
         this.isCanceled = isCanceled;
         this.products = new ArrayList<CartProduct>();
+        this.complains = new ArrayList<Complain>();
     }
 
     public Order() {
@@ -202,14 +209,6 @@ public class Order implements Serializable {
         this.branch = branch;
     }
 
-    public Complain getComplain() {
-        return complain;
-    }
-
-    public void setComplain(Complain complain) {
-        this.complain = complain;
-        complain.setOrder(this);
-    }
     public void setType(String type) {
         this.type = type;
     }
@@ -218,6 +217,25 @@ public class Order implements Serializable {
     }
 
 
+    public List<Complain> getComplains() {
+        return complains;
+    }
+
+    public void setComplains(List<Complain> complains) {
+        this.complains = complains != null ? complains : new ArrayList<>();
+    }
+
+    public void addComplain(Complain c) {
+        if (c == null) return;
+        complains.add(c);
+        c.setOrder(this); // קבע את הצד ההפוך
+    }
+
+    public void removeComplain(Complain c) {
+        if (c == null) return;
+        complains.remove(c);
+        if (c.getOrder() == this) c.setOrder(null);
+    }
 
 
 }

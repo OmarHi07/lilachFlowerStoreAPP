@@ -23,6 +23,9 @@ public class LoginController {
     @FXML // fx:id="EmployeeLog"
     private Label EmployeeLog; // Value injected by FXMLLoader
 
+    @FXML // fx:id="LogInImages"
+    private ImageView LogInImages; // Value injected by FXMLLoader
+
     @FXML // fx:id="customerLogInButton"
     private Button customerLogInButton; // Value injected by FXMLLoader
 
@@ -55,6 +58,8 @@ public class LoginController {
     public void initialize() {
         EventBus.getDefault().register(this);
 
+        Image image = new Image(getClass().getResource("/Images/LogIn.jpeg").toExternalForm());
+        LogInImages.setImage(image);
         visiblePasswordField.setVisible(false);
 
         if (Session.selectedRole.equals("customer")) {
@@ -73,13 +78,13 @@ public class LoginController {
 
     @FXML
     void goBack(ActionEvent event) throws IOException {
-        App.setRoot("Home",500,400);
+        App.setRoot("Home",510,470);
     }
 
     @FXML
     void goToSignUp(MouseEvent event) {
         try {
-            App.setRoot("SignIn", 600, 400);
+            App.setRoot("SignIn",680,560);
         } catch (IOException e) {
             errorLabel.setText("❌ לא ניתן לעבור למסך הרשמה.");
         }
@@ -121,16 +126,31 @@ public class LoginController {
         System.out.println(">> קיבלתי LoginResponse: " + response.getMessage());
         javafx.application.Platform.runLater(() -> {
             if (response.isSuccess()) {
-                errorLabel.setText("✅ " + response.getMessage());
-                try {
-                    System.out.println("#2");
-                    App.setRoot("Primary", 1006, 750);
-                    System.out.println("#3");
+                if (CurrentCustomer.getCurrentUser() != null) {
+                    if (CurrentCustomer.getCurrentUser().isBlocked()) {
+                        errorLabel.setText("Your account has been blocked.");
+                    } else {
+                        errorLabel.setText("✅ " + response.getMessage());
+                        try {
+                            App.setRoot("primary", 1120, 760);
+                        } catch (IOException e) {
+                            errorLabel.setText("Failed to load main screen.");
+                        }
+                    }
+                } else if (CurrentCustomer.getCurrentEmployee() != null) {
+                    if (CurrentCustomer.getCurrentEmployee().isBlocked()) {
+                        errorLabel.setText("Your account has been blocked.");
+                    } else {
+                        errorLabel.setText("✅ " + response.getMessage());
+                        try {
+                            App.setRoot("primary", 1120, 760);
+                        } catch (IOException e) {
+                            errorLabel.setText("Failed to load main screen.");
+                        }
+                    }
                 }
-                catch (IOException e) {
-                    errorLabel.setText("Failed to load main screen.");
-                }
-            } else {
+            }
+            else {
                 errorLabel.setText("❌ " + response.getMessage());
             }
         });

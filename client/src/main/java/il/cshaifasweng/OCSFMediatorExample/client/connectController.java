@@ -18,7 +18,6 @@ public class connectController {
     @FXML // fx:id="backgroundImage"
     private ImageView backgroundImage; // Value injected by FXMLLoader
 
-
     @FXML // fx:id="connect"
     private Button connect; // Value injected by FXMLLoader
 
@@ -50,7 +49,7 @@ public class connectController {
             client.openConnection();
 
             // Navigate to the next screen
-            App.setRoot("Home",700,600);
+            App.setRoot("Home",510,470);
 
         } catch (Exception e) {
             e.printStackTrace();

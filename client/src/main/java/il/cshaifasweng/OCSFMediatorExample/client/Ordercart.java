@@ -1,4 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
+import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.CartProduct;
 import il.cshaifasweng.OCSFMediatorExample.entities.Customer;
 import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
@@ -68,6 +69,7 @@ public class Ordercart {
         private void renderItems() {
                 myorder.getChildren().clear();
 
+                totalprice = 0;
                 // שורת כותרת
                 myorder.add(new Label("Image"), 0, 0);
                 myorder.add(new Label("Name"), 1, 0);
@@ -126,7 +128,23 @@ public class Ordercart {
                         myorder.add(quantityBox, 2, row);
 
                         // מחיר כולל
-                        Label totalItemLabel = new Label(String.format("%.2f ₪", item.getTotal()));
+                        double totalprice1 = item.getPrice();
+                        if(item.getFlower().getSale()!=0){
+                                double discount = item.getFlower().getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        Branch haifa = SimpleClient.getAllBranches().stream().filter(b -> b.getAddress().equals("Haifa")).findFirst().get();
+                        Branch telAviv = SimpleClient.getAllBranches().stream().filter(b -> b.getAddress().equals("TelAviv")).findFirst().get();
+                        if(CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && haifa.getSale()!=0){
+                                double discount = haifa.getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        if(CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && telAviv.getSale()!=0){
+                                double discount = telAviv.getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        totalprice += totalprice1;
+                        Label totalItemLabel = new Label(String.format("%.2f ₪", totalprice1));
                         totalItemLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4e3620;");
                         totalItemLabel.setAlignment(Pos.CENTER); // ממרכז את הטקסט עצמו
                         GridPane.setHalignment(totalItemLabel, HPos.CENTER); // ממרכז את הלייבל בתוך התא
@@ -181,7 +199,7 @@ public class Ordercart {
         @FXML
         void goback(ActionEvent event) {
                 try {
-                        App.setRoot("primary", 1040, 780);
+                        App.setRoot("primary",1120,760);
                 }
                 catch (IOException e) {
                         e.printStackTrace();
@@ -207,6 +225,7 @@ public class Ordercart {
                 assert myorder != null : "fx:id=\"myorder\" was not injected.";
                 assert total != null : "fx:id=\"total\" was not injected.";
 
+                totalprice = 0;
                 // הכפתור יכבה אם אין פריטים
                 conttinue.setDisable(cartItems.isEmpty());
 
@@ -226,14 +245,28 @@ public class Ordercart {
 
                 double totalSum = 0.0;
                 for (CartProduct item : cartItems) {
-                        totalSum += item.getPrice() * item.getQuantity();
+                        double totalprice1 = item.getPrice();
+                        if(item.getFlower().getSale()!=0){
+                                double discount = item.getFlower().getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        Branch haifa = SimpleClient.getAllBranches().stream().filter(b -> b.getAddress().equals("Haifa")).findFirst().get();
+                        Branch telAviv = SimpleClient.getAllBranches().stream().filter(b -> b.getAddress().equals("TelAviv")).findFirst().get();
+                        if(CurrentCustomer.getSelectedBranch().getAddress().equals("Haifa") && haifa.getSale()!=0){
+                                double discount = haifa.getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        if(CurrentCustomer.getSelectedBranch().getAddress().equals("TelAviv") && telAviv.getSale()!=0){
+                                double discount = telAviv.getSale() / 100.0;
+                                totalprice1 = totalprice1 - (totalprice1 * discount);
+                        }
+                        totalSum += totalprice1 * item.getQuantity();
                 }
 
                 double discount = 0.0;
                 Object user = CurrentCustomer.getCurrentUser();
-
                 totalprice = totalSum;
-                total.setText(String.format("Total: %.2f ₪", totalSum));
+                total.setText(String.format("Total: %.2f ₪", totalprice));
 
         }
 
