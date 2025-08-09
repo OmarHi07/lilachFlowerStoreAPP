@@ -231,9 +231,7 @@ public class pastOrders {
                 // --- כפתור ביטול ---
                 Button cancelButton = new Button("Cancel Order");
                 cancelButton.setStyle("-fx-background-color: #613b23; -fx-text-fill: white; -fx-font-size: 13px;");
-                cancelButton.setOnAction(e -> {
-                    System.out.println("Canceled order ID: " + order.getId());
-                });
+
                 cancelButton.setOnAction(e -> {
                     if (confirmCancel(order)) {
                         System.out.println("Canceled order ID: " + order.getId());
@@ -244,19 +242,19 @@ public class pastOrders {
 
 
 
-                boolean canCancel = false;
-                try {
-                    if (order.getDateOrder() != null ) {
-                        LocalDate today = LocalDate.now();
-                        LocalDate receiveDate = order.getDateOrder();
-                        long daysLeft = ChronoUnit.DAYS.between(today, receiveDate);
-                        daysLeft = Math.max(daysLeft, 0); // לא יהיה שלילי
-                        System.out.println("Order " + order.getId() + " daysLeft = " + daysLeft);
-                        canCancel = daysLeft <= 3;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                boolean canCancel = false;
+//                try {
+//                    if (order.getDateOrder() != null ) {
+//                        LocalDate today = LocalDate.now();
+//                        LocalDate receiveDate = order.getDateOrder();
+//                        long daysLeft = ChronoUnit.DAYS.between(today, receiveDate);
+//                        daysLeft = Math.max(daysLeft, 0); // לא יהיה שלילי
+//                        System.out.println("Order " + order.getId() + " daysLeft = " + daysLeft);
+//                        canCancel = daysLeft <= 3;
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
                 // --- הוספה לגריד ---
                 ordersbefore.add(imageView, 0, row);
@@ -264,10 +262,10 @@ public class pastOrders {
                 ordersbefore.add(complainButton, 2, row);
                 ordersbefore.add(dateLabel, 3, row);
 
-                if (canCancel) {
+//                if (canCancel) {
                     ordersbefore.add(cancelButton, 4, row);
                     GridPane.setHalignment(cancelButton, HPos.CENTER);
-               }
+//               }
 
                 row++;
             }
