@@ -34,6 +34,14 @@ public class Item {
     @FXML // fx:id="Price"
     private Text Price; // Value injected by FXMLLoader
 
+    @FXML // fx:id="Done4"
+    private CheckBox Done4; // Value injected by FXMLLoader
+
+    @FXML // fx:id="Sale"
+    private Text Sale; // Value injected by FXMLLoader
+
+    @FXML // fx:id="SaleText"
+    private TextField SaleText; // Value injected by FXMLLoader
 
     @FXML // fx:id="EditInformationBU"
     private Button EditInformationBU; // Value injected by FXMLLoader
@@ -44,14 +52,11 @@ public class Item {
     @FXML // fx:id="image"
     private ImageView image; // Value injected by FXMLLoader
 
-    @FXML // fx:id="Delete"
-    private Text Delete1; // Value injected by FXMLLoader
-
     @FXML // fx:id="Avalible"
     private Text Avalible; // Value injected by FXMLLoader
 
-    @FXML // fx:id="Done4"
-    private CheckBox Done4; // Value injected by FXMLLoader
+    @FXML // fx:id="RemoveSaleBU"
+    private Button RemoveSaleBU; // Value injected by FXMLLoader
 
     @FXML // fx:id="Edit1"
     private Text Edit1; // Value injected by FXMLLoader
@@ -95,15 +100,6 @@ public class Item {
     @FXML // fx:id="AddCart"
     private Button AddCart; // Value injected by FXMLLoader
 
-    @FXML // fx:id="Sale"
-    private Text Sale; // Value injected by FXMLLoader
-
-    @FXML // fx:id="SaleText"
-    private TextField SaleText; // Value injected by FXMLLoader
-
-    @FXML // fx:id="RemoveSaleBU"
-    private Button RemoveSaleBU; // Value injected by FXMLLoader
-
     @FXML // fx:id="ChangeImageBU"
     private Button ChangeImageBU; // Value injected by FXMLLoader
 
@@ -116,28 +112,14 @@ public class Item {
         selectedHaifa = false;
         selectedTelAviv = false;
         Name.setText("Name: " + flower.getFlowerName());
-        if(flower.getSale() == 0 && flower.getSaleBranchHaifaTelAviv()==0) {
-            Price.setText("Price: " + flower.getPrice() + "₪");
-        }
-        else if(flower.getSale()!=0 && flower.getSaleBranchHaifaTelAviv()==0){
+        if(flower.getSale() != 0) {
+            double sale = flower.getSale() / 100.0;
             double price = flower.getPrice();
-            double discount = flower.getSale() / 100.0;
-            double finalPrice = price - (price * discount);
-            Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
-        }
-        else if (flower.getSale()!=0 && flower.getSaleBranchHaifaTelAviv()!=0){
-            double price = flower.getPrice();
-            double discount = flower.getSale() / 100.0;
-            double finalPrice = price - (price * discount);
-            double discount2 = flower.getSaleBranchHaifaTelAviv() / 100.0;
-            finalPrice = finalPrice - (finalPrice * discount2);
-            Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
+            double total = price - (sale * price);
+            Price.setText("Price: " + flower.getPrice() + "₪"  + "Sale Price:" + total + "₪");
         }
         else{
-            double price = flower.getPrice();
-            double discount = flower.getSale() / 100.0;
-            double finalPrice = price - (price * discount);
-            Price.setText("Original Price:" + price +"₪" +" Sale Price:" + finalPrice + "₪");
+            Price.setText("Price: " + flower.getPrice());
         }
         Type.setText("Type: " + flower.getType());
         ID.setText(String.valueOf(flower.getId()));
@@ -160,13 +142,13 @@ public class Item {
                 Permission = false;
             }
             if (!Permission) {
+                RemoveSaleBU.setVisible(false);
                 ChangesBU.setVisible(false);
                 ChangeImageBU.setVisible(false);
+                HaifaText.setVisible(false);
                 Done4.setVisible(false);
                 SaleText.setVisible(false);
                 Sale.setVisible(false);
-                HaifaText.setVisible(false);
-                RemoveSaleBU.setVisible(false);
                 AddHaifa.setVisible(false);
                 AddTelAviv.setVisible(false);
                 TelAviv.setVisible(false);
@@ -183,11 +165,10 @@ public class Item {
                 AddCart.setVisible(false);
                 ChangesBU.setVisible(true);
                 ChangeImageBU.setVisible(true);
+                HaifaText.setVisible(true);
                 Done4.setVisible(true);
                 SaleText.setVisible(true);
                 Sale.setVisible(true);
-                HaifaText.setVisible(true);
-                RemoveSaleBU.setVisible(true);
                 AddHaifa.setVisible(true);
                 AddTelAviv.setVisible(true);
                 TelAviv.setVisible(true);
@@ -213,6 +194,7 @@ public class Item {
         if(flower.getBranch().isEmpty()) {
             Avalible.setText("Not Available");
             AddCart.setVisible(false);
+            SoldOut.setVisible(true);
         }
         else {
             Avalible.setText("Available:");
@@ -223,6 +205,9 @@ public class Item {
                 selectedTelAviv = true;
                 selectedHaifa = true;
                 AddTelAviv.setSelected(true);
+                if(CurrentCustomer.getCurrentUser()!=null) {
+                    AddCart.setVisible(true);
+                }
             }
             else {
                 Branch branch = flower.getBranch().get(0);
@@ -243,14 +228,24 @@ public class Item {
         if(CurrentCustomer.getCurrentUser()!=null) {
             Customer customer = (Customer) CurrentCustomer.getCurrentUser();
             if(customer.getCustomerType() == 1){
-                if(!(flower.getBranch().contains(SimpleClient.getBranchCustomer().get(0)))){
-                    AddCart.setDisable(false);
+                Branch branch = SimpleClient.getAllBranches().get(0);
+                boolean notAvailable = flower.getBranch()
+                        .stream()
+                        .noneMatch(b -> b.getAddress().equals(branch.getAddress()));
+                if(notAvailable){
+                    AddCart.setDisable(true);
                     SoldOut.setVisible(true);
+                }
+                else {
+                    SoldOut.setVisible(false);
                 }
             }
         }
 
         if(CurrentCustomer.getCurrentCustomer().equals("Guest")){
+            RemoveSaleBU.setVisible(false);
+            HaifaText.setVisible(false);
+            TelAviv.setVisible(false);
             Delete.setVisible(false);
             ChangeImageBU.setVisible(false);
             SoldOut.setVisible(false);
@@ -263,61 +258,41 @@ public class Item {
             PutNewType.setVisible(false);
             AddHaifa.setVisible(false);
             AddTelAviv.setVisible(false);
+            Done4.setVisible(false);
             Sale.setVisible(false);
             SaleText.setVisible(false);
-            RemoveSaleBU.setVisible(false);
-            Done4.setVisible(false);
             ChangesBU.setVisible(false);
-            AddCart.setDisable(false);
+            AddCart.setDisable(true);
         }
         ID.setVisible(false);
-        Delete1.setVisible(false);
     }
     public void PutSale(Flower flower){
         setData(flower);
         double price = flower.getPrice();
+        double discount;
         double finalPrice = flower.getPrice();
         if(flower.getSale()!=0){
-                double discount = flower.getSale() / 100.0;
-                finalPrice = price - (price * discount);
+                double discount1 = flower.getSale() / 100.0;
+                finalPrice = price - (price * discount1);
         }
-        if(flower.getSaleBranchHaifaTelAviv()!=0){
-                    double discount1 = flower.getSaleBranchHaifaTelAviv() / 100.0;
-                    finalPrice = finalPrice - (finalPrice * discount1);
-        } else if (flower.getSaleBranchTelAviv()!=0 && CurrentCustomer.getSelectedBranch().equals("TelAviv")) {
-                    double discount2 = flower.getSaleBranchTelAviv() / 100.0;
-                    finalPrice = finalPrice - (finalPrice * discount2);
-        }
-        else if(flower.getSaleBranchHaifa()!=0 && CurrentCustomer.getSelectedBranch().equals("Haifa")) {
-                    double discount3 = flower.getSaleBranchHaifa() / 100.0;
-                    finalPrice = finalPrice - (finalPrice * discount3);
-        }
-        Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
-        }
+//        if(flower.getSaleBranchHaifaTelAviv()!=0){
+//                    double discount1 = flower.getSaleBranchHaifaTelAviv() / 100.0;
+//                    finalPrice = finalPrice - (finalPrice * discount1);
+//        } else if (flower.getSaleBranchTelAviv()!=0 && CurrentCustomer.getSelectedBranch().equals("TelAviv")) {
+//                    double discount2 = flower.getSaleBranchTelAviv() / 100.0;
+//                    finalPrice = finalPrice - (finalPrice * discount2);
+//        }
+//        else if(flower.getSaleBranchHaifa()!=0 && CurrentCustomer.getSelectedBranch().equals("Haifa")) {
+//                    double discount3 = flower.getSaleBranchHaifa() / 100.0;
+//                    finalPrice = finalPrice - (finalPrice * discount3);
+//        }
+        discount = CurrentCustomer.getSelectedBranch().getSale() / 100.0;
+        finalPrice = finalPrice * discount;
 
-    public void deleteData(Flower flower) {
-        Delete.setVisible(false);
-        ChangeImageBU.setVisible(false);
-        SoldOut.setVisible(false);
-        Edit1.setVisible(false);
-        Edit2.setVisible(false);
-        Edit3.setVisible(false);
-        Edit4.setVisible(false);
-        PutNewName.setVisible(false);
-        PutNewPrice.setVisible(false);
-        PutNewType.setVisible(false);
-        AddHaifa.setVisible(false);
-        AddTelAviv.setVisible(false);
-        Sale.setVisible(false);
-        SaleText.setVisible(false);
-        RemoveSaleBU.setVisible(false);
-        Done4.setVisible(false);
-        ChangesBU.setVisible(false);
-        AddCart.setDisable(false);
-        HaifaText.setVisible(false);
-        TelAviv.setVisible(false);
-        Delete1.setVisible(true);
+        Price.setText("Original Price:" + price +"₪ " +" Sale Price:" + finalPrice + "₪");
     }
+
+
     public void setName(String name){
         Name.setText(name);
     }
@@ -351,12 +326,25 @@ public class Item {
             else {
                 int idValue = Integer.parseInt(ID.getText());
                 List<Flower> flowers = SimpleClient.getFlowers();
+                List<Flower> flowerList = SimpleClient.getFlowersSingles();
                 Flower flower = flowers.stream().filter(f -> f.getId() == idValue).findFirst().orElse(null);
-                double price = flower.getPrice();
-                CartProduct cart = new CartProduct(1, price, flower);
-                Ordercart.cartItems.add(cart);
-                AddCart.setDisable(false);
+                if(flower == null){
+                    flower = flowerList.stream().filter(f -> f.getId() == idValue).findFirst().orElse(null);
+                }
+                if(flower != null) {
+                    double price = flower.getPrice();
+                    CartProduct cart = new CartProduct(1, price, flower);
+                    Ordercart.cartItems.add(cart);
+                    AddCart.setDisable(false);
+                }
             }
+        }
+        else if (CurrentCustomer.getCurrentCustomer().equals("Guest")){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Account Required");
+            alert.setHeaderText("Create an Account");
+            alert.setContentText("You must create an account before you can buy items.");
+            alert.showAndWait();
         }
     }
 
@@ -378,7 +366,7 @@ public class Item {
         if(!(newSale.isEmpty())){
             try {
                 SimpleClient.getClient().sendToServer("Change Sale," + newSale + "," + idValue);
-                SaleText.setText("");
+                SaleText.setText(null);
                 Done4.setSelected(false);
 
             }
@@ -405,13 +393,13 @@ public class Item {
         ChangeFlower flower = new ChangeFlower();
         int idValue = Integer.parseInt(ID.getText().trim());
         flower.setId(idValue);
-        if(!(PutNewName.getText().isEmpty())){
+        if(PutNewName.getText()!=null && !PutNewName.getText().isEmpty()){
             flower.setNewName(PutNewName.getText());
         }
-        if(!(PutNewPrice.getText().isEmpty())){
+        if(PutNewPrice.getText()!=null && !(PutNewPrice.getText().isEmpty())){
             flower.setNewPrice(PutNewPrice.getText());
         }
-        if(!(PutNewType.getText().isEmpty())){
+        if(PutNewType.getText()!=null && !(PutNewType.getText().isEmpty())){
             flower.setNewType(PutNewType.getText());
         }
         List<Branch> Branches = SimpleClient.getAllBranches();
@@ -442,9 +430,9 @@ public class Item {
         }
         try {
             SimpleClient.getClient().sendToServer(flower);
-            PutNewName.setText("");
-            PutNewPrice.setText("");
-            PutNewType.setText("");
+            PutNewName.setText(null);
+            PutNewPrice.setText(null);
+            PutNewType.setText(null);
             selectedImageBytes = null;
         } catch (Exception e) {
             e.printStackTrace();

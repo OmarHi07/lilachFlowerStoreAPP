@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="731.0" prefWidth="899.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.InsertFlower">
+<AnchorPane prefHeight="771.0" prefWidth="899.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.InsertFlower">
    <children>
       <Text fill="#4d3420" layoutX="225.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Item To The Cataloge" textAlignment="CENTER" wrappingWidth="448.7999145507813">
          <font>
@@ -166,6 +166,16 @@
       <Text fx:id="AlertTT" fill="#c41515" layoutX="659.0" layoutY="645.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must enter an Type!" textAlignment="CENTER" wrappingWidth="201.60001182556152">
          <font>
             <Font name="Gabriola" size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="AlertRed" fill="#c41515" layoutX="322.0" layoutY="740.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="16.0" />
+         </font>
+      </Text>
+      <Text fx:id="Alertgreen" fill="#15c23a" layoutX="314.0" layoutY="732.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="201.60001182556152">
+         <font>
+            <Font name="Gabriola" size="16.0" />
          </font>
       </Text>
    </children>

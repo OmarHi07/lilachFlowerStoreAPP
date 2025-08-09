@@ -15,23 +15,23 @@
 <AnchorPane prefHeight="550.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SystemManagerController">
    <children>
 
-       <HBox alignment="CENTER" layoutX="454.0" layoutY="14.0" spacing="10">
-           <Button fx:id="blockButton" onAction="#blockuser" text="Block user">
+      <HBox alignment="CENTER" layoutX="454.0" layoutY="14.0" spacing="10">
+         <Button fx:id="blockButton" onAction="#blockuser" text="Block user">
             <font>
                <Font name="David" size="12.0" />
             </font></Button>
-           <Label style="-fx-font-size: 16px;" text="↔">
+         <Label style="-fx-font-size: 16px;" text="↔">
             <font>
                <Font name="System Bold" size="12.0" />
             </font></Label>
-           <Button fx:id="unblockButton" onAction="#unBlockUser" text="Unblock user">
+         <Button fx:id="unblockButton" onAction="#unBlockUser" text="Unblock user">
             <font>
                <Font name="David" size="12.0" />
             </font></Button>
-       </HBox>
+      </HBox>
 
 
-       <AnchorPane layoutX="-1.0" prefHeight="550.0" prefWidth="166.0" style="-fx-background-color: C7BCA6FF;">
+      <AnchorPane layoutX="-1.0" prefHeight="550.0" prefWidth="166.0" style="-fx-background-color: C7BCA6FF;">
          <children>
             <Button fx:id="logOutButton" blendMode="COLOR_BURN" layoutX="15.0" layoutY="510.0" mnemonicParsing="false" onAction="#logOut" text="Log out🚶‍♂️🔙">
                <effect>
@@ -138,7 +138,6 @@
       <TextField fx:id="workerName" layoutX="325.0" layoutY="54.0" promptText="new name " />
       <TextField fx:id="workerNewusername" layoutX="325.0" layoutY="104.0" promptText="new username" />
       <TextField fx:id="workerNewPassword" layoutX="325.0" layoutY="154.0" promptText="new password" />
-      <TextField fx:id="workerPermission" layoutX="325.0" layoutY="204.0" promptText="new permission" />
       <TextField fx:id="newBranch" layoutX="325.0" layoutY="254.0" promptText="new branch" />
       <Label fx:id="customer7" layoutX="178.0" layoutY="303.0" prefHeight="26.0" prefWidth="158.0" text="send email to customer">
          <font>
@@ -157,11 +156,6 @@
          </font>
       </Label>
       <Label fx:id="worker3" layoutX="174.0" layoutY="151.0" prefHeight="26.0" prefWidth="149.0" text=" Enter new password: ">
-         <font>
-            <Font name="Gabriola" size="21.0" />
-         </font>
-      </Label>
-      <Label fx:id="worker4" layoutX="177.0" layoutY="201.0" prefHeight="26.0" prefWidth="149.0" text="Enter permission : ">
          <font>
             <Font name="Gabriola" size="21.0" />
          </font>

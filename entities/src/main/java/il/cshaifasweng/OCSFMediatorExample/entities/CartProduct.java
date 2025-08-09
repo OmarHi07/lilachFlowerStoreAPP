@@ -10,7 +10,8 @@ public class CartProduct implements Serializable{
           int quantity;
           private double price;
 
-          @OneToOne
+          @ManyToOne(fetch = FetchType.LAZY)
+          @JoinColumn(name = "flower_id")
           private Flower flower;
 
           @ManyToOne

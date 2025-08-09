@@ -58,7 +58,7 @@ public class HomeController  {
 
     @FXML
     void createAcount(MouseEvent event) throws IOException {
-         App.setRoot("SignIn",650,530);
+         App.setRoot("SignIn",680,560);
     }
 
 
@@ -67,7 +67,7 @@ public class HomeController  {
         CurrentCustomer.setCurrentCustomer("Guest");
         CurrentCustomer.setCurrentEmployee(null);
         CurrentCustomer.setCurrentUser(null);
-        App.setRoot("primary",996.0,731.0);
+        App.setRoot("primary",1120,760);
     }
 
 }

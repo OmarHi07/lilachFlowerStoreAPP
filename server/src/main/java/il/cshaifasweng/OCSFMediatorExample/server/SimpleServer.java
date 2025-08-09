@@ -3,6 +3,9 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 
 import java.io.IOException;
@@ -18,9 +21,114 @@ import static il.cshaifasweng.OCSFMediatorExample.server.App.instance;
 
 public class SimpleServer extends AbstractServer {
 	private static final ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+	// === Auto-Responder Thread ===
+	private volatile boolean complaintsMonitorRunning = false;
+	private Thread complaintsMonitorThread;
 
 	public SimpleServer(int port) {
 		super(port);
+	}
+
+	@Override
+	protected void serverStarted() {
+		super.serverStarted();
+		startComplaintMonitor();
+	}
+
+	@Override
+	protected void serverStopped() {
+		super.serverStopped();
+		stopComplaintMonitor();
+	}
+
+
+	// ===== Complaints monitor =====
+	private void startComplaintMonitor() {
+		if (complaintsMonitorRunning) return;
+		complaintsMonitorRunning = true;
+
+		complaintsMonitorThread = new Thread(this::complaintsMonitorLoop, "complaints-monitor");
+		complaintsMonitorThread.setDaemon(true); // שלא יחסום יציאה מהתהליך
+		complaintsMonitorThread.start();
+	}
+
+	private void stopComplaintMonitor() {
+		complaintsMonitorRunning = false;
+		if (complaintsMonitorThread != null) {
+			complaintsMonitorThread.interrupt();
+		}
+	}
+
+	private void complaintsMonitorLoop() {
+		final ZoneId tz = ZoneId.of("Asia/Jerusalem");
+		final String AUTO_MARK = "[AUTO] ";
+
+		while (complaintsMonitorRunning) {
+			try {
+				LocalDateTime now = LocalDateTime.now(tz);
+				LocalDateTime threshold = now.minusHours(24);
+
+				// מביאים מה-DB את כל התלונות (פשוט) — אפשר אח"כ לייעל ל-HQL מסונן
+				List<Complain> all = instance.getAllComplaints();
+
+				for (Complain c : all) {
+					try {
+						// דילוג על תלונות שכבר קיבלו תשובה ידנית/אוטומטית
+						String ans = c.getAnswer_text();
+						if (ans != null && !ans.isBlank()) continue;
+
+						// איחוד תאריך+שעה כדי לבדוק 24 שעות מלאות
+						LocalDate d = c.getDate();
+						LocalTime t = c.getTime();
+						if (d == null || t == null) continue;
+
+						LocalDateTime at = LocalDateTime.of(d, t);
+						if (at.isAfter(threshold)) continue; // עדיין לא עברו 24 שעות
+
+						// בונים תשובה אוטומטית עם סימון, כדי לא לשלוח שוב
+						String autoAnswer = AUTO_MARK + "We apologize for the delay. This is your automatic response.";
+
+						Complain db = instance.getComplaintById(c.getId()); // הוסיפי מתודה אם אין
+						if (db == null) continue;
+
+						String already = db.getAnswer_text();
+						if (already != null && !already.isBlank()) continue;
+
+
+						db.setAnswer_text(autoAnswer);
+						db.setStatus(true);
+						db.setRefund(20.0);
+						instance.updateComplaint(db);
+
+						// שליחת מייל ללקוח (אחרי שהעדכון נשמר)
+						Customer cust = db.getCustomer();
+						if (cust != null && cust.getEmail() != null && !cust.getEmail().isBlank()) {
+							String email   = cust.getEmail();
+							String name    = (cust.getFirstName() != null) ? cust.getFirstName() : "Customer";
+							String subject = "Automatic Response to Your Complaint";
+							String body    = "Dear " + name + ",\n\n" + autoAnswer + "\n\nAs compensation, we have refunded 20₪ to your account."
+									+ "We’re sorry for the inconvenience,\n— The Lilach Team";
+							try {
+								EmailSender.sendEmail(email, subject, body);
+							} catch (Exception mailEx) {
+								mailEx.printStackTrace();
+							}
+						}
+					} catch (Exception perItem) {
+						perItem.printStackTrace();
+					}
+				}
+
+				// המתנה 30 דקות בין סריקות
+				Thread.sleep(30 * 60 * 1000L);
+
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt(); // יציאה אלגנטית כשמכבים
+			} catch (Exception e) {
+				e.printStackTrace();
+				try { Thread.sleep(5_000L); } catch (InterruptedException ignored) {}
+			}
+		}
 	}
 
 	@Override
@@ -83,7 +191,7 @@ public class SimpleServer extends AbstractServer {
 			if (client1 != null) {
 				try {
 					client.sendToClient(client1);
-					System.out.println("AddClient message sent successfully.");
+					System.out.println("All the data send successfully.");
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -105,6 +213,7 @@ public class SimpleServer extends AbstractServer {
 			// Send the filtered list back, catching IOException
 			try {
 				client.sendToClient(open);
+				System.out.println("All the complains send successfully.");
 			} catch (IOException e) {
 				e.printStackTrace();
 				// Optionally log an error or notify admin
@@ -170,7 +279,7 @@ public class SimpleServer extends AbstractServer {
 //			}
 //		}
 		//6
-		else if (msgString.startsWith("remove client")) {
+		else if (msgString.startsWith("remove")) {
 			if (!SubscribersList.isEmpty()) {
 				for (SubscribedClient subscribedClient : SubscribersList) {
 					if (subscribedClient.getClient().equals(client)) {
@@ -178,6 +287,16 @@ public class SimpleServer extends AbstractServer {
 						break;
 					}
 				}
+			}
+			if(msgString.startsWith("remove customer")) {
+				String[] parts = msgString.split(",");
+				int id = Integer.parseInt(parts[1]);
+				instance.LogOutCustomer(id);
+			}
+			else if(msgString.startsWith("remove employee")) {
+				String[] parts = msgString.split(",");
+				int id = Integer.parseInt(parts[1]);
+				instance.LogOutEmployee(id);
 			}
 		}
 
@@ -194,8 +313,10 @@ public class SimpleServer extends AbstractServer {
 			String Class = parts[1];
 			if (Class.equals("Employee")) {
 				instance.LogOutEmployee(id);
+				System.out.println("log out employee with ID: " + id);
 			} else if (Class.equals("Customer")) {
 				instance.LogOutCustomer(id);
+				System.out.println("log out Customer with ID: " + id);
 			}
 		}
 
@@ -204,6 +325,7 @@ public class SimpleServer extends AbstractServer {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[1]);
 			instance.deleteFlower(flowerId);
+			System.out.println("delete flower with ID: " + flowerId);
 			sendToAllClients(msgString);
 		}
 
@@ -214,8 +336,14 @@ public class SimpleServer extends AbstractServer {
 
 			if ("employee".equals(request.getUserType())) {
 				response = instance.loginEmployee(request.getUsername(), request.getPassword());
+				if(response.isSuccess()){
+					System.out.println("Employee with Username" + request.getUsername() + " successfully logged in.");
+				}
 			} else {
 				response = instance.loginCustomer(request.getUsername(), request.getPassword());
+				if(response.isSuccess()){
+					System.out.println("Customer with Username" + request.getUsername() + " successfully logged in.");
+				}
 			}
 			try {
 				client.sendToClient(response);
@@ -230,7 +358,8 @@ public class SimpleServer extends AbstractServer {
 			int flowerId = Integer.parseInt(parts[2]);
 			int Sale = Integer.parseInt(parts[1]);
 			Flower flower = instance.PutSale(flowerId, Sale);
-			sendToAllClients(flower);
+			System.out.println("Change Sale Flower with ID: " + flowerId + " to " + Sale);
+			sendToAllClients(msgString);
 		}
 
 		//11
@@ -238,6 +367,7 @@ public class SimpleServer extends AbstractServer {
 			String[] parts = msgString.split(",");
 			int flowerId = Integer.parseInt(parts[1]);
 			instance.PutSale(flowerId, 0);
+			System.out.println("Remove Sale Flower with ID: " + flowerId);
 			sendToAllClients(msgString);
 		}
 
@@ -245,15 +375,16 @@ public class SimpleServer extends AbstractServer {
 		else if (msg instanceof ChangeFlower) {
 			ChangeFlower newFlower = (ChangeFlower) msg;
 			Flower flower = instance.ChangeDetails(newFlower);
+			System.out.println("The details of the flower with id" + flower.getId()+ "change successfully.");
 			sendToAllClients(flower);
 		}
 
 		//13
 		else if (msg instanceof Flower) {
 			Flower flower = (Flower) msg;
-			Flower flower1 = instance.addFlower(flower);
-			AddFlower newFlower = new AddFlower(flower1);
-			sendToAllClients(newFlower);
+			AddFlower flower1 = instance.addFlower(flower);
+			System.out.println("Adding flower successfully.");
+			sendToAllClients(flower1);
 		}
 
 		//14
@@ -306,6 +437,7 @@ public class SimpleServer extends AbstractServer {
 			if (orderToDelete != null) {
 				// מחיקה מהמסד נתונים
 				instance.deleter(orderToDelete);
+				System.out.println("Deleting order successfully.");
 			}
 
 			try {
@@ -324,6 +456,7 @@ public class SimpleServer extends AbstractServer {
 			SignUpResponse response = instance.registerCustomer(request);
 			try {
 				if (response.isSuccess()) {
+					System.out.println("Register Customer successfully.");
 					// Send confirmation email
 					EmailSender.sendEmail(request.getEmail(), "Welcome to Lelac Stores!","Dear " + request.getFirstName() + ",\n\nThank you for signing up at Lelac Stores! We're happy to have you on board.\n\nHappy shopping! 💐");
 				}
@@ -390,6 +523,7 @@ public class SimpleServer extends AbstractServer {
 			AddSale addSale = (AddSale) msg;
 			try {
 				instance.PutSaleBranch(addSale);
+				System.out.println("Adding sale successfully.");
 				sendToAllClients(addSale);
 			}
 			catch (Exception e) {
@@ -397,12 +531,17 @@ public class SimpleServer extends AbstractServer {
 			}
 
 		}
+
 		//23
 		else if (msg instanceof BlockUserRequest) {
 			BlockUserRequest request = (BlockUserRequest) msg;
 			BlockUserResponse response = instance.handleBlockUser(request);
+			System.out.println("Blocking user: " + request.getUsername());
 			try {
 				client.sendToClient(response);
+				if (response.isSuccess()) {
+					sendToAllClients(response);
+				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -412,7 +551,8 @@ public class SimpleServer extends AbstractServer {
 		//22
 		else if(msg instanceof Order){
 			Order order = (Order) msg;
-			Order Order1=instance.saveorder(order);
+			Order Order1 = instance.saveorder(order);
+			System.out.println("Saving order successfully.");
 			AddOrder newOrder = new AddOrder();
 			newOrder.setOrder(Order1);
 			try{
@@ -454,6 +594,7 @@ public class SimpleServer extends AbstractServer {
 			DeleteOrder deleteOrder = (DeleteOrder) msg;
 			Order order = deleteOrder.getOrder();
 			Customer user = instance.deleter(order);
+			System.out.println("Deleting order successfully.");
 			deleteOrder.setUser(user);
 			try {
 				client.sendToClient(deleteOrder);
@@ -467,7 +608,7 @@ public class SimpleServer extends AbstractServer {
 		else if(msg instanceof DeleteUserRequest){
 			DeleteUserRequest request = (DeleteUserRequest) msg;
 			instance.DeleteUser(request);
-
+			System.out.println("Deleting user successfully.");
 		}
 
 		//25

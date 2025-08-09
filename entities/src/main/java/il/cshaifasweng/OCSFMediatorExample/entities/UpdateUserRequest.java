@@ -2,6 +2,9 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import java.io.Serializable;
 
+// add import
+import java.time.LocalDate;
+
 public class UpdateUserRequest implements Serializable {
     private String role;  // "customer", "networkWorker", etc.
 
@@ -27,6 +30,10 @@ public class UpdateUserRequest implements Serializable {
     private String expiryDate;
     private String cvv;
 
+    private LocalDate membershipStartDate;
+
+    private int accType;
+
 
     public UpdateUserRequest() {
         // Default constructor for manual object building
@@ -36,7 +43,8 @@ public class UpdateUserRequest implements Serializable {
 
     public UpdateUserRequest(String role, String originalUsername, String newUsername,
                              String firstName, String lastName, String email,
-                             String phone, String password, String name, int permision, String branch , String workerPassword, String workerNewUsername) {
+                             String phone, String password, String name, int permision, String branch , String workerPassword, String workerNewUsername,
+                             String cardNumber, String expiryDate, String cvv, int accType ,int userId) {
         this.role = role;
         this.originalUsername = originalUsername;
         this.newUsername = newUsername;
@@ -50,6 +58,34 @@ public class UpdateUserRequest implements Serializable {
         this.branch = branch;
         this.workerPassword = workerPassword;
         this.workerNewUsername = workerNewUsername;
+
+        this.cardNumber = cardNumber;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+
+        this.userId = userId;
+
+        this.accType = accType;
+
+
+    }
+
+    public int getUserId(){
+        return userId;
+    }
+
+    public void setAccType(int accType) {
+        this.accType = accType;
+    }
+    public int getAccType() {
+        return accType;
+    }
+
+    public LocalDate getMembershipStartDate() {
+        return membershipStartDate;
+    }
+    public void setMembershipStartDate(LocalDate membershipStartDate) {
+        this.membershipStartDate = membershipStartDate;
     }
 
     public String getRole() { return role; }

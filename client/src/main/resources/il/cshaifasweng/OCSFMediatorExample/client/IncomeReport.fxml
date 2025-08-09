@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.Integer?>
+<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -12,74 +11,94 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersReportsController">
+<AnchorPane prefHeight="689.0" prefWidth="1138.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OrdersHistogramController">
 
-    <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="880.0" spacing="10.0" style="-fx-background-color: linear-gradient(from 13.6364% 32.197% to 100.0% 28.0303%, #c7bca6 0.0%, #eaeaea 100.0%);" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-        <padding>
-            <Insets bottom="10" left="10" right="10" top="10" />
-        </padding>
+    <!-- כותרות יפות -->
+    <Text fill="#231204" layoutX="465.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="💰 Income Report - Orders Summary 💰" wrappingWidth="520.0">
+        <font><Font name="Gabriola" size="31.0" /></font>
+    </Text>
+    <Text fill="#231204" layoutX="520.0" layoutY="302.0" strokeType="OUTSIDE" strokeWidth="0.0" text="📊 Histogram - Income by Date 📅 🔍" wrappingWidth="420.0">
+        <font><Font name="Gabriola" size="29.0" /></font>
+    </Text>
+    <Text layoutX="21.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Date Range:" wrappingWidth="171.2">
+        <font><Font name="Serif Regular" size="20.0" /></font>
+    </Text>
+    <Text layoutX="38.0" layoutY="351.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Branch:" wrappingWidth="123.2">
+        <font><Font name="Serif Regular" size="20.0" /></font>
+    </Text>
 
-        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Income Report - Orders Summary" />
+    <!-- טבלת הזמנות מלאה (ללא שינוי לוגי, רק מיקום/גדלים) -->
+    <TableView fx:id="ordersTable" layoutX="280.0" layoutY="73.0" prefHeight="183.0" prefWidth="860.0">
+        <columns>
+            <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
+            <TableColumn fx:id="addressColumn" prefWidth="120" text="Address" />
+            <TableColumn fx:id="dateOrderColumn" prefWidth="100" text="Order Date" />
+            <TableColumn fx:id="dateReceiveColumn" prefWidth="100" text="Receive Date" />
+            <TableColumn fx:id="greetingColumn" prefWidth="100" text="Greeting" />
+            <TableColumn fx:id="nameReceivesColumn" prefWidth="120" text="Receiver Name" />
+            <TableColumn fx:id="phoneReceivesColumn" prefWidth="120" text="Receiver Phone" />
+            <TableColumn fx:id="statusColumn" prefWidth="70" text="Status" />
+            <TableColumn fx:id="sumColumn" prefWidth="80" text="Sum" />
+            <TableColumn fx:id="typeColumn" prefWidth="100" text="Type" />
+            <TableColumn fx:id="branchIdColumn" prefWidth="80" text="Branch ID" />
+            <TableColumn fx:id="customerIdColumn" prefWidth="80" text="Customer ID" />
+            <TableColumn fx:id="timeOrderColumn" prefWidth="90" text="Order Time" />
+            <TableColumn fx:id="timeReceiveColumn" prefWidth="90" text="Receive Time" />
+        </columns>
+    </TableView>
 
-        <TableView fx:id="ordersTable" prefHeight="160" prefWidth="860">
-            <columns>
-                <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
-                <TableColumn fx:id="addressColumn" prefWidth="120" text="Address" />
-                <TableColumn fx:id="dateOrderColumn" prefWidth="100" text="Order Date" />
-                <TableColumn fx:id="dateReceiveColumn" prefWidth="100" text="Receive Date" />
-                <TableColumn fx:id="greetingColumn" prefWidth="100" text="Greeting" />
-                <TableColumn fx:id="nameReceivesColumn" prefWidth="120" text="Receiver Name" />
-                <TableColumn fx:id="phoneReceivesColumn" prefWidth="120" text="Receiver Phone" />
-                <TableColumn fx:id="statusColumn" prefWidth="70" text="Status" />
-                <TableColumn fx:id="sumColumn" prefWidth="80" text="Sum" />
-                <TableColumn fx:id="typeColumn" prefWidth="100" text="Type" />
-                <TableColumn fx:id="branchIdColumn" prefWidth="80" text="Branch ID" />
-                <TableColumn fx:id="customerIdColumn" prefWidth="80" text="Customer ID" />
-                <TableColumn fx:id="timeOrderColumn" prefWidth="90" text="Order Time" />
-                <TableColumn fx:id="timeReceiveColumn" prefWidth="90" text="Receive Time" />
-            </columns>
-        </TableView>
+    <!-- פילטרים (עם DropShadow כמו בדוגמה) -->
+    <ComboBox fx:id="quarter" layoutX="24.0" layoutY="172.0" onAction="#quarter" prefHeight="26.0" prefWidth="150.0" promptText="Select Quarter">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Q1 (Jan - Mar)" />
+                <String fx:value="Q2 (Apr - Jun)" />
+                <String fx:value="Q3 (Jul - Sep)" />
+                <String fx:value="Q4 (Oct - Dec)" />
+                <String fx:value="NO NEED" />
+            </FXCollections>
+        </items>
+    </ComboBox>
 
-        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Histogram - Income by Date" />
+    <DatePicker fx:id="fromDatePicker" layoutX="21.0" layoutY="212.0" prefHeight="26.0" prefWidth="157.0" promptText="From Date">
+        <effect><DropShadow /></effect>
+    </DatePicker>
+    <DatePicker fx:id="toDatePicker" layoutX="21.0" layoutY="256.0" prefHeight="26.0" prefWidth="157.0" promptText="To Date">
+        <effect><DropShadow /></effect>
+    </DatePicker>
 
-        <BarChart fx:id="ordersBarChart" prefHeight="180" prefWidth="860">
-            <xAxis>
-                <CategoryAxis label="Date" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis label="Total Income" />
-            </yAxis>
-        </BarChart>
+    <!-- בחירת סניף (השארתי IDs כמספרים כדי לא לשבור קוד קיים) -->
+    <ComboBox fx:id="branchComboBox" layoutX="25.0" layoutY="367.0" prefWidth="150.0" promptText="Choose Branch">
+        <effect><DropShadow /></effect>
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="All" />
+                <String fx:value="Haifa" />
+                <String fx:value="TelAviv" />
+            </FXCollections>
+        </items>
+    </ComboBox>
 
-        <Label fx:id="totalIncomeLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Total Income: ₪0.00" />
+    <!-- כפתור טעינה -->
+    <Button layoutX="31.0" layoutY="432.0" onAction="#loadOrdersHistogram" text="Load Income Report">
+        <effect><DropShadow /></effect>
+    </Button>
 
-        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Select Date Range:" />
-        <HBox alignment="CENTER" spacing="10">
-         <ComboBox fx:id="quarter" onAction="#quarter" prefHeight="26.0" prefWidth="87.0" promptText="Quarter">
-            <items>
-               <FXCollections fx:factory="observableArrayList">
-                  <Integer fx:value="1" />
-                  <Integer fx:value="2" />
-               </FXCollections>
-            </items>
-         </ComboBox>
-            <DatePicker fx:id="fromDatePicker" promptText="From Date" />
-            <DatePicker fx:id="toDatePicker" promptText="To Date" />
-        </HBox>
-        <!-- בחירת סניף -->
-        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Select Branch:" />
-        <ComboBox fx:id="branchComboBox" prefWidth="150" promptText="Choose Branch">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <Integer fx:value="1" />
-                    <Integer fx:value="2" />
-                </FXCollections>
-            </items>
-        </ComboBox>
-      <Button layoutX="388.0" layoutY="475.0" onAction="#loadOrdersHistogram" text="Load Income Report" />
-    </VBox>
+    <!-- גרף היסטוגרמה -->
+    <BarChart fx:id="ordersBarChart" barGap="3.0" categoryGap="15.0" layoutX="245.0" layoutY="318.0" prefHeight="360.0" prefWidth="895.0">
+        <xAxis>
+            <CategoryAxis label="Date" />
+        </xAxis>
+        <yAxis>
+            <NumberAxis forceZeroInRange="true" label="Total Income" />
+        </yAxis>
+    </BarChart>
+
+    <!-- סך הכנסות -->
+    <Label fx:id="totalIncomeLabel" layoutX="28.0" layoutY="498.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Total Income: ₪0.00" />
 </AnchorPane>

@@ -11,10 +11,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -126,15 +123,24 @@ public class ReportsController {
         Object data = event.getReportData();
         if (data == null) {
             System.out.println("❌ reportData is null");
+            Platform.runLater(() -> {
+                showErrorAlert("Data Error", "The received complaint report data is invalid or missing.");
+            });
             return;
         }
         if (!(data instanceof List<?>)) {
             System.out.println("❌ reportData is NOT a List");
+            Platform.runLater(() -> {
+                showErrorAlert("Data Error", "The received complaint report data is invalid or missing.");
+            });
             return;
         }
         List<?> rawList = (List<?>) data;
         if (rawList.isEmpty()) {
             System.out.println("⚠️ reportData list is empty");
+            Platform.runLater(() -> {
+                showErrorAlert("No Data", "The complaint report contains no entries. Please select a different time range.");
+            });
             return;
         }
         try {
@@ -160,15 +166,12 @@ public class ReportsController {
         }
     }
 
-    @FXML
-    void goBack(ActionEvent event) {
-        EventBus.getDefault().unregister(this);
-        try{
-            App.setRoot("MainReportsMenu", 710, 300);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    private void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
+
 }

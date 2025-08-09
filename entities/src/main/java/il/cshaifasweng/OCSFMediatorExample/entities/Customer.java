@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.time.LocalDate;
 
 @SuppressWarnings("serial")
 @Entity
@@ -55,6 +56,12 @@ public class Customer implements Serializable {
     )
     private List<Branch> listBranch;
 
+
+    @Column(name = "membership_start_date")
+    private LocalDate membershipStartDate;
+
+
+
     public Customer() {}
 
     public Customer(String firstName, String lastName, String email, String phone, String username, String password, String creditCardNumber, String creditCardExpiration, String creditCardCVV, String identifyingNumber, int customerType  ) {
@@ -75,7 +82,18 @@ public class Customer implements Serializable {
         this.listBranch = new ArrayList<Branch>();
         this.credit = 0.0;
 
+
+
     }
+
+    public LocalDate getMembershipStartDate() {
+        return membershipStartDate;
+    }
+
+    public void setMembershipStartDate(LocalDate membershipStartDate) {
+        this.membershipStartDate = membershipStartDate;
+    }
+
 
     public boolean isBlocked() {
         return blocked;
@@ -139,7 +157,7 @@ public class Customer implements Serializable {
         return creditCardExpiration;
     }
     public void setCreditCardExpiration(String creditCardExpiration) {
-          this.creditCardExpiration = creditCardExpiration;
+        this.creditCardExpiration = creditCardExpiration;
     }
     public String getCreditCardCVV() {
         return creditCardCVV;

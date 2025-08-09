@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,30 +53,30 @@ public class SimpleClient extends AbstractClient {
             Flower flower = (Flower) msg;
             int id = flower.getId();
             if (flower.getTypeOfFlower() == 1) {
-                for (Flower f : flowers) {
-                    if (f.getId() == id) {
-                        flowers.remove(f);
-                        flowers.add(flower);
-                    }
-                }
+                flowers.removeIf(f -> f.getId() == id);
+                flowers.add(flower);
             }
             else if (flower.getTypeOfFlower() == 2) {
-                    for (Flower flower1 : flowersSingles){
-                        if(flower1.getId() == id) {
-                            flowersSingles.remove(flower1);
-                            flowersSingles.add(flower);
-                        }
-
-                    }
+                flowersSingles.removeIf(f -> f.getId() == id);
+                flowersSingles.add(flower);
             }
+
             EventBus.getDefault().post(flower);
         }
         //4
         else if (msg instanceof AddFlower){
 
             AddFlower newFlower = (AddFlower) msg;
-            Flower flower = newFlower.getFlower();
-            SimpleClient.flowers.add(flower);
+            if(newFlower.isTrue()) {
+                Flower flower = newFlower.getFlower();
+                if (flower.getTypeOfFlower() == 1) {
+                    SimpleClient.flowers.add(flower);
+                } else if (flower.getTypeOfFlower() == 2) {
+                    SimpleClient.flowersSingles.add(flower);
+                }
+            }
+            EventBus.getDefault().post(newFlower);
+
         }
 
         //5
@@ -139,10 +140,21 @@ public class SimpleClient extends AbstractClient {
             String[] parts = msgString.split(",");
             int id = Integer.parseInt(parts[2]);
             Flower flower = flowers.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+            if (flower == null) {
+                flower = flowersSingles.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+            }
             if(flower != null) {
-                flowers.remove(flower);
-                flower.setSale(Integer.parseInt(parts[1]));
-                flowers.add(flower);
+                if(flower.getTypeOfFlower()==1) {
+                    flowers.remove(flower);
+                    flower.setSale(Integer.parseInt(parts[1]));
+                    flowers.add(flower);
+                }
+                else{
+                    flowersSingles.remove(flower);
+                    flower.setSale(Integer.parseInt(parts[1]));
+                    flowersSingles.add(flower);
+
+                }
             }
             else {
                 System.out.println("Flower found in cache. Updating...");
@@ -155,10 +167,20 @@ public class SimpleClient extends AbstractClient {
             String[] parts = msgString.split(",");
             int id = Integer.parseInt(parts[1]);
             Flower flower = flowers.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+            if(flower == null) {
+                flower = flowersSingles.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+            }
             if(flower != null) {
-                flowers.remove(flower);
-                flower.setSale(0);
-                flowers.add(flower);
+                if(flower.getTypeOfFlower()==1) {
+                    flowers.remove(flower);
+                    flower.setSale(0);
+                    flowers.add(flower);
+                }
+                else{
+                    flowersSingles.remove(flower);
+                    flower.setSale(0);
+                    flowersSingles.add(flower);
+                }
             }
             else {
                 System.out.println("Flower found in cache. Updating...");
@@ -176,12 +198,16 @@ public class SimpleClient extends AbstractClient {
                 if (flower.getId() == Id) {
                     flowerdelete = flower;
                     SimpleClient.flowers.remove(flower);
+                    break;
                 }
             }
-            for (Flower flower : SimpleClient.flowersSingles){
-                if (flower.getId() == Id) {
-                    flowerdelete = flower;
-                    SimpleClient.flowersSingles.remove(flower);
+            if(flowerdelete == null) {
+                for (Flower flower : SimpleClient.flowersSingles) {
+                    if (flower.getId() == Id) {
+                        flowerdelete = flower;
+                        SimpleClient.flowersSingles.remove(flower);
+                        break;
+                    }
                 }
             }
             DeletFlower deletflower = new DeletFlower(flowerdelete);
@@ -214,6 +240,21 @@ public class SimpleClient extends AbstractClient {
 
         //14
         else if (msg instanceof BlockUserResponse) {
+            BlockUserResponse response = (BlockUserResponse) msg;
+            if(CurrentCustomer.getCurrentUser()!=null) {
+                if(CurrentCustomer.getCurrentUser().getUsername().equals(response.getUsername())) {
+                    CurrentCustomer.setSelectedBranch(null);
+                    CurrentCustomer.setCurrentCustomer(null);
+                    CurrentCustomer.setCurrentUser(null);
+                    CurrentCustomer.setCurrentEmployee(null);
+                    try{
+                        App.setRoot("Home",510,470);
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
             EventBus.getDefault().post(msg);
 
         }
@@ -284,42 +325,23 @@ public class SimpleClient extends AbstractClient {
         //18
         if (msg instanceof AddSale) {
             AddSale addSale = (AddSale) msg;
-            for (Flower flower : flowers) {
-                if (flower.getBranch().size() == 2) {
-                    if (addSale.getNumBranch() == 1) {
-                        flower.setSaleBranchHaifa(addSale.getNumSale());
-                    } else if (addSale.getNumBranch() == 2) {
-                        flower.setSaleBranchTelAviv(addSale.getNumSale());
-                    } else {
-                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
-                    }
-                } else {
-                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale() == 1) {
-                        flower.setSaleBranchHaifa(addSale.getNumSale());
-                    } else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale() == 2) {
-                        flower.setSaleBranchTelAviv(addSale.getNumSale());
-                    } else {
-                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+            if(addSale.getNumBranch()==1){
+                for (Branch branch: SimpleClient.getAllBranches()){
+                    if(branch.getAddress().equals("Haifa")){
+                        branch.setSale(addSale.getNumSale());
                     }
                 }
             }
-            for (Flower flower : flowersSingles) {
-                if (flower.getBranch().size() == 2) {
-                    if (addSale.getNumBranch() == 1) {
-                        flower.setSaleBranchHaifa(addSale.getNumSale());
-                    } else if (addSale.getNumBranch() == 2) {
-                        flower.setSaleBranchTelAviv(addSale.getNumSale());
-                    } else {
-                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
+            else if(addSale.getNumBranch()==2){
+                for (Branch branch: SimpleClient.getAllBranches()){
+                    if(branch.getAddress().equals("TelAviv")){
+                        branch.setSale(addSale.getNumSale());
                     }
-                } else {
-                    if (flower.getBranch().get(0).getAddress().equals("Haifa") && addSale.getNumSale() == 1) {
-                        flower.setSaleBranchHaifa(addSale.getNumSale());
-                    } else if (flower.getBranch().get(0).getAddress().equals("TelAviv") && addSale.getNumSale() == 2) {
-                        flower.setSaleBranchTelAviv(addSale.getNumSale());
-                    } else {
-                        flower.setSaleBranchHaifaTelAviv(addSale.getNumSale());
-                    }
+                }
+            }
+            else {
+                for (Branch branch: SimpleClient.getAllBranches()){
+                    branch.setSale(addSale.getNumSale());
                 }
             }
             EventBus.getDefault().post(addSale);

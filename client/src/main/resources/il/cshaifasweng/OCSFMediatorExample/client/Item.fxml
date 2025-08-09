@@ -109,10 +109,5 @@
             <Font name="Serif Regular" size="12.0" />
          </font>
       </Button>
-      <Text fx:id="Delete1" fill="#c42e17" layoutX="26.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Deleted!!" textAlignment="CENTER" wrappingWidth="312.8000244140625">
-         <font>
-            <Font name="Elephant" size="66.0" />
-         </font>
-      </Text>
    </children>
 </AnchorPane>

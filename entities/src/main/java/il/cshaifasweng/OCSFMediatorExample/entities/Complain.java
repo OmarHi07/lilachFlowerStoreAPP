@@ -22,8 +22,9 @@ public class Complain implements Serializable {
     private LocalDate Date;
     @Column(name = "complain_time")
     private LocalTime Time;
-    @OneToOne
-    @JoinColumn(name = "order_id")
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "order_id") // עמודת מפתח זר לטבלת orders (id)
     private Order order;
 
     private double refund;
@@ -52,10 +53,7 @@ public class Complain implements Serializable {
     public Customer getCustomer() {return customer;}
     public Branch getBranch() {return branch;}
     public void setBranch(Branch branch) {this.branch = branch;}
-    public void setOrder(Order order) {
-        this.order = order;
-        order.setComplain(this);
-    }
+
     public Order getOrder() {return order;}
     public LocalDate getDate() {
         return Date;
@@ -65,6 +63,16 @@ public class Complain implements Serializable {
     }
     public int getId(){return id;}
 
+
+    public void setOrder(Order order) {
+        if (this.order == order) return;
+        Order old = this.order;
+        this.order = order;
+        if (old != null) old.getComplains().remove(this);
+        if (order != null && !order.getComplains().contains(this)) {
+            order.getComplains().add(this);
+        }
+    }
 
 
     public void setDate(LocalDate localDate) {

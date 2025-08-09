@@ -150,9 +150,10 @@ public class ComplaintHandlingController
 
 
     @FXML
-    void backTo(ActionEvent event) {//to return to the previous screen
+    void backTo(ActionEvent event) {
+        EventBus.getDefault().unregister(this);//to return to the previous screen
         try {
-            App.setRoot("primary", 400, 600);
+            App.setRoot("primary",1120,760);
         }
         catch(Exception e){
             e.printStackTrace();

@@ -3,13 +3,11 @@
  */
 
 package il.cshaifasweng.OCSFMediatorExample.client;
-import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Customer;
-import il.cshaifasweng.OCSFMediatorExample.entities.Flower;
-import il.cshaifasweng.OCSFMediatorExample.entities.StoreChainManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +18,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +30,12 @@ public class InsertFlower {
 
     @FXML // fx:id="AlertColor"
     private Text AlertColor; // Value injected by FXMLLoader
+
+    @FXML // fx:id="AlertRed"
+    private Text AlertRed; // Value injected by FXMLLoader
+
+    @FXML // fx:id="Alertgreen"
+    private Text Alertgreen; // Value injected by FXMLLoader
 
     @FXML // fx:id="AlertImage"
     private Text AlertImage; // Value injected by FXMLLoader
@@ -102,7 +107,7 @@ public class InsertFlower {
 
     @FXML
     void initialize(){
-       // EventBus.getDefault().register(this);
+       EventBus.getDefault().register(this);
         TypeOfFlowerSelected = 0;
         colorGroup = new ToggleGroup();
         TypeOfFlower = new ToggleGroup();
@@ -121,6 +126,7 @@ public class InsertFlower {
         AlertPrice.setVisible(false);
         AlertType.setVisible(false);
         selectedImageBytes = null;
+        AlertTT.setVisible(false);
     }
 
     @FXML
@@ -185,7 +191,16 @@ public class InsertFlower {
 
     }
 
+    @Subscribe
+    public void AddingFlower(AddFlower newflower){
+        if(newflower.isTrue()) {
+            Alertgreen.setText("The Flower Added Successfully");
+        }
+        else {
+            Alertgreen.setText("The Flower Not Added Successfully");
+        }
 
+    }
     @FXML
     void SingleType(ActionEvent event) {
          TypeOfFlowerSelected = 2;
@@ -234,6 +249,9 @@ public class InsertFlower {
             White.setSelected(false);
             yellow.setSelected(false);
             telaviv.setSelected(false);
+            TypeOfFlowerSelected = 0;
+            TypeOfFlower.selectToggle(null);
+            colorGroup.selectToggle(null);
             Name.clear();
             Price.clear();
             Sale.clear();
@@ -310,7 +328,7 @@ public class InsertFlower {
             CurrentCustomer.setCurrentEmployee(null);
             CurrentCustomer.setCurrentCustomer(null);
             CurrentCustomer.setSelectedBranch(null);
-            App.setRoot("SignIn", 900, 760);
+            App.setRoot("Home",510,470);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -320,7 +338,7 @@ public class InsertFlower {
     @FXML
     void BackToCataloge(ActionEvent event) {
         try {
-            App.setRoot("primary", 900, 730);
+            App.setRoot("primary",1120,760);
         }
         catch(Exception e){
             e.printStackTrace();

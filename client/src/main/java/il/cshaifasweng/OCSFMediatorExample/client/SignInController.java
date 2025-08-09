@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -87,6 +88,8 @@ public class SignInController {
     void initialize() {
         EventBus.getDefault().register(this);
 
+        Image image = new Image(getClass().getResource("/Images/SignUp.jpeg").toExternalForm());
+        signInImages.setImage(image);
 
         // Add account types to ComboBox
         accountType.getItems().addAll("Regular", "Network Account", "Membership");
@@ -267,11 +270,26 @@ public class SignInController {
         });
     }
 
+    public void Clear(){
+        firstName.clear();
+        lastName.clear();
+        IDNumber.clear();
+        email.clear();
+        phoneNumber.clear();
+        creditCard.clear();
+        UserName.clear();
+        password.clear();
+        creditCard.clear();
+        CVV.clear();
+        epirtyDate.setValue(null);
+    }
+
     @Subscribe
     public void gotresponse(SignUpResponse signUpResponse) {
         Platform.runLater(() -> {
             if (signUpResponse.isSuccess()) {
                 showSuccessAlert("Success", "Account created successfully!");
+                Clear();
                 // Optionally switch scene to login
             } else {
                 showAlert("Sign-Up Failed", signUpResponse.getMessage());
