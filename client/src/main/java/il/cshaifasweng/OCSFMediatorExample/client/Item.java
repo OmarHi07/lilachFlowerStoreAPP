@@ -316,7 +316,7 @@ public class Item {
     void AddToTheCart(ActionEvent event) {
         if(CurrentCustomer.getCurrentUser() != null) {
             Customer customer = (Customer) CurrentCustomer.getCurrentUser();
-            if (customer.getCustomerType() == 2 && CurrentCustomer.getSelectedBranch() == null) {
+            if ((customer.getCustomerType() == 2 || customer.getCustomerType()==3) && CurrentCustomer.getSelectedBranch() == null) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Select Branch");
                     alert.setHeaderText("Select a Branch");

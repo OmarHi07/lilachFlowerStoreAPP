@@ -364,6 +364,7 @@ public class payfororder {
                         cardnumErrorLabel.setText("Card number must be 12–19 digits.");
                         cardnumErrorLabel.setVisible(true);
                         isValid = false;
+                        return false;
                 } else {
                         cardnumErrorLabel.setVisible(false);
                 }
@@ -373,6 +374,7 @@ public class payfororder {
                         cvvErrorLabel.setText("CVV must be exactly 3 digits.");
                         cvvErrorLabel.setVisible(true);
                         isValid = false;
+                        return false;
                 } else {
                         cvvErrorLabel.setVisible(false);
                 }
@@ -382,8 +384,18 @@ public class payfororder {
                         dateErrorLabel.setText("Expiration date must be today or in the future.");
                         dateErrorLabel.setVisible(true);
                         isValid = false;
+                        return false;
                 } else {
                         dateErrorLabel.setVisible(false);
+                }
+
+                if(dateapply.getValue().isBefore(LocalDate.now())){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Please complete all required fields.");
+                        alert.setContentText("Make sure to enter DATE RECIVE in the future.");
+                        alert.showAndWait();
+                        return false;
                 }
 
                 if (!someoneelse.isSelected() && !forme.isSelected()) {
