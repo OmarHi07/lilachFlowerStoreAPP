@@ -213,7 +213,21 @@ public class DataBaseManagement {
         }
     }
 
-
+    public CartProduct getCartProduct(int id) {
+        CartProduct employee = null;
+        try{
+            session.beginTransaction();
+            employee = session.get(CartProduct.class, id);
+            session.getTransaction().commit();
+        }
+        catch (Exception e) {
+            if (session != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+        return employee;
+    }
     public AddFlower addFlower(Flower flower) {
         try {
             session.beginTransaction();
@@ -790,6 +804,9 @@ public class DataBaseManagement {
             // שמירת המוצרים
             for (CartProduct product : order.getProducts()) {
                 product.setOrder(order);
+                Flower flower = session.get(Flower.class, product.getFlower().getId());
+                flower.addCartProduct(product);
+                session.update(flower);
                 session.save(product);
             }
 

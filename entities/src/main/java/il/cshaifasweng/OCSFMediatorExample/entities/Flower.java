@@ -3,6 +3,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Flowers")
@@ -13,6 +14,12 @@ public class Flower implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @OneToMany(mappedBy = "flower",
+    fetch = FetchType.EAGER,
+    cascade = CascadeType.ALL,
+    orphanRemoval = true)
+    private Set<CartProduct> cartProducts ;
 
     @Lob
     @Column(name = "image", columnDefinition="LONGBLOB")
@@ -35,6 +42,7 @@ public class Flower implements Serializable {
 
     private int TypeOfFlower; // =1 Bouquet , =2 Single
 
+    //فحص
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "flower_branch",
@@ -112,4 +120,7 @@ public class Flower implements Serializable {
     public void setImage(byte[] image) {this.image = image;}
     public String getColor() {return color;}
     public void setColor(String color) {this.color = color;}
+    public void addCartProduct(CartProduct cartProduct) {
+        cartProducts.add(cartProduct);
+    }
 }

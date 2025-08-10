@@ -190,6 +190,8 @@ public class SimpleServer extends AbstractServer {
 			client1.setFlowerList(flowerList);
 			if (client1 != null) {
 				try {
+
+					CartProduct cartProduct = instance.getCartProduct(1);
 					client.sendToClient(client1);
 					System.out.println("All the data send successfully.");
 

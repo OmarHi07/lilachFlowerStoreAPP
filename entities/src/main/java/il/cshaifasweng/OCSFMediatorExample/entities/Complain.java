@@ -26,8 +26,8 @@ public class Complain implements Serializable {
     @Column(name = "complain_time")
     private LocalTime Time;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id") // עמודת מפתח זר לטבלת orders (id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     private double refund;
@@ -71,10 +71,10 @@ public class Complain implements Serializable {
         if (this.order == order) return;
         Order old = this.order;
         this.order = order;
-        if (old != null) old.getComplains().remove(this);
-        if (order != null && !order.getComplains().contains(this)) {
-            order.getComplains().add(this);
-        }
+//        if (old != null) old.getComplains().remove(this);
+//        if (order != null && !order.getComplains().contains(this)) {
+//            order.getComplains().add(this);
+//        }
     }
 
 
