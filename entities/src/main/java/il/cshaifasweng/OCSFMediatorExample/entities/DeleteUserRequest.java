@@ -3,6 +3,9 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import java.io.Serializable;
 
 public class DeleteUserRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
     private int id;
     private String NameTable;
 

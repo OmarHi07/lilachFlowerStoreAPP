@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class AddClient implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public List<Flower> flowerList;
     public List<Branch> branchList;
     public AddClient(){}

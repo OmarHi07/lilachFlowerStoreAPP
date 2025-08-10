@@ -3,6 +3,8 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import java.io.Serializable;
 
 public class SignUpRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String firstName, lastName, id, email, phone, username, password;
     private String creditCard, cvv, expiryDate, accountType;
     private String branch;

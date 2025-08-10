@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 //we use this checking if the user name already in use
 public class UsernameCheckRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String username;
     boolean taken = false;
     public UsernameCheckRequest(String username) {

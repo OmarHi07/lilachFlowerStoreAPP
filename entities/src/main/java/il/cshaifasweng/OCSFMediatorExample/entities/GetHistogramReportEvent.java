@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class GetHistogramReportEvent implements Serializable {
+    private static final long serialVersionUID = 1L;
+
 
     private final String type; // למשל "complaints"
     private final Map<String, Long> data; // שם סניף -> כמות

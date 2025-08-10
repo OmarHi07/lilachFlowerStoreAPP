@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 @SuppressWarnings("serial")
 @Entity
 public class StoreChainManager extends Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
+
 
     public StoreChainManager() {
         super();
