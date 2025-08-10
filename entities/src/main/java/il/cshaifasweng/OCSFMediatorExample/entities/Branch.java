@@ -22,16 +22,16 @@ public class Branch implements Serializable {
        private String address;
 
        @ManyToMany(mappedBy = "BranchesAvailable", fetch = FetchType.EAGER)
-       private  Set<Flower> flowers;
+       private transient   Set<Flower> flowers;
 
        @ManyToMany(mappedBy = "listBranch" , fetch = FetchType.EAGER)
-       private  Set<Customer> ListUsers;
+       private  transient Set<Customer> ListUsers;
 
        @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
-       private  Set<Order> ListOrders;
+       private transient Set<Order> ListOrders;
 
        @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER)
-       private  Set<Complain> ListComplains;
+       private transient Set<Complain> ListComplains;
 
        private int Sale;
 

@@ -6,19 +6,16 @@ import java.io.Serializable;
 public class CartProduct implements Serializable{
     private static final long serialVersionUID = -8224097662914849956L;
 
-
-    @Id
+          @Id
           @GeneratedValue(strategy = GenerationType.IDENTITY)
           private int id;
           int quantity;
           private double price;
 
-          @ManyToOne(fetch = FetchType.LAZY)
-          @JoinColumn(name = "flower_id")
+          @ManyToOne
           private Flower flower;
 
           @ManyToOne
-          @JoinColumn(name = "order_id")
           private Order order;
 
           public CartProduct() {}

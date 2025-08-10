@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 @Entity
@@ -33,12 +34,14 @@ public class Order implements Serializable {
     private List<CartProduct> products;
 
     // ב-Order
+
     @OneToMany(
             mappedBy = "order",
-            fetch = FetchType.LAZY,   // ← טעינה רק כשמבקשים
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
-    )    private List<Complain> complains = new ArrayList<>();
+    )
+    private List<Complain> complain;
 
     private LocalDate dateReceive;
     private LocalTime timeReceive;
@@ -68,7 +71,6 @@ public class Order implements Serializable {
         this.status=3;
         this.isCanceled = isCanceled;
         this.products = new ArrayList<CartProduct>();
-        this.complains = new ArrayList<Complain>();
     }
 
     public Order() {
@@ -220,25 +222,25 @@ public class Order implements Serializable {
     }
 
 
-    public List<Complain> getComplains() {
-        return complains;
-    }
+//    public List<Complain> getComplains() {
+//        return complains;
+//    }
 
-    public void setComplains(List<Complain> complains) {
-        this.complains = complains != null ? complains : new ArrayList<>();
-    }
-
-    public void addComplain(Complain c) {
-        if (c == null) return;
-        complains.add(c);
-        c.setOrder(this); // קבע את הצד ההפוך
-    }
-
-    public void removeComplain(Complain c) {
-        if (c == null) return;
-        complains.remove(c);
-        if (c.getOrder() == this) c.setOrder(null);
-    }
+//    public void setComplains(List<Complain> complains) {
+//        this.complains = complains != null ? complains : new ArrayList<>();
+//    }
+//
+//    public void addComplain(Complain c) {
+//        if (c == null) return;
+//        complains.add(c);
+//        c.setOrder(this); // קבע את הצד ההפוך
+//    }
+//
+//    public void removeComplain(Complain c) {
+//        if (c == null) return;
+//        complains.remove(c);
+//        if (c.getOrder() == this) c.setOrder(null);
+//    }
 
 
 }
