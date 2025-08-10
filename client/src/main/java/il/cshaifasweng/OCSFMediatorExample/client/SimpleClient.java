@@ -17,7 +17,8 @@ public class SimpleClient extends AbstractClient {
     private static List<Branch> AllBranches;
     private static List<Order> AllOrders;
     private static List<Branch> BranchCustomer;
-
+    public static String IP = "127.0.0.1";
+    public static int Port = 3001;
     protected SimpleClient(String host, int port) {
         super(host, port);
     }
@@ -354,37 +355,16 @@ public class SimpleClient extends AbstractClient {
         }
 
     }
-
-    public static SimpleClient getClient() {
-        return client;
-    }
     public static List<Branch> getBranchCustomer(){return BranchCustomer;}
     public static List<Order> getAllOrders(){return AllOrders;}
     public static List<Branch> getAllBranches() {return AllBranches;}
     public static List<Flower> getFlowers() {return flowers;}
     public static List<Flower> getFlowersSingles(){return flowersSingles;}
-    public static synchronized SimpleClient getClient(String host, int port) {
-        try {
-            if (client == null) {
-                client = new SimpleClient(host, port);
-                client.openConnection();
-                return client;
-            }
-            if (!client.isConnected() ||
-                    !client.getHost().equals(host) ||
-                    client.getPort() != port) {
-
-                try { client.closeConnection(); } catch (Exception ignore) {}
-                client = new SimpleClient(host, port);
-                client.openConnection();
-            }
-            return client;
+    public static SimpleClient getClient () {
+        if (client == null) {
+            client = new SimpleClient(IP, Port);
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to connect to " + host + ":" + port, e);
-        }
-
+        return client;
     }
 
 }
