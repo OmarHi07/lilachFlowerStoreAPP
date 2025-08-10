@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Table(name="employee")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Employee implements Serializable{
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8224097662914849956L;
 
 
     @Id

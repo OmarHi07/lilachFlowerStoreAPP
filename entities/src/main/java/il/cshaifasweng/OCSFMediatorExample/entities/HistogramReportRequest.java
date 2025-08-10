@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class HistogramReportRequest implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8224097662914849956L;
 
     private final LocalDate fromDate;
     private final LocalDate toDate;
