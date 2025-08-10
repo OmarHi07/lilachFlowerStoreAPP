@@ -46,7 +46,7 @@ public class connectController {
         try {
             // Connect to the server
             SimpleClient client = SimpleClient.getClient(host, port);
-            client.openConnection();
+//            client.openConnection();
 
             // Navigate to the next screen
             App.setRoot("Home",510,470);
