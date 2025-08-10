@@ -6,10 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class GetReportEvent implements Serializable {
-
+    private static final long serialVersionUID = -8224097662914849956L;
     @Serial
-    private static final long serialVersionUID = 1L;
-
     private  String reportType;
     private  List<?> reportData;
 

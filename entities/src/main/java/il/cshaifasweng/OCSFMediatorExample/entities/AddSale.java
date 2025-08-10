@@ -3,8 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import java.io.Serializable;
 
 public class AddSale implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -8224097662914849956L;
     private int NumBranch;
     private int NumSale;
     public AddSale(int NumBranch, int NumSale){

@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Table(name = "Flowers")
 public class Flower implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8224097662914849956L;
 
 
     @Id
