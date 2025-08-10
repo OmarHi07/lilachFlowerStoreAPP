@@ -363,11 +363,28 @@ public class SimpleClient extends AbstractClient {
     public static List<Branch> getAllBranches() {return AllBranches;}
     public static List<Flower> getFlowers() {return flowers;}
     public static List<Flower> getFlowersSingles(){return flowersSingles;}
-    public static SimpleClient getClient(String host, int port) {
-        if (client == null) {
-            client = new SimpleClient(host, port);
+    public static synchronized SimpleClient getClient(String host, int port) {
+        try {
+            if (client == null) {
+                client = new SimpleClient(host, port);
+                client.openConnection();
+                return client;
+            }
+            if (!client.isConnected() ||
+                    !client.getHost().equals(host) ||
+                    client.getPort() != port) {
+
+                try { client.closeConnection(); } catch (Exception ignore) {}
+                client = new SimpleClient(host, port);
+                client.openConnection();
+            }
+            return client;
         }
-        return client;
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to connect to " + host + ":" + port, e);
+        }
+
     }
 
 }
