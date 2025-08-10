@@ -3,6 +3,9 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import java.io.Serializable;
 
 public class DeleteOrder implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
     private Order order;
     private Customer user;
     public DeleteOrder(Order order) {

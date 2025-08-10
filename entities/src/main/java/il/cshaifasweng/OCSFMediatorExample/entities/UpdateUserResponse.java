@@ -3,6 +3,8 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import java.io.Serializable;
 
 public class UpdateUserResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private boolean success;
     private String message;
     private UpdateUserRequest request;

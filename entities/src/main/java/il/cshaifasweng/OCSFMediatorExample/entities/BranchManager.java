@@ -6,6 +6,8 @@ import javax.persistence.*;
 @SuppressWarnings("serial")
 @Entity
 public class BranchManager extends Employee implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     @OneToOne(mappedBy = "manager")
     private Branch Branch;
     public BranchManager() {

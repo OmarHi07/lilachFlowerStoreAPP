@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class ReportRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
     private String reportType; // למשל "complain"
     private LocalDate fromDate;
     private LocalDate toDate;

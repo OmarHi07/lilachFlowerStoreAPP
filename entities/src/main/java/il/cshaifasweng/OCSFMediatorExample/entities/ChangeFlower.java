@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChangeFlower implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String NewName;
     private String NewPrice;
     private String NewType;
