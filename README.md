@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌸 Lilach Flower Store – Information System
+#  Lilach Flower Store – Information System
 
 ### Developed by:  
 **Omar Hijab**  
